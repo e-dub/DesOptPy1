@@ -29,7 +29,8 @@ import sys
 import getpass
 import platform
 
-def OptHis2HTML(OptName, Alg):
+def OptHis2HTML(OptName, Alg, DesOptDir):
+
     operatingSystem = platform.uname()[0]
     if operatingSystem == "Linux":
         DirSplit = "/"
@@ -38,22 +39,24 @@ def OptHis2HTML(OptName, Alg):
         DirSplit = "\\"
         homeDir = "c:\\Users\\"
     user = getpass.getuser()                  # Benutzer anfragen
-#    html_index = open(homeDir+user+"/DesOpt/Results/index.html", 'r')                                       # website root Template öffnen
-#    html_index_string = html_index.read()
-#    html_index_split = html_index_string.split('<!append new project after here!>')
-#    if(html_index_split[0].find(OptName) == -1):
-#        html_index_string = html_index_split[0] + "<br><a href=\"" + OptName + "/" + OptName + "_Status.html\">" + OptName + "</a>" + '<!append new project after here!>\r\n' + html_index_split[1]
-#    html_index.close()
-#
-#    html_index = open("C:\\Users\\Florian\\DesOptResults\\index.html", 'w')
-#    html_index.write(html_index_string)
-#    html_index.close()
 
     directory_startscript = sys.argv[0]
     (DesOpt_Base, tail) = os.path.split(directory_startscript)
     (DesOpt_Base, tail) = os.path.split(DesOpt_Base)    #DesOpt_Base is the base directory now
     #template_directory= DesOpt_Base + "/.DesOptPy/_OptStatusReport/"  # directory with the html files etc.
     template_directory= os.path.dirname(os.path.realpath(__file__)) + "/StatusReportFiles/"  # directory with the html files etc.
+
+    html_index = open(template_directory + "/index.html", 'r')                                       # website root Template öffnen
+    html_index_string = html_index.read()
+    html_index_split = html_index_string.split('<!append new project after here!>')
+    if(html_index_split[0].find(OptName) == -1):
+        html_index_string = html_index_split[0] + "<br><a href=\"" + OptName + "/" + OptName + "_Status.html\">" + OptName + "</a>\r\n" + '<!append new project after here!>\r\n' + html_index_split[1]
+    html_index.close()
+    html_index = open(DesOptDir + "\\Results\\index.html", 'w')
+    html_index.write(html_index_string)
+    html_index.close()
+
+
 
 
     value = ""
@@ -188,15 +191,14 @@ def OptHis2HTML(OptName, Alg):
     html = open('initial1.html', 'w')
     html.write(hstrnew)
     html.close()
-    # Directries erstellen und alles kopieren
-    # if not os.path.exists("/home/"+user+"/DesOptResults/ResultReport/"+OptName):
-    # os.makedirs("/home/"+user+"/DesOptResults/ResultReport/"+OptName)
-    # shutil.copy("initial1.html","/home/"+user+"/DesOptResults/ResultReport/"+OptName+"_Status.html")
+
+
+    if not os.path.exists(DesOptDir + "\\Results\\"+OptName):
+        os.makedirs(DesOptDir + "\\Results\\"+OptName)
 
     shutil.copy("initial1.html",
-                homeDir+user+"/DesOpt/Results/"+OptName+"/"+OptName+"_Status.html")
-    # if not os.path.exists("/home/"+user+"/Git/history-to-html/_OptResultReports/"+OptName):
-    # os.makedirs("/home/"+user+"/Git/history-to-html/_OptResultReports/"+OptName)
+               DesOptDir + "\\Results\\"+OptName+"\\"+OptName+"_Status.html")
+
     # shutil.copy("initial1.html","M:/Git/history-to-html/_OptResultReports/"+OptName+"/"+OptName+".html")
     # print "done creating html"
     return 0

@@ -324,7 +324,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         global nEval
         nEval += 1
         if OptStatus == 1:
-            OptHis2HTML.OptHis2HTML(OptName, OptAlg)
+            OptHis2HTML.OptHis2HTML(OptName, OptAlg,DesOptDir )
         if xDis is not []:
             nD = len(xDis)
             gDis = [[]]*2*nD
