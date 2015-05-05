@@ -1,0 +1,877 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+General
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\sysresp}{r}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\syspara}{p}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\sysrespvec}{\boldsymbol{r}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\sysparavec}{\boldsymbol{p}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Optimization
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\objfn}{f}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$f$"
+description "Objective function"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\objfnO}{f^{0}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$f^0$"
+description "Inital objective function"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\objfnopt}{f^{*}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$f^*$"
+description "Optimal objective function"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\confnvec}{\boldsymbol{g}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{g}$"
+description "Inequality constraint function vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\confnvecO}{\boldsymbol{g}^{0}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{g}^0$"
+description "Inital inequality constraint function vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\confnvecopt}{\boldsymbol{g}^{*}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{g}^*$"
+description "Optimal inequality constraint function vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\desvar}{x}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$x$"
+description "Design variable"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\desvarvec}{\boldsymbol{x}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{x}$"
+description "Design variable vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\desvarvecO}{\boldsymbol{x}^{0}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{x}^0$"
+description "Initial design variable vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\desvarLvec}{\boldsymbol{x}^{L}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{x}^L$"
+description "Lower bounded design variable vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\desvarUvec}{\boldsymbol{x}^{U}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{x}^U$"
+description "Upper bounded design variable vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\desvarvecopt}{\boldsymbol{x}^{*}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{x}^*$"
+description "Optimal design variable vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset FormulaMacro
+\newcommand{\desdomain}{\boldsymbol{X}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{X}$"
+description "Design domain matrix"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Optimization
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\objfn}{\mathsf{f}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Opt"
+symbol "$\\mathsf{f}$"
+description "Objective function"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\objfnvec}{\boldsymbol{\objfn}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Opt"
+symbol "$\\boldsymbol{\\mathsf{f}}$"
+description "Objective function vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\objfnO}{\objfn^{0}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\mathsf{f}^0$"
+description "Inital objective function"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\objfnopt}{\objfn^{*}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\mathsf{f}^*$"
+description "Optimal objective function"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\confn}{\mathsf{g}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\mathsf{g}$"
+description "Inequality constraint function"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\confnvec}{\boldsymbol{\confn}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{g}}$"
+description "Inequality constraint function vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\confnvecO}{\confnvec^{0}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{g}}^0$"
+description "Inital inequality constraint function vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\confnvecopt}{\confnvec^{*}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{g}}^*$"
+description "Optimal inequality constraint function vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\eqconfn}{\mathsf{h}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\mathsf{h}$"
+description "Equality constraint function"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\eqconfnvec}{\boldsymbol{\eqconfn}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{h}}$"
+description "Equality constraint function vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\eqconfnvecO}{\eqconfnvec^{0}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{h}}^0$"
+description "Inital equality constraint function vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\eqconfnvecopt}{\eqconfnvec^{*}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{h}}^*$"
+description "Optimal equality constraint function vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\desvar}{\mathsf{x}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\mathsf{x}$"
+description "Design variable"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\desvarvec}{\boldsymbol{\desvar}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{x}}$"
+description "Design variable vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\desvarvecO}{\desvarvec^{0}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{x}}^0$"
+description "Initial design variable vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\desvarL}{\mathsf{\desvar}^{L}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\mathsf{x}^L$"
+description "Lower bounded design variable"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\desvarU}{\mathsf{\desvar}^{U}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\mathsf{x}^U$"
+description "Upper bounded design variable"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\desvarUvec}{\desvarvec^{U}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{x}}^U$"
+description "Upper bounded design variable vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\desvarLvec}{\desvarvec^{L}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{x}}^L$"
+description "Lower bounded design variable vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\desvarvecopt}{\desvarvec^{*}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{x}}^*$"
+description "Optimal design variable vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\desdomain}{\boldsymbol{\mathsf{X}}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\boldsymbol{\\mathsf{X}}$"
+description "Design domain matrix"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\lagr}{\mathsf{L}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\mathsf{L}$"
+description "Lagrangian funciton value"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\shadprice}{\mathsf{S}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\mathsf{L}$"
+description "Lagrangian funciton value"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\lagrmult}{\textsf{λ}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\textsf{\\textgreek{l}}$"
+description "Lagrangian multiplier"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\lagrmultvec}{\textsf{\textbf{λ}}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\textsf{\\textbf{\\textgreek{l}}}$"
+description "Lagrangian multiplier vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\lambda$"
+description "Load factor"
+
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\mathsf{\\lambda}$"
+description "Lagrangian multiplier"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\nabla$"
+description "Nabla operator, here: gradient with respect to design varialbes"
+
+\end_inset
+
+
+\begin_inset FormulaMacro
+\renewcommand{\grad}{\nabla}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "Optimization"
+symbol "$\\textsf{\\textbf{\\textgreek{l}}}$"
+description "Lagrangian multiplier vector"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\lagrfn}{\lagr=\objfn\left(\desvarvec\right)+\lagrmultvec^{T}\confnvec\left(\desvarvec\right)}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\optprobfull}{\min_{\desvarvec\in\desdomain}\left\{  \objfn\left(\desvarvec\right)|\confnvec\left(\desvarvec\right)\overset{!}{\leq}\boldsymbol{0},\,\eqconfnvec\left(\desvarvec\right)\overset{!}{=}\boldsymbol{0}\right\}  }
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\optprob}{\min_{\desvarvec\in\desdomain}\left\{  \objfn\left(\desvarvec\right)|\confnvec\left(\desvarvec\right)\overset{!}{\leq}\boldsymbol{0}\right\}  }
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\renewcommand{\optprobbnduncon}{\min_{\desvarvec\in\desdomain}\left\{  \objfn\left(\desvarvec\right)\right\}  }
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
