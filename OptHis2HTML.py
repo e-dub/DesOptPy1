@@ -22,7 +22,7 @@ see DesOpt.py
 import numpy as np
 from time import localtime, strftime
 from pyOpt import History
-
+import glob
 import shutil
 import os
 import sys
@@ -59,7 +59,6 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
 
 
 
-
     value = ""
     value2 = ""
     # value = Werte der Zielfkt
@@ -78,8 +77,8 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
     fIter = [[]] * len(fGradIter)
     xIter = [[]] * len(fGradIter)
     gIter = [[]] * len(fGradIter)
-    print("length of fGradIter %d"  % len(fGradIter))
-    print("length of fAll %d"  % len(fAll))
+    #print("length of fGradIter %d"  % len(fGradIter))
+    #print("length of fAll %d"  % len(fAll))
     # video    if np.size(fAll)==1 and len(glob.glob('DesignIt*.png'))==0:
     # video       shutil.copy2('Design.png', 'DesignIt'+"{0:04d}".format(0)+'.png')
     for ii in range(len(fGradIter)):
@@ -234,7 +233,17 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
 
     shutil.copy("initial1.html",
                DesOptDir + os.sep + "Results"+ os.sep + OptName + os.sep + OptName + "_Status.html")
+    if not os.path.exists(DesOptDir + os.sep + "Results" + os.sep + "RGraph.scatter.js"):
+        for file in glob.glob(template_directory + "*.PNG"):
+            shutil.copy(file,
+                        DesOptDir + os.sep + "Results" + os.sep)
+        for file in glob.glob(template_directory + "*.js"):
+            shutil.copy(file,
+                        DesOptDir + os.sep + "Results" + os.sep)
 
+#        shutil.copytree(template_directory,
+#                        D+ os.sep,
+#                        ignore=shutil.ignore_patterns('*.html'))
     # shutil.copy("initial1.html","M:/Git/history-to-html/_OptResultReports/"+OptName+"/"+OptName+".html")
     # print "done creating html"
     return 0
