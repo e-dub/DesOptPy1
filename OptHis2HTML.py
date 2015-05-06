@@ -74,6 +74,8 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
     fIter = [[]] * len(fGradIter)
     xIter = [[]] * len(fGradIter)
     gIter = [[]] * len(fGradIter)
+    print("length of fGradIter %d"  % len(fGradIter))
+    print("length of fAll %d"  % len(fAll))
     # video    if np.size(fAll)==1 and len(glob.glob('DesignIt*.png'))==0:
     # video       shutil.copy2('Design.png', 'DesignIt'+"{0:04d}".format(0)+'.png')
     for ii in range(len(fGradIter)):
@@ -193,11 +195,11 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
     html.close()
 
 
-    if not os.path.exists(DesOptDir + "\\Results\\"+OptName):
-        os.makedirs(DesOptDir + "\\Results\\"+OptName)
+    if not os.path.exists(DesOptDir + os.sep + "Results"+ os.sep + OptName):
+        os.makedirs(DesOptDir + os.sep + "Results"+ os.sep + OptName)
 
     shutil.copy("initial1.html",
-               DesOptDir + "\\Results\\"+OptName+"\\"+OptName+"_Status.html")
+               DesOptDir + os.sep + "Results"+ os.sep + OptName + os.sep + OptName + "_Status.html")
 
     # shutil.copy("initial1.html","M:/Git/history-to-html/_OptResultReports/"+OptName+"/"+OptName+".html")
     # print "done creating html"

@@ -2,19 +2,64 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>Optimization Overview Page</title>
+
+    <style type="text/css">
+running_opti_title {
+        color:red;
+        float:left;
+        height:200px;
+        width:200px;
+}
+
+#running_opti_time {
+        float:right;
+        height:200px;
+        width:300px;
+}
+
+
+
+
+</style>
+
+
 </head>
 <body>
 
-<h1>Running Optimizations:</h1>
-<a href="html_files/project__001.html">Test 001</a><br>
+<h1 id="header_running">Running Optimizations:</h1>
+<div id="running_opti_title">
+    <a href="html_files/project__001.html">Test 001</a>
+</div>
+<div id="running_opti_time">
+    Running for HH:MM:SS
+</div>
 <a href="html_files/project__001.html">Test 002</a>
-<br><a href="DesOptResults_SLSQP_20150504223319/DesOptResults_SLSQP_20150504223319_Status.html">DesOptResults_SLSQP_20150504223319</a><br><a href="DesOptResults_SLSQP_20150504223338/DesOptResults_SLSQP_20150504223338_Status.html">DesOptResults_SLSQP_20150504223338</a><!append new project after here!>
-
-
+<br><a href="DesOptResults_SLSQP_20150504223319/DesOptResults_SLSQP_20150504223319_Status.html">DesOptResults_SLSQP_20150504223319</a><br><a href="DesOptResults_SLSQP_20150504223338/DesOptResults_SLSQP_20150504223338_Status.html">DesOptResults_SLSQP_20150504223338</a><!append new project after here!>
+
+<table>
+<tr>
+  <th>
+      <a href="html_files/project__001.html">Test 001</a>
+  </th>
+  <td>
+     Running for <script>
+document.write(Date.now());
+</script>
+
+
+  </td>
+</tr>
+</table>
+
+</body>
+
+
+
 
 <h1>Finished Optimizations:</h1>
 <a href="html_files/project__002_fin.html">Project 002</a>
 
 </body>
 </html>
+
