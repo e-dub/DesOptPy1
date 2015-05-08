@@ -36,16 +36,13 @@ import fnmatch
 import shutil
 import subprocess
 import time
+from subprocess import Popen
+
 
 def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
-    model_dir = ""
-    model_dir = optname.split("_",1)[0]
-    #bin_dir = "../DesOpt/Results/"+optname+"/RunFiles/"+model_dir
+    #model_dir = ""
+    #model_dir = optname.split("_", 1)[0]
     bin_dir = "../DesOpt/Results/"+optname+"/RunFiles/"
-#    for file in os.listdir(bin_dir):
-#        if fnmatch.fnmatch(file, '*.pkl'):
-#            file_OptSolData = open(bin_dir+"/"+file, 'r')
-#            OptSolData = pickle.load(file_OptSolData)
     file_OptSolData = open(bin_dir+"/"+optname+"_OptSol.pkl")
     OptSolData = pickle.load(file_OptSolData)
     x0 = OptSolData['x0']
@@ -91,10 +88,16 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
     Opt1Order = OptSolData['Opt1Order']
     hhmmss0 = OptSolData['hhmmss0']
     hhmmss1 = OptSolData['hhmmss1']
-
-    #---------------------------------------------------------------------------------------------------
+    ResultsFolder = "../DesOpt/Results/"+optname+"/ResultReport/"
+    if operatingSystem != 'Windows':
+        InkscapeCall = "inkscape"
+        LyxCall = "lyx"
+    elif operatingSystem == 'Windows':
+        InkscapeCall = "C:\\inkscape\\inkscape.exe"
+        LyxCall = "c:\\lyx\\lyx.exe"
+    # ---------------------------------------------------------------------------------------------------
     #         Write and save plots
-    #---------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------
     if diagrams == 1:
         print '# --------------  DIAGRAM GENERATION PROGRESS:  -------------- #\n'
         progressbar(0,82)
@@ -125,9 +128,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             ax1.legend(handles, labels, loc='best',prop = fontP)
             plt.xlim(xmin=0, xmax=len(fIterNorm)-1)
             plt.tight_layout()                                                  #Feature to autofit the graphics
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fgMaxIterNorm.png')
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fgMaxIterNorm.svg')
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fgMaxIterNorm_wo.pdf')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIterNorm.png')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIterNorm.svg')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIterNorm_wo.pdf')
             plt.close()
 
             plt.rc('text', usetex=False)
@@ -146,7 +149,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             ax1.legend(handles, labels, loc='best',prop = fontP)
             plt.xlim(xmin=0, xmax=len(fIterNorm)-1)
             plt.tight_layout()
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fgMaxIterNorm.pdf')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIterNorm.pdf')
             plt.close()
 
             progressbar(6,82)
@@ -170,9 +173,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             ax1.legend(handles, labels,  loc='best',prop = fontP,handleheight=2)  #changed location to best
             plt.xlim(xmin=0, xmax=len(fIter)-1)
             plt.tight_layout()                                                  #Feature to autofit the graphics
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fgMaxIter.svg')
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fgMaxIter.png')
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fgMaxIter_wo.pdf')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIter.svg')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIter.png')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIter_wo.pdf')
             plt.close()
 
             plt.rc('text', usetex=False)
@@ -191,7 +194,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             ax1.legend(handles, labels,  loc='best',prop = fontP,handleheight=2)  #changed location to best
             plt.xlim(xmin=0, xmax=len(fIter)-1)
             plt.tight_layout()                                                  #Feature to autofit the graphics
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fgMaxIter.pdf')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIter.pdf')
             plt.close()
 
             progressbar(12,82)
@@ -214,9 +217,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             plt.xlim(xmin=0, xmax=len(gIter)-1)
             ax2.legend(loc=2, bbox_to_anchor=(1.05, 1), borderaxespad=0.,ncol=numColg,prop=fontPP)
             plt.subplots_adjust(left=0.07, right=(0.96-(numColg*0.075)), top=0.93, bottom=0.12)
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gIter.svg')
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gIter.png')
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gIter_wo.pdf')
+            plt.savefig(ResultsFolder+OptName+'_gIter.svg')
+            plt.savefig(ResultsFolder+OptName+'_gIter.png')
+            plt.savefig(ResultsFolder+OptName+'_gIter_wo.pdf')
             plt.close()
 
             plt.rc('text', usetex=False)
@@ -234,7 +237,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             plt.xlim(xmin=0, xmax=len(gIter)-1)
             ax2.legend(loc=2, bbox_to_anchor=(1.05, 1), borderaxespad=0.,ncol=numColg,prop=fontPP)
             plt.subplots_adjust(left=0.07, right=(0.96-(numColg*0.075)), top=0.93, bottom=0.12)
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gIter.pdf')
+            plt.savefig(ResultsFolder+OptName+'_gIter.pdf')
             plt.close()
 
             progressbar(18,82)
@@ -261,9 +264,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             plt.xlabel("Constraints")
             plt.ylabel("$g$")
             plt.tight_layout()
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gBar.svg')
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gBar.png')
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gBar_wo.pdf')
+            plt.savefig(ResultsFolder+OptName+'_gBar.svg')
+            plt.savefig(ResultsFolder+OptName+'_gBar.png')
+            plt.savefig(ResultsFolder+OptName+'_gBar_wo.pdf')
             plt.close()
 
             plt.rc('text', usetex=False)
@@ -284,7 +287,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             plt.xlabel(r"Constraints")
             plt.ylabel(r"\$\g$")
             plt.tight_layout()
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gBar.pdf')
+            plt.savefig(ResultsFolder+OptName+'_gBar.pdf')
             plt.close()
 
             progressbar(24,82)
@@ -309,9 +312,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         #ax.set_xticklabels(ind+1)
         plt.tick_params(axis='x', which='both', bottom='off', labelbottom='off')
         plt.tight_layout()
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fBar.svg')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fBar.png')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fBar_wo.pdf')
+        plt.savefig(ResultsFolder+OptName+'_fBar.svg')
+        plt.savefig(ResultsFolder+OptName+'_fBar.png')
+        plt.savefig(ResultsFolder+OptName+'_fBar_wo.pdf')
         plt.close()
 
         plt.rc('text', usetex=False)
@@ -326,7 +329,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         ax.set_ylabel(r"\$\f$")
         plt.tick_params(axis='x', which='both', bottom='off', labelbottom='off')
         plt.tight_layout()
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fBar.pdf')
+        plt.savefig(ResultsFolder+OptName+'_fBar.pdf')
         plt.close()
 
         progressbar(26,82)
@@ -351,9 +354,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             plt.xlim(xmin=0, xmax=len(xIter)-1)
             ax2.legend(loc=2, bbox_to_anchor=(1.05, 1), borderaxespad=0.,ncol=numColx,prop=fontPP)
             plt.subplots_adjust(left=0.07, right=(0.96-(numColx*0.078)), top=0.93, bottom=0.12)
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fGradIter.svg')
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fGradIter.png')
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fGradIter_wo.pdf')
+            plt.savefig(ResultsFolder+OptName+'_fGradIter.svg')
+            plt.savefig(ResultsFolder+OptName+'_fGradIter.png')
+            plt.savefig(ResultsFolder+OptName+'_fGradIter_wo.pdf')
             plt.close()
 
             plt.rc('text', usetex=False)
@@ -371,7 +374,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             plt.xlim(xmin=0, xmax=len(xIter)-1)
             ax2.legend(loc=2, bbox_to_anchor=(1.05, 1), borderaxespad=0.,ncol=numColx,prop=fontPP)
             plt.subplots_adjust(left=0.07, right=(0.96-(numColx*0.078)), top=0.93, bottom=0.12)
-            plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_fGradIter.pdf')
+            plt.savefig(ResultsFolder+OptName+'_fGradIter.pdf')
             plt.close()
 
         progressbar(35,82)
@@ -394,9 +397,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         plt.xlim(xmin=0, xmax=len(xIter)-1)
         ax2.legend(loc=2, bbox_to_anchor=(1.05, 1), borderaxespad=0.,ncol=numColx,prop=fontPP)
         plt.subplots_adjust(left=0.07, right=(0.96-(numColx*0.078)), top=0.93, bottom=0.12)
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xIter.svg')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xIter.png')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xIter_wo.pdf')
+        plt.savefig(ResultsFolder+OptName+'_xIter.svg')
+        plt.savefig(ResultsFolder+OptName+'_xIter.png')
+        plt.savefig(ResultsFolder+OptName+'_xIter_wo.pdf')
         plt.close()
 
         plt.rc('text', usetex=False)
@@ -414,7 +417,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         plt.xlim(xmin=0, xmax=len(xIter)-1)
         ax2.legend(loc=2, bbox_to_anchor=(1.05, 1), borderaxespad=0.,ncol=numColx,prop=fontPP)
         plt.subplots_adjust(left=0.07, right=(0.96-(numColx*0.078)), top=0.93, bottom=0.12)
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xIter.pdf')
+        plt.savefig(ResultsFolder+OptName+'_xIter.pdf')
         plt.close()
 
         progressbar(41,82)
@@ -438,9 +441,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         plt.subplots_adjust(left=0.07, right=(0.96-(numColx*0.078)), top=0.93, bottom=0.12)
         plt.xlabel("Iteration")
         plt.ylabel("$\hat{x}_j$")
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xIterNorm.svg')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xIterNorm.png')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xIterNorm_wo.pdf')
+        plt.savefig(ResultsFolder+OptName+'_xIterNorm.svg')
+        plt.savefig(ResultsFolder+OptName+'_xIterNorm.png')
+        plt.savefig(ResultsFolder+OptName+'_xIterNorm_wo.pdf')
         plt.close()
 
         plt.rc('text', usetex=False)
@@ -458,7 +461,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         plt.subplots_adjust(left=0.07, right=(0.96-(numColx*0.078)), top=0.93, bottom=0.12)
         plt.xlabel(r"Iteration")
         plt.ylabel(r"\$\xn$")
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xIterNorm.pdf')
+        plt.savefig(ResultsFolder+OptName+'_xIterNorm.pdf')
         plt.close()
 
         progressbar(49,82)
@@ -485,9 +488,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         #ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%d'))
         ax.xaxis.set_major_locator(ticker.AutoLocator())
         plt.tight_layout()
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xBar.svg')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xBar.png')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xBar_wo.pdf')
+        plt.savefig(ResultsFolder+OptName+'_xBar.svg')
+        plt.savefig(ResultsFolder+OptName+'_xBar.png')
+        plt.savefig(ResultsFolder+OptName+'_xBar_wo.pdf')
         plt.close()
 
         plt.rc('text', usetex=False)
@@ -509,7 +512,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         #ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%d'))
         ax2.xaxis.set_major_locator(ticker.AutoLocator())
         plt.tight_layout()
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xBar.pdf')
+        plt.savefig(ResultsFolder+OptName+'_xBar.pdf')
         plt.close()
 
         progressbar(52,82)
@@ -533,9 +536,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         plt.xlabel("Design variables")
         plt.ylabel("$\hat{x}_j$")
         plt.tight_layout()
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xBarNorm.svg')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xBarNorm.png')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xBarNorm_wo.pdf')
+        plt.savefig(ResultsFolder+OptName+'_xBarNorm.svg')
+        plt.savefig(ResultsFolder+OptName+'_xBarNorm.png')
+        plt.savefig(ResultsFolder+OptName+'_xBarNorm_wo.pdf')
         plt.close()
 
         plt.rc('text', usetex=False)
@@ -553,7 +556,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         plt.xlabel(r"Design variables")
         plt.ylabel(r"\$\xn$")
         plt.tight_layout()
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_xBarNorm.pdf')
+        plt.savefig(ResultsFolder+OptName+'_xBarNorm.pdf')
         plt.close()
 
         progressbar(56,82)
@@ -572,9 +575,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         plt.ylim(ymin=0, ymax=ng)
         plt.grid(True, which='both')
         plt.tight_layout()
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gGradOpt.svg')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gGradOpt.png')
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gGradOpt_wo.pdf')
+        plt.savefig(ResultsFolder+OptName+'_gGradOpt.svg')
+        plt.savefig(ResultsFolder+OptName+'_gGradOpt.png')
+        plt.savefig(ResultsFolder+OptName+'_gGradOpt_wo.pdf')
         plt.close()
 
         plt.rc('text', usetex=False)
@@ -588,7 +591,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         plt.ylim(ymin=0, ymax=ng)
         plt.grid(True, which='both')
         plt.tight_layout()
-        plt.savefig("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+'_gGradOpt.pdf')
+        plt.savefig(ResultsFolder+OptName+'_gGradOpt.pdf')
         plt.close()
 
         progressbar(63,82)
@@ -596,55 +599,25 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         #---------------------------------------------------------------------------------------------------
         # Convert the PDF's with Inkscape to PDF-Latex files
         #---------------------------------------------------------------------------------------------------
-        if operatingSystem!='Windows':
-            os.system("inkscape -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fgMaxIterNorm.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fgMaxIterNorm.pdf --export-latex")
-            os.system("inkscape -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fgMaxIter.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fgMaxIter.pdf --export-latex")
-            os.system("inkscape -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gIter.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gIter.pdf --export-latex")
-            os.system("inkscape -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gBar.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gBar.pdf --export-latex")
-            progressbar(68,82)
-
-            os.system("inkscape -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fBar.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fBar.pdf --export-latex")
-            try: os.system("inkscape -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fGradIter.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fGradIter.pdf --export-latex")
-            except: pass
-            os.system("inkscape -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xIter.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xIter.pdf --export-latex")
-            os.system("inkscape -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xIterNorm.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xIterNorm.pdf --export-latex")
-            os.system("inkscape -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xBar.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xBar.pdf --export-latex")
-            os.system("inkscape -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xBarNorm.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xBarNorm.pdf --export-latex")
-            os.system("inkscape -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gGradOpt.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gGradOpt.pdf --export-latex")
-
-            progressbar(82,82)
-
-        #---------------------------------------------------------------------------------------------------
-        # For Windows, still not final, should work without absolute paths!
-        #---------------------------------------------------------------------------------------------------
-
-        if operatingSystem=='Windows':
-
-
-            subprocess.call("C:\\inkscape\\inkscape.exe -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fgMaxIterNorm.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fgMaxIterNorm.pdf --export-latex", shell=True)
-            subprocess.call("C:\\inkscape\\inkscape.exe -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fgMaxIter.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fgMaxIter.pdf --export-latex", shell=True)
-            subprocess.call("C:\\inkscape\\inkscape.exe -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gIter.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gIter.pdf --export-latex", shell=True)
-            subprocess.call("C:\\inkscape\\inkscape.exe -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gBar.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gBar.pdf --export-latex", shell=True)
-            subprocess.call("C:\\inkscape\\inkscape.exe -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fBar.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fBar.pdf --export-latex", shell=True)
-
-            progressbar(68,82)
-
-            subprocess.call("C:\\inkscape\\inkscape.exe -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fGradIter.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_fGradIter.pdf --export-latex", shell=True)
-            subprocess.call("C:\\inkscape\\inkscape.exe -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xIter.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xIter.pdf --export-latex", shell=True)
-            subprocess.call("C:\\inkscape\\inkscape.exe -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xIterNorm.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xIterNorm.pdf --export-latex", shell=True)
-            subprocess.call("C:\\inkscape\\inkscape.exe -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xBar.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xBar.pdf --export-latex", shell=True)
-            subprocess.call("C:\\inkscape\\inkscape.exe -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xBarNorm.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_xBarNorm.pdf --export-latex", shell=True)
-            subprocess.call("C:\\inkscape\\inkscape.exe -D -z --file="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gGradOpt.pdf --export-pdf="+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_gGradOpt.pdf --export-latex", shell=True)
-
-            progressbar(82,82)
-
+        PlotFiles = ["xBar", "xBarNorm", "gBar", "fBar", "fgMaxIterNorm", "fgMaxIter", "gIter",
+                      "fGradIter", "xIter", "xIterNorm", "gGradOpt" ]
+        mProc = [[]]*len(PlotFiles)
+        for ii in range(len(PlotFiles)):
+            mProc[ii] = Popen(InkscapeCall + " -D -z --file="+"../DesOpt/Results/"+optname+
+                              "/ResultReport/"+OptName+"_"+ PlotFiles[ii] + ".pdf --export-pdf="+
+                              ResultsFolder+OptName+
+                              "_"+ PlotFiles[ii] + ".pdf --export-latex", shell=True).wait()
+        #os.wait()
+        #time.sleep(3)
+        #wait here??????????
+        progressbar(82,82)
         print '# --------------- DIAGRAM GENERATION FINISHED! --------------- #'
 
     if tables==1:
         #---------------------------------------------------------------------------------------------------
         # Options Table
         #---------------------------------------------------------------------------------------------------
-        tRR = open(""+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_OptAlgOptionsTable.tex","w")
+        tRR = open(""+ResultsFolder+OptName+"_OptAlgOptionsTable.tex","w")
         optCrit = []
         optCrit.append('\\begin{table}[H] \n')
         optCrit.append('\\caption{Algorithm options} \n')
@@ -654,7 +627,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         optCrit.append('\\toprule \n')
         optCrit.append('Property & Value \\tabularnewline \n')
         #optCrit.append('\\midrule \n')
-        #optCrit.append('\\midrule \n')
+        #optCrit.append('\\midrule \n')os.system(
         optCrit.append('\\midrule \n')
         for uu in OptAlg.options:
             if str(uu) != "defaults" and str(uu) != "IFILE":
@@ -667,15 +640,14 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         optCrit.append('\\end{table}')
         tRR.writelines(optCrit)
         tRR.close()
-        # Convert tex file to lyx file
-        os.system("tex2lyx "+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_OptAlgOptionsTable.tex")
+        os.system("tex2lyx "+ResultsFolder+OptName+"_OptAlgOptionsTable.tex")
 
         # Normalized data
         if DesVarNorm==1:
             #---------------------------------------------------------------------------------------------------
             # Normalized design variables table
             #---------------------------------------------------------------------------------------------------
-            tRR = open(""+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_DesignVarTableNorm.tex","w")
+            tRR = open(""+ResultsFolder+OptName+"_DesignVarTableNorm.tex","w")
             dvT = []
             dvT.append('\\begin{table}[H] \n')
             dvT.append('\\caption{Details of normalized design variables $\hat{x}$} \n')
@@ -701,12 +673,12 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             dvT.append('\\end{table}')
             tRR.writelines(dvT)
             tRR.close()
-            os.system("tex2lyx "+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_DesignVarTableNorm.tex")
+            os.system("tex2lyx "+ResultsFolder+OptName+"_DesignVarTableNorm.tex")
 
         #---------------------------------------------------------------------------------------------------
         # Design variables table
         #---------------------------------------------------------------------------------------------------
-        tRR = open(""+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_DesignVarTable.tex","w")
+        tRR = open(""+ResultsFolder+OptName+"_DesignVarTable.tex","w")
         dvT = []
         dvT.append('\\begin{table}[H] \n')
         dvT.append('\\caption{Details of design variables $x$} \n')
@@ -733,12 +705,12 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         tRR.writelines(dvT)
         tRR.close()
         # Convert tex file to lyx file
-        os.system("tex2lyx "+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_DesignVarTable.tex")
+        os.system("tex2lyx "+ResultsFolder+OptName+"_DesignVarTable.tex")
 
-        #---------------------------------------------------------------------------------------------------
+        # ---------------------------------------------------------------------------------------------------
         # System responses table
-        #---------------------------------------------------------------------------------------------------
-        tRR = open(""+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_SystemResponseTable.tex","w")
+        # ---------------------------------------------------------------------------------------------------
+        tRR = open(""+ResultsFolder+OptName+"_SystemResponseTable.tex", "w")
         srT = []
         srT.append('\\begin{table}[H] \n')
         srT.append('\\caption{System responses} \n')
@@ -748,15 +720,15 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         srT.append('\\toprule \n')
         srT.append('Response & Symbol & Start value  & Optimal value \\tabularnewline \n')
         srT.append('\\midrule \n')
-        #srT.append('\\midrule \n')
-        #temp = [r'Objective function  & $\f$ & ',str(round(fIter[0][0],4)),'&',str(round(fOpt[0],4)),'\\tabularnewline']
-        temp = [r'Objective function  & $\f$ & ',str(round(fIter[0][0],4)),'&',str(round(fOpt[0],4)),'\\tabularnewline \n']
+        # srT.append('\\midrule \n')
+        # temp = [r'Objective function  & $\f$ & ',str(round(fIter[0][0],4)),'&',str(round(fOpt[0],4)),'\\tabularnewline']
+        temp = [r'Objective function  & $\f$ & ', str(round(fIter[0][0], 4)), '&', str(round(fOpt[0], 4)), '\\tabularnewline \n']
         srT = srT + temp
-        if np.size(gc)>0:
+        if np.size(gc) > 0:
             for ii in range(ng):
-                #srT.append('\\midrule \n')
-                temp=['Inequality constraint ',str(ii+1),r'&$\g_{',str(ii+1),'}$&',str(round(gIter[0][ii],4)),'&',str(round(gOpt[ii],4)),'\\tabularnewline \n']
-                srT=srT+temp
+                # srT.append('\\midrule \n')
+                temp = ['Inequality constraint ', str(ii+1), r'&$\g_{', str(ii+1), '}$&', str(round(gIter[0][ii], 4)), '&', str(round(gOpt[ii],4)), '\\tabularnewline \n']
+                srT = srT+temp
         srT.append('\\bottomrule \n')
         srT.append('\\end{tabular} \n')
         srT.append('\\par\\end{centering} \n')
@@ -764,13 +736,13 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         tRR.writelines(srT)
         tRR.close()
         # Convert tex file to lyx file
-        os.system("tex2lyx "+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_SystemResponseTable.tex")
+        os.system("tex2lyx "+ResultsFolder+OptName+"_SystemResponseTable.tex")
 
-        if np.size(gc)>0:
-    #---------------------------------------------------------------------------------------------------
-    # First order and lagrange table
-    #---------------------------------------------------------------------------------------------------
-            tRR = open(""+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_FirstOrderLagrangeTable.tex","w")
+        # ---------------------------------------------------------------------------------------------------
+        # First order and lagrange table
+        # ---------------------------------------------------------------------------------------------------
+        if np.size(gc) > 0:
+            tRR = open(""+ResultsFolder+OptName+"_FirstOrderLagrangeTable.tex", "w")
             optCrit = []
             optCrit.append('\\begin{table}[H] \n')
             optCrit.append('\\caption{First-order optimality as well as non-zero Lagrangian multipliers} \n')
@@ -780,9 +752,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             optCrit.append('\\toprule \n')
             optCrit.append('Property & Symbol & Value \\tabularnewline \n')
             optCrit.append('\\midrule \n')
-            #optCrit.append('\\midrule \n')
+            # optCrit.append('\\midrule \n')
             try:
-                temp = ['First-order optimality & $\\left\\Vert \\mathcal{\\nabla L}\\right\\Vert $ & ',str(round(Opt1Order,4)),'\\tabularnewline \n']
+                temp = ['First-order optimality & $\\left\\Vert \\mathcal{\\nabla L}\\right\\Vert $ & ', str(round(Opt1Order, 4)), '\\tabularnewline \n']
                 optCrit = optCrit + temp
                 for uu in range(len(lambda_c)):
                     #optCrit.append('\\midrule \n')
@@ -794,12 +766,13 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
                 optCrit.append('\\end{table}')
                 tRR.writelines(optCrit)
                 tRR.close()
-                os.system("tex2lyx "+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_FirstOrderLagrangeTable.tex")
-            except: pass
-    #---------------------------------------------------------------------------------------------------
+                os.system("tex2lyx "+ResultsFolder+OptName+"_FirstOrderLagrangeTable.tex")
+            except:
+                pass
+    # ---------------------------------------------------------------------------------------------------
     # Shadow prices table
-    #---------------------------------------------------------------------------------------------------
-            tRR = open(""+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_ShadowPricesTable.tex","w")
+    # ---------------------------------------------------------------------------------------------------
+            tRR = open(""+ResultsFolder+OptName+"_ShadowPricesTable.tex", "w")
             optCrit = []
             optCrit.append('\\begin{table}[H] \n')
             optCrit.append('\\caption{Shadow prices} \n')
@@ -810,9 +783,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             optCrit.append('Property & Symbol & Value \\tabularnewline \n')
             optCrit.append('\\midrule \n')
             for uu in range(len(SPg)):
-                #optCrit.append('\\midrule \n')
-                temp = ['Shadow price of $g_{',str(uu+1),'}$ & $S_{g_{',str(uu+1),'}}$ & ',str(round(SPg[uu],4)),'\\tabularnewline \n']
-                optCrit=optCrit + temp
+                # optCrit.append('\\midrule \n')
+                temp = ['Shadow price of $g_{', str(uu+1), '}$ & $S_{g_{', str(uu+1), '}}$ & ', str(round(SPg[uu], 4)), '\\tabularnewline \n']
+                optCrit = optCrit + temp
             optCrit.append('\\bottomrule \n')
             optCrit.append('\\end{tabular} \n')
             optCrit.append('\\par\\end{centering} \n')
@@ -820,18 +793,18 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             tRR.writelines(optCrit)
             tRR.close()
             # Convert tex file to lyx file
-            os.system("tex2lyx "+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+"_ShadowPricesTable.tex")
+            os.system("tex2lyx "+ResultsFolder+OptName+"_ShadowPricesTable.tex")
 
-        #---------------------------------------------------------------------------------------------------
+        # ---------------------------------------------------------------------------------------------------
         # Write LyX solution document and print as pdf
-        #---------------------------------------------------------------------------------------------------
+        # ---------------------------------------------------------------------------------------------------
         templatePath = os.path.dirname(os.path.realpath(__file__)) + "/ResultReportFiles/"
-        shutil.copy(templatePath + "/TUM.eps","../DesOpt/Results/"+OptName+"/ResultReport/"+"TUM.eps")
-        shutil.copy(templatePath + "/FG_CM_blau_oZ_CMYK.eps", "../DesOpt/Results/"+OptName+"/ResultReport/"+"FG_CM_blau_oZ_CMYK.eps")
-        shutil.copy(templatePath + "/FGCM_Background.pdf", "../DesOpt/Results/"+OptName+"/ResultReport/"+"FGCM_Background.pdf")
-        FileName = ["_ResultReportPy.lyx", "_ResultPresentationPy.lyx"]
+        shutil.copy(templatePath + "/TUM.eps", ResultsFolder+"TUM.eps")
+        shutil.copy(templatePath + "/FG_CM_blau_oZ_CMYK.eps", ResultsFolder + "FG_CM_blau_oZ_CMYK.eps")
+        shutil.copy(templatePath + "/FGCM_Background.pdf", ResultsFolder + "FGCM_Background.pdf")
+        FileName = ["_ResultPresentationPy.lyx", "_ResultReportPy.lyx"]
         for ii in range(2):
-            fRR = open(templatePath + FileName[ii],"r+")
+            fRR = open(templatePath + FileName[ii], "r+")
             contentRR = fRR.readlines()
             # Replace Modelname and Date
             contentRR = [w.replace('XXXmodelname', OptModel) for w in contentRR]
@@ -845,7 +818,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             # Replace modelname, number of design variables, number of constraints, algorithm name and options
             contentRR = [w.replace('XXXmodelname', OptModel) for w in contentRR]
             contentRR = [w.replace('XXXnx', str(np.size(x0))) for w in contentRR]
-            if np.size(gc)>0:
+            if np.size(gc) > 0:
                 contentRR = [w.replace('XXXnc', str(np.size(gc))) for w in contentRR]
             else:
                 contentRR = [w.replace('XXXnc', str(0)) for w in contentRR]
@@ -860,21 +833,19 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             # Replace AAA for pictures and tables
             contentRR = [w.replace('AAA', OptName) for w in contentRR]
             fRR.close()
-            fRR = open("../DesOpt/Results/"+optname+"/ResultReport/"+OptName+FileName[ii], "w")
+            fRR = open(ResultsFolder+OptName+FileName[ii], "w")
             fRR.writelines(contentRR)
             fRR.close()
     if lyx == 1:
         for ii in range(2):
-            os.system("lyx --export pdf2 "+"../DesOpt/Results/"+optname+"/ResultReport/"+OptName+FileName[ii])
-# if __name__ == "__main__":
-#  try: optName = sys.argv[1]
-# except: "Error: No model specified!"
-# OptResultReport(optName,diagrams=1,tables=1,lyx=1)
+            os.system(LyxCall + " --export pdf2 " + ResultsFolder + OptName + FileName[ii])
+            print ResultsFolder + OptName + FileName[ii]
+
 
 def progressbar(actTime, totTime):
     toolbar_width = 60
-    percentage=float(actTime)/float(totTime)
-    numOfChars=int(percentage*toolbar_width)
+    percentage = float(actTime)/float(totTime)
+    numOfChars = int(percentage*toolbar_width)
     Char = '='
     sys.stdout.write('\r[')
     sys.stdout.flush()
@@ -893,8 +864,7 @@ def progressbar(actTime, totTime):
     sys.stdout.write(']')
     sys.stdout.flush()
 
+
 def elapsed(starttime):
     time_now = time.time()
     print('time Elapsed:\t' + str(time_now-starttime))
-
-

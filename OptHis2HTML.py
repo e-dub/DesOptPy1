@@ -234,7 +234,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
     shutil.copy("initial1.html",
                DesOptDir + os.sep + "Results"+ os.sep + OptName + os.sep + OptName + "_Status.html")
     if not os.path.exists(DesOptDir + os.sep + "Results" + os.sep + "RGraph.scatter.js"):
-        for file in glob.glob(template_directory + "*.PNG"):
+        for file in glob.glob(template_directory + "*.png"):
             shutil.copy(file,
                         DesOptDir + os.sep + "Results" + os.sep)
         for file in glob.glob(template_directory + "*.js"):
