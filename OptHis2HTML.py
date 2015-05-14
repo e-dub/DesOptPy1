@@ -31,7 +31,7 @@ import platform
 
 def OptHis2HTML(OptName, Alg, DesOptDir):
 
-    Alg = Alg.name
+
     operatingSystem = platform.uname()[0]
     if operatingSystem == "Linux":
         DirSplit = "/"
@@ -40,6 +40,12 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
         DirSplit = "\\"
         homeDir = "c:\\Users\\"
     user = getpass.getuser()                  # Benutzer anfragen
+
+    pos_of_iters = []
+    pos_of_best_ind=[]
+    fIter=[]
+    xIter=[]
+    gIter=[]
 
     directory_startscript = sys.argv[0]
     (DesOpt_Base, tail) = os.path.split(directory_startscript)
@@ -59,57 +65,35 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
 
 
 
-
-    value = ""
-    value2 = ""
-    # value = Werte der Zielfkt
-    # value2 = maximale werte aller Nebenbedingungen
-
     OptHist = History(OptName, "r")                    # Instanz einer History erstellen
 
     fAll = OptHist.read([0, -1], ["obj"])[0]["obj"]
     xAll = OptHist.read([0, -1], ["x"])[0]["x"]
     gAll = OptHist.read([0, -1], ["con"])[0]["con"]
-    if Alg == "NLPQLP":
+    if Alg.name == "NLPQLP":
         gAll = [x * -1 for x in gAll]
-    gGradIter = OptHist.read([0, -1], ["grad_con"])[0]["grad_con"]
+
     fGradIter = OptHist.read([0, -1], ["grad_obj"])[0]["grad_obj"]
 
-    fIter = [[]] * len(fGradIter)
-    xIter = [[]] * len(fGradIter)
-    gIter = [[]] * len(fGradIter)
-    print("length of fGradIter %d"  % len(fGradIter))
-    print("length of fAll %d"  % len(fAll))
-    # video    if np.size(fAll)==1 and len(glob.glob('DesignIt*.png'))==0:
-    # video       shutil.copy2('Design.png', 'DesignIt'+"{0:04d}".format(0)+'.png')
-    for ii in range(len(fGradIter)):
-        # video        if ii==len(fGradIter)-1:
-        # video            shutil.copy2('Design.png', 'DesignIt'+"{0:04d}".format(ii+1)+'.png')
-        Posdg = OptHist.cues["grad_con"][ii][0]
-        Posf = OptHist.cues["obj"][ii][0]
-        iii = 0
-        while Posdg > Posf:
-            iii = iii + 1
-            try:
-                Posf = OptHist.cues["obj"][iii][0]
-            except:
-                Posf = Posdg + 1
-        iii = iii - 1
-        fIter[ii] = fAll[iii]
-        xIter[ii] = xAll[iii]
-        gIter[ii] = gAll[iii]
-
-    failIter = OptHist.read([0, -1], ["fail"])[0]["fail"]
-    if Alg == "COBYLA" or Alg == "NSGA2":
+    if Alg.name == "COBYLA":
         fIter = fAll
         xIter = xAll
         gIter = gAll
+    elif Alg.name == "NSGA-II":
+        PopSize=Alg.options['PopSize'][1]
+
+        for i in range(0,fAll.__len__()/PopSize):
+
+            pos_of_best_ind.append(np.argmin(fAll[i*PopSize:i*PopSize+PopSize])+PopSize*i)
+            fIter.append(fAll[pos_of_best_ind[i]])
+            xIter.append(xAll[pos_of_best_ind[i]])
+            gIter.append(gAll[pos_of_best_ind[i]])
     else:
         fIter = [[]] * len(fGradIter)
         xIter = [[]] * len(fGradIter)
         gIter = [[]] * len(fGradIter)
-        # SuIter = [[]] * len(fGradIter)
-        for ii in range(len(fGradIter)):
+
+        for ii in range(len(fIter)):
             Posdg = OptHist.cues["grad_con"][ii][0]
             Posf = OptHist.cues["obj"][ii][0]
             iii = 0
@@ -124,18 +108,22 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
             xIter[ii] = xAll[iii]
             gIter[ii] = gAll[iii]
 
+    if Alg.name != "NSGA-II":
+        if len(fGradIter) == 0:         # first calculation
+            fIter = fAll
+            xIter = xAll
+            gIter = gAll
+
+
     OptHist.close()
 
 
     fIter = np.asarray(fIter)
     xIter = np.asarray(xIter)
     gIter = np.asarray(gIter)
-    niter = len(fIter)
+    niter = len(fIter) - 1
 
-    for x in range(0, niter):
-        value = value + '[' + str(x) + ',' + str(float(fIter[x])) + '],'            # Daten für Zielfkt-diagramm aufbereiten
-        if gIter.size != 0:
-            value2 = value2 + '[' + str(x) + ',' + str(float(np.max(gIter[x]))) + '],'  # Daten für Nebenb-diagramm aufbereiten
+
     html = open(template_directory + '/initial.html', 'r')                                       # HTML Template öffnen
     hstr = html.read()
     part1 = hstr[:(hstr.find('<br><br>') + 4)]                                        # html slicen
@@ -172,14 +160,28 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
     hstr = hstr[hstr.find('<p>Convergence'):]
     part17 = hstr[hstr.find('<p>Convergence')+14:]
     html.close()
+
+
     time_now = strftime("%Y-%b-%d %H:%M:%S", localtime())          # Aktualisierungszeit auslesen
     ymax = 0
     ymin = 0
-    arr_gmin = [[]] * len(fGradIter)
+    arr_gmin = [[]] * len(fIter)
     gmin1 = 0
     gmax = 0
     gmin = 0
-    for x in range(0, niter):                                    # Maximale y-Achsen Werte bestimmen
+
+    value = ""
+    value2 = ""
+    # value = Werte der Zielfkt
+    # value2 = maximale werte aller Nebenbedingungen
+
+
+    for x in range(0, niter + 1):
+        value = value + '[' + str(x) + ',' + str(float(fIter[x]))  +  '],'            #Daten für Zielfkt-diagramm aufbereiten
+        if gIter.size != 0:
+            value2 = value2 + '[' + str(x) + ',' + str(float(np.max(gIter[x]))) + '],'  # Daten für Nebenb-diagramm aufbereiten
+
+    for x in range(0, niter + 1):                                    # Maximale y-Achsen Werte bestimmen
         if (np.max(xIter[x]) > ymax):
             ymax = np.max(xIter[x])
         if (np.min(xIter[x]) < ymin):
@@ -190,31 +192,42 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
         if gIter.size != 0:
             if (np.min(gIter[x]) < gmin):
                 gmin = np.min(gIter[x])
+
     datasets = ""
     datasetsg = ""
+
     if xIter.size != 0:
         for x in range(0, len(xIter[0])):                                    # Datasets von Obj-fkt erstellen
             datasets += 'var ' + 'data' + str(x) + '=['
-            for y in range(0, niter):
+            for y in range(0, niter +1 ):
                 datasets += '[' + str(y) + ',' + str(xIter[y][x]) + '],'
             datasets += '];\n\t\t\t'
+
     if gIter.size != 0:
         for x in range(0, len(gIter[0])):                                     # Datasets von Con-fkt erstellen
             datasetsg += 'var ' + 'data'+str(x)+'=['
-            for y in range(0, niter):
+            for y in range(0, niter +1):
                 datasetsg += '[' +str(y) + ','+str(gIter[y][x])+'],'
             datasetsg += '];\n\t\t\t'
-        for u in range(0, niter):
+        for u in range(0, len(gIter)):
             arr_gmin[u] = np.max(gIter[u])
         gmin1 = np.min(arr_gmin)
+
     allDesVar = ""
+
     if xIter.size != 0:
         for y in range(0, len(xIter[0])):
             allDesVar = allDesVar+',data'+str(y)
+
     allConVar = ""
+
     if gIter.size != 0:
         for y in range(0, len(gIter[0])):
             allConVar = allConVar+',data'+str(y)
+
+
+
+
     # Neue HTML Datei erstellen
     if gIter.size != 0:
         hstrnew = part1+OptName+part2+time_now+part3+value+part4+value2+part5+str(niter)+part6+str(ymax)+part7+str(ymin)+part8+datasets
@@ -235,6 +248,13 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
     shutil.copy("initial1.html",
                DesOptDir + os.sep + "Results"+ os.sep + OptName + os.sep + OptName + "_Status.html")
 
+
+
     # shutil.copy("initial1.html","M:/Git/history-to-html/_OptResultReports/"+OptName+"/"+OptName+".html")
     # print "done creating html"
     return 0
+
+def picture(number):
+    str_picture = '\'<img src="./Pictures/DesignVarXXXX.png"  width="600" />\''
+    str_picture=str_picture.replace('XXXX', str(number))
+    return str_picture
