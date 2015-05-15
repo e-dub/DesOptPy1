@@ -42,8 +42,8 @@ from subprocess import Popen
 def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
     #model_dir = ""
     #model_dir = optname.split("_", 1)[0]
-    bin_dir = "../DesOpt/Results/"+optname+"/RunFiles/"
-    file_OptSolData = open(bin_dir+"/"+optname+"_OptSol.pkl")
+    DirRunFiles = "../DesOpt/Results/"+optname+"/RunFiles/"
+    file_OptSolData = open(DirRunFiles+"/"+optname+"_OptSol.pkl")
     OptSolData = pickle.load(file_OptSolData)
     x0 = OptSolData['x0']
     xOpt = OptSolData['xOpt']
@@ -88,7 +88,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
     Opt1Order = OptSolData['Opt1Order']
     hhmmss0 = OptSolData['hhmmss0']
     hhmmss1 = OptSolData['hhmmss1']
-    ResultsFolder = "../DesOpt/Results/"+optname+"/ResultReport/"
+    ResultsFolder = "../DesOpt/Results/"+OptName+"/ResultReport/"
     if operatingSystem != 'Windows':
         InkscapeCall = "inkscape"
         LyxCall = "lyx"
@@ -599,17 +599,15 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         #---------------------------------------------------------------------------------------------------
         # Convert the PDF's with Inkscape to PDF-Latex files
         #---------------------------------------------------------------------------------------------------
-        PlotFiles = ["xBar", "xBarNorm", "gBar", "fBar", "fgMaxIterNorm", "fgMaxIter", "gIter",
-                      "fGradIter", "xIter", "xIterNorm", "gGradOpt" ]
+        PlotFiles = ["gBar", "fBar", "fgMaxIterNorm", "fgMaxIter", "gIter",
+                      "fGradIter", "xIter", "xIterNorm", "gGradOpt", "xBar", "xBarNorm"]
         mProc = [[]]*len(PlotFiles)
         for ii in range(len(PlotFiles)):
-            mProc[ii] = Popen(InkscapeCall + " -D -z --file="+"../DesOpt/Results/"+optname+
-                              "/ResultReport/"+OptName+"_"+ PlotFiles[ii] + ".pdf --export-pdf="+
-                              ResultsFolder+OptName+
-                              "_"+ PlotFiles[ii] + ".pdf --export-latex", shell=True).wait()
-        #os.wait()
-        #time.sleep(3)
-        #wait here??????????
+            mProc[ii] = Popen(InkscapeCall + " -D -z --file="+
+                              ResultsFolder+OptName+"_"+ PlotFiles[ii] + ".pdf"+
+                              " --export-pdf="+
+                              ResultsFolder+OptName+"_"+ PlotFiles[ii] + ".pdf"+
+                              " --export-latex", shell=True).wait()
         progressbar(82,82)
         print '# --------------- DIAGRAM GENERATION FINISHED! --------------- #'
 
@@ -839,7 +837,6 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
     if lyx == 1:
         for ii in range(2):
             os.system(LyxCall + " --export pdf2 " + ResultsFolder + OptName + FileName[ii])
-            print ResultsFolder + OptName + FileName[ii]
 
 
 def progressbar(actTime, totTime):
