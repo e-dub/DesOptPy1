@@ -16,9 +16,7 @@ Make result report for the optimization run
 ----------------------------------------------------------------------------------------------------
 To do and ideas
 ----------------------------------------------------------------------------------------------------
-see DesOpt_old.py
 '''
-
 import matplotlib.pyplot as plt
 import matplotlib.pylab as pyl
 from matplotlib.font_manager import FontProperties
