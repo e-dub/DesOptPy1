@@ -77,7 +77,6 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
     SPg = OptSolData['SPg']
     gc = OptSolData['gc']
     OptAlg = OptSolData['OptAlg']
-    xIterNorm = OptSolData['xIterNorm']
     x0norm = OptSolData['x0norm']
     xL = OptSolData['xL']
     xU = OptSolData['xU']
@@ -289,7 +288,66 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             plt.close()
 
             progressbar(24,82)
+        else:
+            #---------------------------------------------------------------------------------------------------
+            # Normalized objective function and maximum constraint iteration plot
+            #---------------------------------------------------------------------------------------------------
+            plt.rc('text', usetex=True)
+            #rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+            fgMaxIterNormFig=plt.figure(figsize=(5, 4), dpi=200)
+            ax1 = fgMaxIterNormFig.add_subplot(111)
+            ax1.plot(fIterNorm,label="$\hat{f}$")
+            plt.xlabel("Iteration")
+            plt.ylabel("Normalized objective function $\hat{f}$")
+            handles, labels = ax1.get_legend_handles_labels()
+            ax1.legend(handles, labels, loc='best',prop = fontP)
+            plt.xlim(xmin=0, xmax=len(fIterNorm)-1)
+            plt.tight_layout()                                                  #Feature to autofit the graphics
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIterNorm.png')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIterNorm.svg')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIterNorm_wo.pdf')
+            plt.close()
 
+            plt.rc('text', usetex=False)
+            fgMaxIterNormFig=plt.figure(figsize=(5, 4), dpi=200)
+            ax1 = fgMaxIterNormFig.add_subplot(111)
+            ax1.plot(fIterNorm,label=r"\$\fn$")
+            plt.xlabel(r"Iteration")
+            plt.ylabel(r"Normalized objective function \$\fn$")#,fontsize=1)
+            handles, labels = ax1.get_legend_handles_labels()
+            ax1.legend(handles, labels, loc='best',prop = fontP)
+            plt.xlim(xmin=0, xmax=len(fIterNorm)-1)
+            plt.tight_layout()
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIterNorm.pdf')
+            plt.close()
+
+            plt.rc('text', usetex=True)
+            fgMaxIterFig=plt.figure(figsize=(5, 4), dpi=200)
+            ax1 = fgMaxIterFig.add_subplot(111)
+            ax1.plot(fIter,label="$f$")
+            plt.xlabel("Iteration")
+            ax1.set_ylabel("Objective function $f$")
+            handles, labels = ax1.get_legend_handles_labels()
+            ax1.legend(handles, labels,  loc='best',prop = fontP,handleheight=2)  #changed location to best
+            plt.xlim(xmin=0, xmax=len(fIter)-1)
+            plt.tight_layout()                                                  #Feature to autofit the graphics
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIter.svg')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIter.png')
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIter_wo.pdf')
+            plt.close()
+
+            plt.rc('text', usetex=False)
+            fgMaxIterFig=plt.figure(figsize=(5, 4), dpi=200)
+            ax1 = fgMaxIterFig.add_subplot(111)
+            ax1.plot(fIter,label=r"\$\f$")
+            plt.xlabel(r"Iteration")
+            ax1.set_ylabel(r"Objective function \$\f$")
+            handles, labels = ax1.get_legend_handles_labels()
+            ax1.legend(handles, labels,  loc='best',prop = fontP,handleheight=2)  #changed location to best
+            plt.xlim(xmin=0, xmax=len(fIter)-1)
+            plt.tight_layout()                                                  #Feature to autofit the graphics
+            plt.savefig(ResultsFolder+OptName+'_fgMaxIter.pdf')
+            plt.close()
         #---------------------------------------------------------------------------------------------------
         # Objective function at optimum bar plot
         #---------------------------------------------------------------------------------------------------
@@ -424,43 +482,46 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         # Normalized design variables iteration plot
         #---------------------------------------------------------------------------------------------------
         ######commment out if not normalized!
-        plt.rc('text', usetex=True)
-        def xIterNormPlot(ax):
-            jet = plt.get_cmap('jet')
-            cNorm  = colors.Normalize(vmin=0, vmax=len(xIter[0]))
-            scalarMap = cm.ScalarMappable(norm=cNorm, cmap=jet)
-            for n in range(len(xIterNorm[0])):
-                ax.plot(xIterNorm[:,n], color=scalarMap.to_rgba(n), label="$\hat{x}_{"+str(n+1)+"}$")
-        xIterNormFig=plt.figure(figsize=(5, 4), dpi=200)
-        ax2 = xIterNormFig.add_subplot(111)
-        xIterNormPlot(ax2)
-        plt.xlim(xmin=0, xmax=len(xIter)-1)
-        ax2.legend(loc=2, bbox_to_anchor=(1.05, 1), borderaxespad=0.,ncol=numColx,prop=fontPP)
-        plt.subplots_adjust(left=0.07, right=(0.96-(numColx*0.078)), top=0.93, bottom=0.12)
-        plt.xlabel("Iteration")
-        plt.ylabel("$\hat{x}_j$")
-        plt.savefig(ResultsFolder+OptName+'_xIterNorm.svg')
-        plt.savefig(ResultsFolder+OptName+'_xIterNorm.png')
-        plt.savefig(ResultsFolder+OptName+'_xIterNorm_wo.pdf')
-        plt.close()
+        if DesVarNorm in ["None", None, False]:
+            pass
+        else:
+            plt.rc('text', usetex=True)
+            def xIterNormPlot(ax):
+                jet = plt.get_cmap('jet')
+                cNorm  = colors.Normalize(vmin=0, vmax=len(xIter[0]))
+                scalarMap = cm.ScalarMappable(norm=cNorm, cmap=jet)
+                for n in range(len(xIterNorm[0])):
+                    ax.plot(xIterNorm[:,n], color=scalarMap.to_rgba(n), label="$\hat{x}_{"+str(n+1)+"}$")
+            xIterNormFig=plt.figure(figsize=(5, 4), dpi=200)
+            ax2 = xIterNormFig.add_subplot(111)
+            xIterNormPlot(ax2)
+            plt.xlim(xmin=0, xmax=len(xIter)-1)
+            ax2.legend(loc=2, bbox_to_anchor=(1.05, 1), borderaxespad=0.,ncol=numColx,prop=fontPP)
+            plt.subplots_adjust(left=0.07, right=(0.96-(numColx*0.078)), top=0.93, bottom=0.12)
+            plt.xlabel("Iteration")
+            plt.ylabel("$\hat{x}_j$")
+            plt.savefig(ResultsFolder+OptName+'_xIterNorm.svg')
+            plt.savefig(ResultsFolder+OptName+'_xIterNorm.png')
+            plt.savefig(ResultsFolder+OptName+'_xIterNorm_wo.pdf')
+            plt.close()
 
-        plt.rc('text', usetex=False)
-        def xIterNormPlot2(ax):
-            jet = plt.get_cmap('jet')
-            cNorm  = colors.Normalize(vmin=0, vmax=len(xIter[0]))
-            scalarMap = cm.ScalarMappable(norm=cNorm, cmap=jet)
-            for n in range(len(xIterNorm[0])):
-                ax.plot(xIterNorm[:,n], color=scalarMap.to_rgba(n), label=r"\$\xn_{"+str(n+1)+"}$")
-        xIterNormFig=plt.figure(figsize=(5, 4), dpi=200)
-        ax2 = xIterNormFig.add_subplot(111)
-        xIterNormPlot2(ax2)
-        plt.xlim(xmin=0, xmax=len(xIter)-1)
-        ax2.legend(loc=2, bbox_to_anchor=(1.05, 1), borderaxespad=0.,ncol=numColx,prop=fontPP)
-        plt.subplots_adjust(left=0.07, right=(0.96-(numColx*0.078)), top=0.93, bottom=0.12)
-        plt.xlabel(r"Iteration")
-        plt.ylabel(r"\$\xn$")
-        plt.savefig(ResultsFolder+OptName+'_xIterNorm.pdf')
-        plt.close()
+            plt.rc('text', usetex=False)
+            def xIterNormPlot2(ax):
+                jet = plt.get_cmap('jet')
+                cNorm  = colors.Normalize(vmin=0, vmax=len(xIter[0]))
+                scalarMap = cm.ScalarMappable(norm=cNorm, cmap=jet)
+                for n in range(len(xIterNorm[0])):
+                    ax.plot(xIterNorm[:,n], color=scalarMap.to_rgba(n), label=r"\$\xn_{"+str(n+1)+"}$")
+            xIterNormFig=plt.figure(figsize=(5, 4), dpi=200)
+            ax2 = xIterNormFig.add_subplot(111)
+            xIterNormPlot2(ax2)
+            plt.xlim(xmin=0, xmax=len(xIter)-1)
+            ax2.legend(loc=2, bbox_to_anchor=(1.05, 1), borderaxespad=0.,ncol=numColx,prop=fontPP)
+            plt.subplots_adjust(left=0.07, right=(0.96-(numColx*0.078)), top=0.93, bottom=0.12)
+            plt.xlabel(r"Iteration")
+            plt.ylabel(r"\$\xn$")
+            plt.savefig(ResultsFolder+OptName+'_xIterNorm.pdf')
+            plt.close()
 
         progressbar(49,82)
 
@@ -492,25 +553,35 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         plt.close()
 
         plt.rc('text', usetex=False)
-        xBarfig2 = plt.figure(figsize=(5, 4), dpi=200)
+        xBarfig = plt.figure(figsize=(5, 4), dpi=200)
         width = 0.5
         xspacing=0.25
-        ax2 = xBarfig2.add_subplot(111)
-        ind = np.arange(nx)
-        rects1 = ax2.bar(ind+xspacing,x0, width, color='#FAA43A')
-        rects2 = ax2.bar(ind+xspacing+width/2.,xOpt,width, color='#5DA5DA')
-        ax2.legend( (rects1[0], rects2[0]), (r"\$\xin$", r"\$\xo$"),prop = fontP)
-        ax2.set_xticks(ind+(width+width/2.)/2.+xspacing)
+#        ax2 = xBarfig2.add_subplot(111)
+#        ind = np.arange(nx)
+#        rects1 = ax2.bar(ind+xspacing,x0, width, color='#FAA43A')
+#        rects2 = ax2.bar(ind+xspacing+width/2.,xOpt,width, color='#5DA5DA')
+#        ax2.legend( (rects1[0], rects2[0]), (r"\$\xin$", r"\$\xo$"),prop = fontP)
+#        ax2.set_xticks(ind+(width+width/2.)/2.+xspacing)
         #ax.locator_params(tight=False, nbins=4)
+        ax = xBarfig.add_subplot(111)
+        ind = np.arange(nx)
+        rects1 = ax.bar(ind+xspacing,x0, width, color='#FAA43A')
+        rects2 = ax.bar(ind+xspacing+width/2., xOpt, width, color='#5DA5DA')
+        #ax.legend( (rects1[0], rects2[0]), ("$x_0$", "$x^*$"),prop = fontP)
+        ax.legend( (rects1[0], rects2[0]), (r"\$\xin$", r"\$\xo$"), prop = fontP)
+        ax.set_xticks(ind+(width+width/2.)/2.+xspacing)
+
         plt.xlabel(r"Design variables")
         plt.ylabel(r"\$\x$")
         plt.xlim(xmin=0, xmax=nx+xspacing )
-        plt.ylim(ymin=0, ymax=np.max((np.max(x0),np.max(xOpt))))
+        #plt.ylim(ymin=0, ymax=np.max((np.max(x0),np.max(xOpt))))
+        plt.ylim(ymin=0, ymax=np.max((np.max(xOpt),np.max(xOpt))))
         #ax.set_xticklabels(ind+1)
         #ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%d'))
-        ax2.xaxis.set_major_locator(ticker.AutoLocator())
+        ax.xaxis.set_major_locator(ticker.AutoLocator())
         plt.tight_layout()
         plt.savefig(ResultsFolder+OptName+'_xBar.pdf')
+        plt.savefig(ResultsFolder+OptName+'_xBarTry.pdf')
         plt.close()
 
         progressbar(52,82)
@@ -518,44 +589,47 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         #---------------------------------------------------------------------------------------------------
         # Normalized design variables bar plot
         #---------------------------------------------------------------------------------------------------
-        plt.rc('text', usetex=True)
-        xBarNormfig = plt.figure(figsize=(5, 4), dpi=200)
-        width = 0.5
-        xspacing=0.25
-        ax = xBarNormfig.add_subplot(111)
-        ind = np.arange(nx)
-        rects1 = ax.bar(ind+xspacing,x0norm, width, color='#FAA43A')
-        rects2 = ax.bar(ind+xspacing+width/2.,xOptNorm,width, color='#5DA5DA')
-        ax.legend( (rects1[0], rects2[0]), ("$\hat{x}_0$", "$\hat{x}^*$"), prop=fontP)
-        #ax.set_xticks(ind+(width+width/2.)/2.+xspacing)
-        ax.xaxis.set_major_locator(ticker.AutoLocator())
-        plt.xlim(xmin=0, xmax=nx+xspacing )
-        plt.ylim(ymin=0, ymax=np.max((np.max(x0norm),np.max(xOptNorm))))
-        plt.xlabel("Design variables")
-        plt.ylabel("$\hat{x}_j$")
-        plt.tight_layout()
-        plt.savefig(ResultsFolder+OptName+'_xBarNorm.svg')
-        plt.savefig(ResultsFolder+OptName+'_xBarNorm.png')
-        plt.savefig(ResultsFolder+OptName+'_xBarNorm_wo.pdf')
-        plt.close()
+        if DesVarNorm in ["None", None, False]:
+            pass
+        else:
+            plt.rc('text', usetex=True)
+            xBarNormfig = plt.figure(figsize=(5, 4), dpi=200)
+            width = 0.5
+            xspacing=0.25
+            ax = xBarNormfig.add_subplot(111)
+            ind = np.arange(nx)
+            rects1 = ax.bar(ind+xspacing,x0norm, width, color='#FAA43A')
+            rects2 = ax.bar(ind+xspacing+width/2.,xOptNorm,width, color='#5DA5DA')
+            ax.legend( (rects1[0], rects2[0]), ("$\hat{x}_0$", "$\hat{x}^*$"), prop=fontP)
+            #ax.set_xticks(ind+(width+width/2.)/2.+xspacing)
+            ax.xaxis.set_major_locator(ticker.AutoLocator())
+            plt.xlim(xmin=0, xmax=nx+xspacing )
+            plt.ylim(ymin=0, ymax=np.max((np.max(x0norm),np.max(xOptNorm))))
+            plt.xlabel("Design variables")
+            plt.ylabel("$\hat{x}_j$")
+            plt.tight_layout()
+            plt.savefig(ResultsFolder+OptName+'_xBarNorm.svg')
+            plt.savefig(ResultsFolder+OptName+'_xBarNorm.png')
+            plt.savefig(ResultsFolder+OptName+'_xBarNorm_wo.pdf')
+            plt.close()
 
-        plt.rc('text', usetex=False)
-        xBarNormfig = plt.figure(figsize=(5, 4), dpi=200)
-        width = 0.5
-        xspacing=0.25
-        ax = xBarNormfig.add_subplot(111)
-        ind = np.arange(nx)
-        rects1 = ax.bar(ind+xspacing,x0norm, width, color='#FAA43A')
-        rects2 = ax.bar(ind+xspacing+width/2.,xOptNorm,width, color='#5DA5DA')
-        ax.legend( (rects1[0], rects2[0]), (r"\$\xnin$", r"\$\xno$"), prop=fontP)
-        ax.xaxis.set_major_locator(ticker.AutoLocator())
-        plt.xlim(xmin=0, xmax=nx+xspacing )
-        plt.ylim(ymin=0, ymax=np.max((np.max(x0norm),np.max(xOptNorm))))
-        plt.xlabel(r"Design variables")
-        plt.ylabel(r"\$\xn$")
-        plt.tight_layout()
-        plt.savefig(ResultsFolder+OptName+'_xBarNorm.pdf')
-        plt.close()
+            plt.rc('text', usetex=False)
+            xBarNormfig = plt.figure(figsize=(5, 4), dpi=200)
+            width = 0.5
+            xspacing=0.25
+            ax = xBarNormfig.add_subplot(111)
+            ind = np.arange(nx)
+            rects1 = ax.bar(ind+xspacing,x0norm, width, color='#FAA43A')
+            rects2 = ax.bar(ind+xspacing+width/2.,xOptNorm,width, color='#5DA5DA')
+            ax.legend( (rects1[0], rects2[0]), (r"\$\xnin$", r"\$\xno$"), prop=fontP)
+            ax.xaxis.set_major_locator(ticker.AutoLocator())
+            plt.xlim(xmin=0, xmax=nx+xspacing )
+            plt.ylim(ymin=0, ymax=np.max((np.max(x0norm),np.max(xOptNorm))))
+            plt.xlabel(r"Design variables")
+            plt.ylabel(r"\$\xn$")
+            plt.tight_layout()
+            plt.savefig(ResultsFolder+OptName+'_xBarNorm.pdf')
+            plt.close()
 
         progressbar(56,82)
 
@@ -639,7 +713,9 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         os.system("tex2lyx "+ResultsFolder+OptName+"_OptAlgOptionsTable.tex")
 
         # Normalized data
-        if DesVarNorm==1:
+        if DesVarNorm in ["None", None, False]:
+            pass
+        else:
             #---------------------------------------------------------------------------------------------------
             # Normalized design variables table
             #---------------------------------------------------------------------------------------------------
@@ -687,12 +763,12 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         dvT.append('\n \\midrule  \n')
         if nx==1:
             #dvT.append('\\midrule \n')
-            temp=[str(1),r'&$\x_{1}$&',str(round(x0,4)),'&',str(0.),'&',str(1.),'&',str(round(xOpt,4)),'\\tabularnewline \n']
+            temp=[str(1),r'&$\x_{1}$&',str(round(x0,4)),'&',str(round(xL,4)),'&',str(round(xU,4)),'&',str(round(xOpt,4)),'\\tabularnewline \n']
             dvT=dvT+temp
         else:
             for ii in range(nx):
                 #dvT.append('\\midrule \n')
-                temp=[str(ii+1),r'&$\x_{',str(ii+1),'}$&',str(x0[ii]),'&',str(xL[ii]),'&',str(xU[ii]),'&',str(round(xOpt[ii],4)),'\\tabularnewline \n']
+                temp=[str(ii+1),r'&$\x_{',str(ii+1),'}$&',str(round(x0[ii],4)),'&',str(round(xL[ii],4)),'&',str(round(xU[ii],4)),'&',str(round(xOpt[ii],4)),'\\tabularnewline \n']
                 dvT=dvT+temp
         dvT.append('\\bottomrule \n')
         dvT.append('\\end{tabular} \n')
@@ -819,6 +895,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             else:
                 contentRR = [w.replace('XXXnc', str(0)) for w in contentRR]
             contentRR = [w.replace('XXXalgorithmname', Alg) for w in contentRR]
+            contentRR = [w.replace('XXXdesvarnorm', str(DesVarNorm)) for w in contentRR]
             contentRR = [w.replace('XXXoptions', "Options") for w in contentRR]
             # Replace number of iterations, number of evaluations, starting time, ending time, elapsed time
             contentRR = [w.replace('XXXnit', str(nIter)) for w in contentRR]

@@ -271,22 +271,15 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     ResultsDir = DesOptDir + os.sep + "Results"
     RunDir = DesOptDir + os.sep + "Run"
     if LocalRun is True and Debug is False:
-        #try: os.mkdir(homeDir + userName + "/DesOptResults/" + OptName)
-        #except: pass
-        #try: os.mkdir(homeDir + userName + "/DesOptResults/" + OptName + "/ResultReport")
-        #except: pass
-        #shutil.copytree(os.getcwd(), homeDir + userName + "/DesOptRun/" + OptName + "/")
         try: os.mkdir(ResultsDir)
         except: pass
-        os.mkdir(ResultsDir + os.sep + OptName + os.sep)
+        os.mkdir(ResultsDir + DirSplit + OptName)
         os.mkdir(ResultsDir + os.sep + OptName + os.sep + "ResultReport" + os.sep)
         shutil.copytree(os.getcwd(),RunDir + os.sep + OptName)
-
     if SensCalc == "ParaFD":
         import OptSensParaFD
         os.system("cp -r ParaPythonFn " + homeDir + userName + "/DesOptRun/" + OptName)
     if LocalRun is True and Debug is False:
-        #os.chdir(homeDir + userName + "/DesOptRun/" + OptName)
         os.chdir("../../Run/" + OptName + "/")
     sys.path.append(os.getcwd())
 
@@ -470,14 +463,14 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             xU = copy.copy(xNewU)
             gcNew = np.concatenate((gc, np.ones(2,)), 0)
             gc = copy.copy(gcNew)
-    if DesVarNorm is not "None":
-        [x0norm, xLnorm, xUnorm] = normalize(x0, xL, xU, DesVarNorm)
-        DefOptSysEq = OptSysEqNorm
-    elif DesVarNorm is "None":
+    if DesVarNorm in ["None", None, False]:
         x0norm = x0
         xLnorm = xL
         xUnorm = xU
         DefOptSysEq = OptSysEq
+    else:
+        [x0norm, xLnorm, xUnorm] = normalize(x0, xL, xU, DesVarNorm)
+        DefOptSysEq = OptSysEqNorm
     nx = np.size(x0)
     ng = np.size(gc)
 
@@ -485,9 +478,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #       pyOpt optimization
 # -------------------------------------------------------------------------------------------------
     if pyOptAlg is True:
-        if SBDO is not False and DesVarNorm is not "None":
+        if SBDO is not False and DesVarNorm  not in ["None", None, False]:
             OptProb = pyOpt.Optimization(OptModel, ApproxOptSysEqNorm, obj_set=None)
-        elif SBDO is not False and DesVarNorm is "None":
+        elif SBDO is not False and DesVarNorm in ["None", None, False]:
             OptProb = pyOpt.Optimization(OptModel, ApproxOptSysEq, obj_set=None)
         else:
             OptProb = pyOpt.Optimization(OptModel, DefOptSysEq)
@@ -516,12 +509,12 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         print(OptProb)
         if Alg in ["MMA", "IPOPT", "GCMMA", "CONMIN", "SLSQP", "PSQP", "KSOPT", "ALGENCAN", "NLPQLP"]:
             if SensCalc == "OptSensEq":
-                if DesVarNorm != "None":
+                if DesVarNorm  not in ["None", None, False]:
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEqNorm, store_hst=OptName)
                 else:
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEq, store_hst=OptName)
             elif SensCalc == "ParaFD":  # Michi Richter
-                if DesVarNorm != "None":
+                if DesVarNorm  not in ["None", None, False]:
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEqParaFDNorm, store_hst=OptName)
                 else:
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEqParaFD, store_hst=OptName)
@@ -715,23 +708,23 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 # Denormalization of design variables
 # -------------------------------------------------------------------------------------------------
     xOpt = np.resize(xOpt[0:np.size(xL)], np.size(xL))
-    if DesVarNorm != "None":
+    if DesVarNorm in ["None", None, False]:
+        x0norm = []
+        xIterNorm = []
+        xOptNorm = []
+    else:
         xOpt = np.resize(xOpt, [np.size(xL), ])
         xOptNorm = xOpt
         xOpt = denormalize(xOptNorm.T, xL, xU, DesVarNorm)
         try:
             xIterNorm = xIter[:, 0:np.size(xL)]
-            xIter = xIterNorm
+            xIter = np.zeros(np.shape(xIterNorm))
             for ii in range(len(xIterNorm)):
                 xIter[ii] = denormalize(xIterNorm[ii], xL, xU, DesVarNorm)
         except:
             x0norm = []
             xIterNorm = []
             xOptNorm = []
-    else:
-        x0norm = []
-        xIterNorm = []
-        xOptNorm = []
     nIter = np.size(fIter)
     if np.size(fIter) > 0:
         fIterNorm = fIter / fIter[0]  # fIterNorm=(fIter-fIter[nEval-1])/(fIter[0]-fIter[nEval-1])

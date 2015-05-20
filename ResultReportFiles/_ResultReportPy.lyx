@@ -901,7 +901,7 @@ Information about the optimization problem and the algorithm
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="2">
+<lyxtabular version="3" rows="6" columns="2">
 <features rotate="0" booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -986,7 +986,7 @@ XXXnc
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -995,11 +995,31 @@ Algorithm name
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 XXXalgorithmname
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Design variable normalization
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+XXXdesvarnorm
 \end_layout
 
 \end_inset
@@ -5950,17 +5970,24 @@ Design variables at start
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
 \noindent
 \align center
 \begin_inset ERT
 status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+IfFileExists{AAA_xIterNorm.pdf_tex}{
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{figure}[H]
+\end_layout
 
 \begin_layout Plain Layout
 
@@ -5987,22 +6014,25 @@ textwidth}
 import{}{AAA_xIterNorm.pdf_tex}
 \end_layout
 
-\end_inset
-
-
-\begin_inset Caption Standard
-
 \begin_layout Plain Layout
-Convergence of normalized design variables 
-\begin_inset Formula $\xn$
-\end_inset
 
 
+\backslash
+caption{Convergence of normalized design variables $
+\backslash
+xn$}
 \end_layout
 
-\end_inset
+\begin_layout Plain Layout
 
 
+\backslash
+end{figure}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
 \end_layout
 
 \end_inset
@@ -6011,17 +6041,24 @@ Convergence of normalized design variables
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
 \noindent
 \align center
 \begin_inset ERT
 status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+IfFileExists{AAA_xBarNorm.pdf_tex}{
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{figure}[H]
+\end_layout
 
 \begin_layout Plain Layout
 
@@ -6048,50 +6085,48 @@ textwidth}
 import{}{AAA_xBarNorm.pdf_tex}
 \end_layout
 
-\end_inset
+\begin_layout Plain Layout
 
 
+\backslash
+caption{Normalized design variables at start $
+\backslash
+xnin$ and optimum $
+\backslash
+xno$}
 \end_layout
 
 \begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Caption Standard
+
+
+\backslash
+end{figure}
+\end_layout
 
 \begin_layout Plain Layout
-Normalized design variables at start 
-\begin_inset Formula $\xnin$
-\end_inset
 
- and optimum 
-\begin_inset Formula $\xno$
-\end_inset
-
-
+}
 \end_layout
 
 \end_inset
 
 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection*
-Constraints
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
+\begin_inset Note Note
 status open
 
 \begin_layout Plain Layout
+Constraints
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \noindent
 \align center
 \begin_inset ERT
@@ -6102,36 +6137,66 @@ status open
 
 \backslash
 IfFileExists{AAA_gIter.pdf_tex}{
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
-centering 
+subsection*{Constraints}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{figure}[H]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+centering
+\end_layout
+
+\begin_layout Plain Layout
+
+
 \backslash
 def
 \backslash
 svgwidth{0.75
 \backslash
-textwidth} 
-\backslash
-input{AAA_gIter.pdf_tex}}{
-\backslash
-typeout{Hinweis: Die Datei AAA_gIter.pdf_tex wurde nicht gefunden}}
+textwidth}
 \end_layout
-
-\end_inset
-
-
-\begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Convergence of inequality constraints 
-\begin_inset Formula $\g$
-\end_inset
 
- 
+
+\backslash
+import{}{AAA_gIter.pdf_tex}
 \end_layout
 
-\end_inset
+\begin_layout Plain Layout
 
 
+\backslash
+caption{Convergence of inequality constraints $
+\backslash
+g$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{figure}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
 \end_layout
 
 \end_inset
@@ -6140,13 +6205,6 @@ Convergence of inequality constraints
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
 \noindent
 \align center
 \begin_inset ERT
@@ -6157,34 +6215,65 @@ status open
 
 \backslash
 IfFileExists{AAA_gBar.pdf_tex}{
-\backslash
-centering 
-\backslash
-import{}{AAA_gBar.pdf_tex}}{
-\backslash
-typeout{Hinweis: Die Datei AAA_gBar.pdf_tex wurde nicht gefunden}}
 \end_layout
-
-\end_inset
-
-
-\begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Inequality constraints at start 
-\begin_inset Formula $\gin$
-\end_inset
-
- and optimum 
-\begin_inset Formula $\go$
-\end_inset
 
 
+\backslash
+begin{figure}[H]
 \end_layout
 
-\end_inset
+\begin_layout Plain Layout
 
 
+\backslash
+centering
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+def
+\backslash
+svgwidth{0.75
+\backslash
+textwidth}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+import{}{AAA_gBar.pdf_tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+caption{Inequality constraints at start $
+\backslash
+protect
+\backslash
+gin$ and optimum $
+\backslash
+protect
+\backslash
+go$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{figure}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
 \end_layout
 
 \end_inset
