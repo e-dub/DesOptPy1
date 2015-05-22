@@ -95,9 +95,6 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
         xIter = [[]] * len(fGradIter)
         gIter = [[]] * len(fGradIter)
 
-        print len(fAll)
-        print len(fIter)
-        print len(fGradIter)
 
         for ii in range(len(fIter)):
 
