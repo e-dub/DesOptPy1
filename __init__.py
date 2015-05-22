@@ -630,6 +630,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 # -------------------------------------------------------------------------------------------------
 #       Optimization post-processing
 # -------------------------------------------------------------------------------------------------
+    if OptStatus == 1:
+            OptHis2HTML.OptHis2HTML(OptName, OptAlg,DesOptDir )
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
     hhmmss0 = time.strftime("%H", loctime0) + ' : ' + time.strftime("%M", loctime0) + ' : ' + time.strftime("%S", loctime0)
@@ -883,6 +885,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     OptSolData['Opt1Order'] = Opt1Order
     OptSolData['hhmmss0'] = hhmmss0
     OptSolData['hhmmss1'] = hhmmss1
+
 
 # -------------------------------------------------------------------------------------------------
 #   §    Save in Python format
