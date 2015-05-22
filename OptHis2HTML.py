@@ -31,16 +31,7 @@ import platform
 
 
 def OptHis2HTML(OptName, Alg, DesOptDir):
-    operatingSystem = platform.uname()[0]
-    if operatingSystem == "Linux":
-        DirSplit = "/"
-        homeDir = "/home/"
-    else:
-        DirSplit = "\\"
-        homeDir = "c:\\Users\\"
-    user = getpass.getuser()  # Benutzer anfragen
 
-    pos_of_iters = []
     pos_of_best_ind = []
     fIter = []
     xIter = []
@@ -48,7 +39,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
 
     directory_startscript = sys.argv[0]
     (DesOpt_Base, tail) = os.path.split(directory_startscript)
-    (DesOpt_Base, tail) = os.path.split(DesOpt_Base)  # DesOpt_Base is the base directory now
+
     # template_directory= DesOpt_Base + "/.DesOptPy/_OptStatusReport/"  # directory with the html files etc.
     template_directory = os.path.dirname(
         os.path.realpath(__file__)) + "/StatusReportFiles/"  # directory with the html files etc.
@@ -70,8 +61,6 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
     fAll = OptHist.read([0, -1], ["obj"])[0]["obj"]
     xAll = OptHist.read([0, -1], ["x"])[0]["x"]
     gAll = OptHist.read([0, -1], ["con"])[0]["con"]
-
-
 
     if Alg.name == "NLPQLP":
         gAll = [x * -1 for x in gAll]
@@ -112,8 +101,6 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
             xIter[ii] = xAll[iii]
             gIter[ii] = gAll[iii]
 
-
-
     if Alg.name != "NSGA-II":
         if len(fGradIter) == 0:  # first calculation
             fIter = fAll
@@ -122,48 +109,10 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
 
     OptHist.close()
 
-
     fIter = np.asarray(fIter)
     xIter = np.asarray(xIter)
     gIter = np.asarray(gIter)
     niter = len(fIter) - 1
-
-    html = open(template_directory + '/initial.html', 'r')  # HTML Template öffnen
-    hstr = html.read()
-    part1 = hstr[:(hstr.find('<br><br>') + 4)]  # html slicen
-    hstr = hstr[hstr.find('<br><br>') + 4:]
-    part2 = hstr[:hstr.find('</font></h1></center>')]
-    hstr = hstr[hstr.find('</font></h1></center>'):]
-    part3 = hstr[hstr.find('</font></h1></center>'):hstr.find('var data1 = [') + 13]
-    hstr = hstr[hstr.find('var data1 = ['):]
-    part4 = hstr[hstr.find('var data1 = [') + 13:hstr.find('var data2=[') + 11]
-    hstr = hstr[hstr.find('var data2=['):]
-    part5 = hstr[hstr.find('var data2=[') + 11:hstr.find('var niter=') + 10]
-    hstr = hstr[hstr.find('var niter='):]
-    part6 = hstr[hstr.find('var niter=') + 10:hstr.find('var ymax=') + 9]
-    hstr = hstr[hstr.find('var ymax='):]
-    part7 = hstr[hstr.find('var ymax=') + 9:hstr.find('var ymin=') + 9]
-    hstr = hstr[hstr.find('var ymin='):]
-    part8 = hstr[hstr.find('var ymin=') + 9:hstr.find('var ymin=') + 11]
-    hstr = hstr[hstr.find('var ymin='):]
-    part9 = hstr[hstr.find('var ymin=') + 11:hstr.find('Scatter(\'cvs2\'') + 14]
-    hstr = hstr[hstr.find('Scatter(\'cvs2\''):]
-    part10 = hstr[hstr.find('Scatter(\'cvs2\'') + 14:hstr.find('var gmax=') + 9]
-    hstr = hstr[hstr.find('var gmax='):]
-    part11 = hstr[hstr.find('var gmax=') + 9:hstr.find('var gmax=') + 11]
-    hstr = hstr[hstr.find('var gmax='):]
-    part12 = hstr[hstr.find('var gmax=') + 11:hstr.find('RGraph.Scatter(\'cvs3\'') + 21]
-    hstr = hstr[hstr.find('RGraph.Scatter(\'cvs3\''):]
-    part13 = hstr[hstr.find('RGraph.Scatter(\'cvs3\'') + 21:hstr.find('.Set(\'ymin\',') + 12]
-    hstr = hstr[hstr.find('.Set(\'ymin\','):]
-    part14 = hstr[hstr.find('.Set(\'ymin\',') + 12:hstr.find('RGraph.Scatter(\'cvs4\'') + 21]
-    hstr = hstr[hstr.find('RGraph.Scatter(\'cvs4\''):]
-    part15 = hstr[hstr.find('RGraph.Scatter(\'cvs4\'') + 21:hstr.find('.Draw()') + 7]
-    hstr = hstr[hstr.find('.Draw()') + 7:]
-    part16 = hstr[hstr.find('.Draw()') + 7:hstr.find('<p>Convergence')]
-    hstr = hstr[hstr.find('<p>Convergence'):]
-    part17 = hstr[hstr.find('<p>Convergence') + 14:]
-    html.close()
 
     time_now = strftime("%Y-%b-%d %H:%M:%S", localtime())  # Aktualisierungszeit auslesen
     ymax = 0
@@ -215,7 +164,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
             datasetsg += '];\n\t\t\t'
         for u in range(0, len(gIter)):
             arr_gmin[u] = np.max(gIter[u])
-        gmin1 = np.min(arr_gmin)
+
 
     allDesVar = ""
 
@@ -230,20 +179,46 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
             allConVar = allConVar + ',data' + str(y)
 
 
-
+    html = open(template_directory + '/initial.html', 'r')  # HTML Template öffnen
+    hstr = html.read()
+    html.close()
 
     # Neue HTML Datei erstellen
     if gIter.size != 0:
-        hstrnew = part1 + OptName + part2 + time_now + part3 + value + part4 + value2 + part5 + str(
-            niter) + part6 + str(ymax) + part7 + str(ymin) + part8 + datasets
-        hstrnew += part9 + allDesVar + part10 + str(gmax) + part11 + datasetsg + part12 + allConVar + part13 + str(
-            gmin) + part14 + allConVar + part15 + part16 + part17
+        hstrnew = hstr.replace('xxxxName',OptName)
+        hstrnew = hstrnew.replace('xxxxTime',time_now)
+        hstrnew = hstrnew.replace('xxxxValue1',value)
+        hstrnew = hstrnew.replace('xxxxValue2',value2)
+        hstrnew = hstrnew.replace('xxxxnIter',str(niter))
+        hstrnew = hstrnew.replace('xxxxymax',str(ymax))
+        hstrnew = hstrnew.replace('xxxxymin',str(ymin))
+        hstrnew = hstrnew.replace('xxxxdatasetf',datasets)
+        hstrnew = hstrnew.replace('xxxxallDesVar',allDesVar)
+        hstrnew = hstrnew.replace('xxxxgmax',str(gmax))
+        hstrnew = hstrnew.replace('xxxxgmin',str(gmin))
+        hstrnew = hstrnew.replace('xxxxdatasetg',datasetsg)
+        hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
+        hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
     else:
-        hstrnew = part1 + OptName + part2 + time_now + part3 + value + part4 + value2 + part5 + str(
-            niter) + part6 + str(ymax) + part7 + str(ymin) + part8 + datasets
-        hstrnew += part9 + allDesVar + part10 + str(gmax) + part11 + datasetsg + part16 + "</center></body></html>"
-    hstrnew = hstrnew.replace("gmin1", str(gmin1))
-    hstrnew = hstrnew.replace("#template_directory#", template_directory)
+        hstrnew = hstr.replace('xxxxName',OptName)
+        hstrnew = hstrnew.replace('xxxxTime',time_now)
+        hstrnew = hstrnew.replace('xxxxValue1',value)
+        hstrnew = hstrnew.replace('xxxxValue2',value2)
+        hstrnew = hstrnew.replace('xxxxnIter',str(niter))
+        hstrnew = hstrnew.replace('xxxxymax',str(ymax))
+        hstrnew = hstrnew.replace('xxxxymin',str(ymin))
+        hstrnew = hstrnew.replace('xxxxdatasetf',datasets)
+        hstrnew = hstrnew.replace('xxxxallDesVar',allDesVar)
+        hstrnew = hstrnew.replace('xxxxgmax',str(gmax))
+        hstrnew = hstrnew.replace('xxxxgmin',str(gmin))
+        hstrnew = hstrnew.replace('xxxxdatasetg',datasetsg)
+        hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
+        hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
+
+        hstrnew = hstrnew[0:hstrnew.find("<!--Start of constraint part-->")] + hstrnew[hstrnew.find("<!--End of constraint part-->"):-1]
+        hstrnew = hstrnew[0:hstrnew.find("<!--Start of constraint html part-->")] + hstrnew[hstrnew.find("<!--End of constraint html part-->"):-1]
+
+
     html = open('initial1.html', 'w')
     html.write(hstrnew)
     html.close()
@@ -253,11 +228,6 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
 
     shutil.copy("initial1.html",
                 DesOptDir + os.sep + "Results" + os.sep + OptName + os.sep + OptName + "_Status.html")
-
-
-
-    # shutil.copy("initial1.html","M:/Git/history-to-html/_OptResultReports/"+OptName+"/"+OptName+".html")
-    # print "done creating html"
     return 0
 
 
