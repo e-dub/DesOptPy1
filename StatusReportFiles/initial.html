@@ -80,11 +80,12 @@
 				
 			var scatter2 = new RGraph.Scatter('cvs', data2)
                 .Set('line', true)
-				.Set('xmin',0)
 				.Set('gutter.left',80)
 				.Set('gutter.right',80)
 				.Set('gutter.bottom',30)
+				.Set('xmin',0)
                 .Set('xmax',niter)
+                .Set('ymin',-1)
 				.Set('labels.above',true)
 				.Set('ticksize',7)
 				.Set('tickmarks','plus')
