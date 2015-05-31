@@ -28,7 +28,7 @@ import os
 import sys
 import getpass
 import platform
-
+import glob
 
 def OptHis2HTML(OptName, Alg, DesOptDir):
     operatingSystem = platform.uname()[0]
@@ -255,7 +255,13 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
                 DesOptDir + os.sep + "Results" + os.sep + OptName + os.sep + OptName + "_Status.html")
 
 
-
+    if not os.path.exists(DesOptDir + os.sep + "Results" + os.sep + "RGraph.scatter.js"):
+        for file in glob.glob(template_directory + "*.png"):
+            shutil.copy(file,
+                        DesOptDir + os.sep + "Results" + os.sep)
+        for file in glob.glob(template_directory + "*.js"):
+            shutil.copy(file,
+                        DesOptDir + os.sep + "Results" + os.sep)
     # shutil.copy("initial1.html","M:/Git/history-to-html/_OptResultReports/"+OptName+"/"+OptName+".html")
     # print "done creating html"
     return 0
