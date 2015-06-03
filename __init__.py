@@ -438,18 +438,27 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             approx_f = Data["approx_f"]
             approx_g = Data["approx_g"]
 
-        def ApproxOptSysEqNorm(xNorm):
-            xNorm = xNorm[0:np.size(xL), ]
-            x = denormalize(xNorm, xL, xU, DesVarNorm)
-            f = approx_f.predict(x)
-            g = np.zeros(len(gc))
-            for ii in range(len(gc)):
-                # exec("g[ii], MSE = gp_g"+str(ii)+".predict(x, eval_MSE=True)")
-                g[ii] = approx_g[ii].predict(x)
-            # sigma = np.sqrt(MSE)
-            fail = 0
-            print f
-            return f, g, fail
+    def ApproxOptSysEq(x):
+        f = approx_f.predict(x)
+        g = np.zeros(len(gc))
+        for ii in range(len(gc)):
+            # exec("g[ii], MSE = gp_g"+str(ii)+".predict(x, eval_MSE=True)")
+            g[ii] = approx_g[ii].predict(x)
+        # sigma = np.sqrt(MSE)
+        fail = 0
+        return f, g, fail
+
+    def ApproxOptSysEqNorm(xNorm):
+        xNorm = xNorm[0:np.size(xL), ]
+        x = denormalize(xNorm, xL, xU, DesVarNorm)
+        f = approx_f.predict(x)
+        g = np.zeros(len(gc))
+        for ii in range(len(gc)):
+            # exec("g[ii], MSE = gp_g"+str(ii)+".predict(x, eval_MSE=True)")
+            g[ii] = approx_g[ii].predict(x)
+        # sigma = np.sqrt(MSE)
+        fail = 0
+        return f, g, fail
     if xDis is not []:
         for ii in range(np.size(xDis, 0)):
             xExpand0 = np.ones(xDis[ii]) * 1./xDis[ii]   # Start at uniform of all materials etc.
@@ -478,18 +487,18 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #       pyOpt optimization
 # -------------------------------------------------------------------------------------------------
     if pyOptAlg is True:
-        if SBDO is not False and DesVarNorm  not in ["None", None, False]:
+        if SBDO is not False and DesVarNorm  in ["xLxU", True, "xLx0", "x0", "xU"]: #in ["None", None, False]:
             OptProb = pyOpt.Optimization(OptModel, ApproxOptSysEqNorm, obj_set=None)
         elif SBDO is not False and DesVarNorm in ["None", None, False]:
             OptProb = pyOpt.Optimization(OptModel, ApproxOptSysEq, obj_set=None)
         else:
             OptProb = pyOpt.Optimization(OptModel, DefOptSysEq)
-            if np.size(x0) == 1:
-                OptProb.addVar('x', 'c', value=x0norm, lower=xLnorm, upper=xUnorm)
-            elif np.size(x0) > 1:
-                for ii in range(np.size(x0)):
-                    OptProb.addVar('x' + str(ii + 1), 'c', value=x0norm[ii], lower=xLnorm[ii], upper=xUnorm[ii])
-        OptProb.addObj('f')
+        if np.size(x0) == 1:
+            OptProb.addVar('x', 'c', value=x0norm, lower=xLnorm, upper=xUnorm)
+        elif np.size(x0) > 1:
+            for ii in range(np.size(x0)):
+                OptProb.addVar('x' + str(ii + 1), 'c', value=x0norm[ii], lower=xLnorm[ii], upper=xUnorm[ii])
+            OptProb.addObj('f')
         if np.size(gc) == 1:
             OptProb.addCon('g', 'i')
             ng = 1
