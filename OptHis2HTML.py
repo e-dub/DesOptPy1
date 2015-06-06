@@ -241,3 +241,4 @@ def picture(number):
     str_picture = '\'<img src="./Pictures/DesignVarXXXX.png"  width="600" />\''
     str_picture = str_picture.replace('XXXX', str(number))
     return str_picture
+###neuer Kommentar
