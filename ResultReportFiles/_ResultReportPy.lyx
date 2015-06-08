@@ -10,7 +10,9 @@
 \usepackage{color}
 \usepackage{tikz}
 \usepackage{pgf}
+\usepackage{pgfplots}
 \usepackage{pstool}
+\usepackage{longtable}
 %\usepackage{pgfplots}
       %    \pgfplotsset{compat=newest}
    %       \pgfplotsset{plot coordinates/math parser=false}
@@ -19,8 +21,8 @@
 \pagestyle{fancy}
 %\usepackage{NumericPlots}
 \usepackage{import}
-
-
+\hypersetup{urlcolor=blue}
+\usepackage{a4wide}
 \definecolor{TUMblau}{rgb}{0,0.3960784313725490196078431372549,0.74117647058823529411764705882353}
 \definecolor{100Schwarz}{rgb}{0,0,0}
 \definecolor{Weiss}{rgb}{1,1,1}
@@ -308,7 +310,7 @@ E.
  J.
  Wehrle
 \begin_inset Foot
-status collapsed
+status open
 
 \begin_layout Plain Layout
 Erich Wehrle
@@ -319,11 +321,7 @@ Postdoctoral Researcher
 \begin_inset Newline newline
 \end_inset
 
-Fachgebiet Computational Mechanics 
-\begin_inset Newline newline
-\end_inset
-
-Ingenieurfakultät Bau Geo Umwelt 
+Chair of Computational Mechanics  
 \begin_inset Newline newline
 \end_inset
 
@@ -5542,7 +5540,7 @@ Objective function
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \noindent
@@ -5554,17 +5552,27 @@ status open
 
 
 \backslash
-IfFileExists{AAA_fgMaxIter.pdf_tex}{
+IfFileExists{AAA_fgMaxIter.pdf_tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 centering 
 \backslash
 def
 \backslash
-svgwidth{0.75
+svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-import{}{AAA_fgMaxIter.pdf_tex}}{
+import{}{AAA_fgMaxIter.pdf_tex}}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 typeout{Hinweis: Die Datei AAA_fgMaxIter.pdf_tex wurde nicht gefunden}}
 \end_layout
@@ -5601,7 +5609,7 @@ Convergence of objective function
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \noindent
@@ -5613,17 +5621,27 @@ status open
 
 
 \backslash
-IfFileExists{AAA_fgMaxIterNorm.pdf_tex}{
+IfFileExists{AAA_fgMaxIterNorm.pdf_tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 centering 
 \backslash
 def
 \backslash
-svgwidth{0.75
+svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-import{}{AAA_fgMaxIterNorm.pdf_tex}}{
+import{}{AAA_fgMaxIterNorm.pdf_tex}}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 typeout{Hinweis: Die Datei AAA_fgMaxIterNorm.pdf_tex wurde nicht gefunden}}
 \end_layout
@@ -5681,7 +5699,7 @@ centering
 \backslash
 def
 \backslash
-svgwidth{0.75
+svgwidth{1.0
 \backslash
 textwidth}
 \end_layout
@@ -5737,17 +5755,27 @@ status open
 
 
 \backslash
-IfFileExists{AAA_fGradIter.pdf_tex}{
+IfFileExists{AAA_fGradIter.pdf_tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 centering 
 \backslash
 def
 \backslash
-svgwidth{0.75
+svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-input{AAA_fGradIter.pdf_tex}}{
+input{AAA_fGradIter.pdf_tex}}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 typeout{Hinweis: Die Datei AAA_fGradIter.pdf_tex wurde nicht gefunden}}
 \end_layout
@@ -5864,7 +5892,7 @@ centering
 \backslash
 def
 \backslash
-svgwidth{0.75
+svgwidth{1.0
 \backslash
 textwidth}
 \end_layout
@@ -5925,7 +5953,7 @@ centering
 \backslash
 def
 \backslash
-svgwidth{0.75
+svgwidth{1.0
 \backslash
 textwidth}
 \end_layout
@@ -5979,7 +6007,12 @@ status open
 
 
 \backslash
-IfFileExists{AAA_xIterNorm.pdf_tex}{
+IfFileExists{AAA_xIterNorm.pdf_tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \end_layout
 
 \begin_layout Plain Layout
@@ -6002,7 +6035,7 @@ centering
 \backslash
 def
 \backslash
-svgwidth{0.75
+svgwidth{1.0
 \backslash
 textwidth}
 \end_layout
@@ -6050,7 +6083,12 @@ status open
 
 
 \backslash
-IfFileExists{AAA_xBarNorm.pdf_tex}{
+IfFileExists{AAA_xBarNorm.pdf_tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \end_layout
 
 \begin_layout Plain Layout
@@ -6073,7 +6111,7 @@ centering
 \backslash
 def
 \backslash
-svgwidth{0.75
+svgwidth{1.0
 \backslash
 textwidth}
 \end_layout
@@ -6136,7 +6174,12 @@ status open
 
 
 \backslash
-IfFileExists{AAA_gIter.pdf_tex}{
+IfFileExists{AAA_gIter.pdf_tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \end_layout
 
 \begin_layout Plain Layout
@@ -6166,7 +6209,7 @@ centering
 \backslash
 def
 \backslash
-svgwidth{0.75
+svgwidth{1.0
 \backslash
 textwidth}
 \end_layout
@@ -6214,7 +6257,12 @@ status open
 
 
 \backslash
-IfFileExists{AAA_gBar.pdf_tex}{
+IfFileExists{AAA_gBar.pdf_tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \end_layout
 
 \begin_layout Plain Layout
@@ -6237,7 +6285,7 @@ centering
 \backslash
 def
 \backslash
-svgwidth{0.75
+svgwidth{1.0
 \backslash
 textwidth}
 \end_layout
@@ -6302,7 +6350,7 @@ status open
 
 
 \backslash
-psfragfig*[width=0.75
+psfragfig*[width=1.0
 \backslash
 textwidth]{XXXFirstOrderOptPlot}
 \end_layout
@@ -6356,17 +6404,21 @@ status open
 
 
 \backslash
-IfFileExists{AAA_DesignVarTableNorm.tex}{
+IfFileExists{AAA_DesignVarTableNorm.tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 centering 
 \backslash
-def
-\backslash
-svgwidth{0.75
-\backslash
-textwidth} 
-\backslash
-input{AAA_DesignVarTableNorm.tex}}{
+input{AAA_DesignVarTableNorm.tex}}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 typeout{Hinweis: Die Datei AAA_DesignVarTableNorm wurde nicht gefunden}}
 \end_layout
@@ -6421,17 +6473,21 @@ status open
 
 
 \backslash
-IfFileExists{AAA_FirstOrderLagrangeTable.tex}{
+IfFileExists{AAA_FirstOrderLagrangeTable.tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 centering 
 \backslash
-def
-\backslash
-svgwidth{0.75
-\backslash
-textwidth} 
-\backslash
-input{AAA_FirstOrderLagrangeTable.tex}}{
+input{AAA_FirstOrderLagrangeTable.tex}}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 typeout{Hinweis: Die Datei AAA_FirstOrderLagrangeTable.tex wurde nicht gefunden}}
 \end_layout
@@ -6473,17 +6529,21 @@ status open
 
 
 \backslash
-IfFileExists{AAA_ShadowPricesTable.tex}{
+IfFileExists{AAA_ShadowPricesTable.tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 centering 
 \backslash
-def
-\backslash
-svgwidth{0.75
-\backslash
-textwidth} 
-\backslash
-input{AAA_ShadowPricesTable.tex}}{
+input{AAA_ShadowPricesTable.tex}}
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \backslash
 typeout{Hinweis: Die Datei AAA_ShadowPricesTable.tex wurde nicht gefunden}}
 \end_layout
