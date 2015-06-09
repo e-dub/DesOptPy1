@@ -50,37 +50,27 @@ Change log
 To do and ideas
 ---------------------------------------------------------------------------------------------------
 Need to do immediately
-X TODO give optimization parameters and optimizations in SysEq?
-X TODO remove gc? needed for proper lagrangians!!!
-X    IDEA: if not give = 0, check size of g, possible without calculation?
 TDOO: Nightly automatic benchmark run to make sure everything working?
 TODO  max line lenght = 79? (PEP8)
-?done? TODO non-normalized design vector NLPQLP
 TODO every iteration to output window (file)
     to output text file as well as status report.
 TODO normalize deltax?
-TODO extend to other solvers: IPOPT, CVXOPT (http://cvxopt.org/), pyCOIN (http://www.ime.usp.br/~pjssilva/software.html#pycoin) pyGMO, openopt, etc
-TODO extend to fmincon!!!!!
+TODO extend to use with other solvers: IPOPT!, CVXOPT (http://cvxopt.org/), pyCOIN (http://www.ime.usp.br/~pjssilva/software.html#pycoin)
+TODO extend to use with  fmincon!!!!!
+TODO extend to use with OpenOpt
+TODO Evolutaionary strategies with PyEvolve, inspyred, DEAP, pybrain
+TODO Disrete optimization with python-zibopt?
+TODO Multiobjective
+    http://www.midaco-solver.com/index.php/more/multi-objective
+    http://openopt.org/interalg
 TODO Langragian multiplier for one-dimensional optimization, line 423
 TODO gGradIter is forced into
 TODO sens_mode='pgc'
 TODO pyTables? for outputs, readable in Excel
 TODO range to xrange (xrange is faster)
-TODO Evolutaionary strategies
-    TODO add PyEvolve
-    TODO add inspyred
-    TODO add DEAP
-    TODO add pybrain
-X    TODO add PyGMO
-TODO Disrete optimization:
-    TODO python-zibopt
-X    TODO APSIS
-TODO Multiobjective
-    http://www.midaco-solver.com/index.php/more/multi-objective
-    http://openopt.org/interalg
-x    http://esa.github.io/pygmo/
 TODO excel report with "from xlwt import Workbook"
 TODO SBDO
+    Adaptive surrogating!
    DoE methods:
 x       LHS, S...
    Approximation methods
@@ -100,26 +90,6 @@ TODO Examples
    Discrete problems
    gGradIter in dgdxIter
    fGradIter in dfdxIter etc
-TODO His2HTML
-    TODO His2HTML: after first evaluation, make html!
-    TODO His2HTML: last iteration not shown?
-    TODO His2HTML: target -> objective!
-    TODO His2HTML: line for g=0
-    TODO His2HTML: des variable and constraint number +1 (not pythonish 0)
-    TODO His2HTML: all other algorithms do not result in error!
-    TODO His2HTML: for zeroth order (non-gradient-based) algorithms (specifically COBYLA, NSGA2)
-    TODO His2HTML: integrate NSGA2, out files in DesOptRun, read in as text etc.
-    TODO His2HTML: Normalized AND Demormalized design variables!
-    TODO His2HTML: values not always on
-TODO OptResultReport: Finish presentation!
-TODO OptResultReport: Files in /.DesOptPy/
--TODO OptResultReport: Gradients gGradOpt plot in Lyx
--TODO OptResultReport: Gradients gGradOpt plot only integers
--TODO OptResultReport: smart sizing of diagrams with legends
--TODO OptResultReport: postprocessing for unconstrained problems
-TODO OptResultReport: with DesVarNorm = "None"!!!!!
-TODO OptResultReport: Speed-up possible?
-TODO OptResultReport: change file repository to DesOpt/.DesOptPy/
 '''
 __title__ = "DesOptPy"
 __version__ = "2.0 alpha"
