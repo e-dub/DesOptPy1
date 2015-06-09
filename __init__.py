@@ -224,7 +224,7 @@ if IsPyGMO is True:
 
 
 def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", SensCalc="FD", DesVarNorm=True,
-           deltax=1e-3, OptStatus=False, OptPostProcess=False, Video=False, DoE=False, SBDO=False,
+           deltax=1e-3, StatusReport=False, ResultReport=False, Video=False, DoE=False, SBDO=False,
            Debug=False, PrintOut=True, OptNameAdd="", AlgOptions=[]):
 
 # -------------------------------------------------------------------------------------------------
@@ -234,9 +234,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     :type OptNode: object
     """
     if Debug is True:
-        print "Debug is set to False; overriding OptPostProcess and OptStatus"
-        OptStatus = False
-        OptPostProcess = False
+        print "Debug is set to False; overriding ResultReport and StatusReport"
+        StatusReport = False
+        ResultReport = False
     computerName = platform.uname()[1]
     operatingSystem = platform.uname()[0]
     architecture = platform.uname()[4]
@@ -316,7 +316,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         fail = 0
         global nEval
         nEval += 1
-        if OptStatus == 1:
+        if StatusReport == 1:
             OptHis2HTML.OptHis2HTML(OptName, OptAlg,DesOptDir )
         if xDis is not []:
             nD = len(xDis)
@@ -632,7 +632,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 # -------------------------------------------------------------------------------------------------
 #       Optimization post-processing
 # -------------------------------------------------------------------------------------------------
-    if OptStatus == 1:
+    if StatusReport == 1:
             OptHis2HTML.OptHis2HTML(OptName, OptAlg,DesOptDir )
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
@@ -923,7 +923,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 # -------------------------------------------------------------------------------------------------
 #   §    Graphical post-processing
 # -------------------------------------------------------------------------------------------------
-    if OptPostProcess is True:
+    if ResultReport is True:
         print("Entering preprocessing mode")
         OptResultReport.OptResultReport(OptName, diagrams=1, tables=1, lyx=1)
     if Video is True:
