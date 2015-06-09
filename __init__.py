@@ -810,34 +810,42 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             gGradOptActive = gGradOpt[:, gOptActiveIndex == True]
             try:
                 cOptActive = gc[gOptActiveIndex == True]
+                cActiveType = ["Constraint"]*np.size(cOptActive)
             except:
                 cOptActive = []
+                cActiveType = []
             if np.size(xGradActive) == 0:
                 g_xLU_GradOptActive = gGradOptActive
-                c_xLU_OptActive = cOptActive
+                c_xLU_ActiveType = cOptActive
+                c_xLU_ActiveType = cActiveType
             elif np.size(gGradOptActive) == 0:
                 g_xLU_GradOptActive = xGradActive
                 c_xLU_OptActive = xActive
+                c_xLU_ActiveType = ["Bound"]*np.size(xActive)
             else:
                 g_xLU_GradOptActive = np.concatenate((gGradOptActive, xGradActive), axis=1)
                 c_xLU_OptActive = np.concatenate((cOptActive, xActive), axis=1)
+                xActiveType = ["Bound"]*np.size(xActive)
+                c_xLU_ActiveType = np.concatenate((cActiveType, xActiveType), axis=1)
         else:
             g_xLU_GradOptActive = xGradActive
             gGradOpt = np.array([])
             c_xLU_OptActive = np.array([])
             g_xLU_GradOptActive = np.array([])
+            c_xLU_ActiveType = np.array([])
 
     else:
         fGradOpt = np.array([])
         gGradOpt = np.array([])
         g_xLU_GradOptActive = np.array([])
         c_xLU_OptActive = np.array([])
+        c_xLU_ActiveType = np.array([])
 
 # -------------------------------------------------------------------------------------------------
 #   §      Post-processing of optimization solution
 # -------------------------------------------------------------------------------------------------
     lambda_c, SPg, OptRes, Opt1Order, KKTmax = OptPostProc(fGradOpt, gc, gOptActiveIndex, g_xLU_GradOptActive,
-                                                           c_xLU_OptActive)
+                                                           c_xLU_OptActive, c_xLU_ActiveType, DesVarNorm)
 
 # -------------------------------------------------------------------------------------------------
 #   §      Save optimizaiton solution to file
