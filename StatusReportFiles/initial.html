@@ -12,30 +12,115 @@
     <title>Statusmonitoring</title>
    
 	<meta http-equiv="refresh" content="300" >
+	<style>
+	
+	
+		
+		#nav {
+			width:900px;
+			margin:0 auto;
+			list-style:none;
+		}
+		#nav li {
+			float:left;
+			margin:2px;
+			padding:4px;
+			border: 1px solid #81DAF5;
+			background-color: #81DAF5;
+			border-radius:3px;
+			
+		}
+		#nav a {
+			display:block;
+			text-align:center;
+			width:150px; /* fixed width */
+			text-decoration:none; 
+		}
+		
+		#cvs {
+			position: absolute;
+			top: 280px;
+			margin-left: auto;
+			margin-right: auto;
+			left: 0;
+			right: 0;
+			visibility: visible;
+		}
+		
+		#cvs2 {
+			position: absolute;
+			top: 280px;
+			margin-left: auto;
+			margin-right: auto;
+			left: 0;
+			right: 0;
+			visibility: hidden;
+		}
+		
+		#cvs3 {
+			position: absolute;
+			top: 280px;
+			margin-left: auto;
+			margin-right: auto;
+			left: 0;
+			right: 0;
+			visibility: hidden;
+		}
+		
+		#cvs4 {
+			position: absolute;
+			top: 280px;
+			margin-left: auto;
+			margin-right: auto;
+			left: 0;
+			right: 0;
+			visibility: hidden;
+		}
+	
+	
+		
+	</style>
+
 </head>
-<body>
+<body onresize="resizeGraphs()">
 
     <div style="float: left;margin: 0px 0px 0px 60px;"><img src="../title_tum.png" alt="titelbild" height="85" ></div>
     <div style="float: right;margin: 0px 60px 0px 0px;"><img src="../CM.png" alt="titelbild" height="85"></div>
     <center><h1>Design Optimization Status Report<br><font size="5">of</font><br>xxxxName<br>
     <font size="5">Last Update: xxxxTime</font></h1></center>
-
+	
+	
+	<ul id="nav">
+		<li id="nav1" onclick="showGraph1()" >Objective function and constraint</li>
+		<li id="nav2" onclick="showGraph2()" >Design variables</li>
+		<li id="nav3" onclick="showGraph3()" >Convergence of constraints</li>
+		<li id="nav4" onclick="showGraph4()" >Convergence of violated constraints</li>
+	</ul>
 
       <center>
-    <br>
-    <p>Convergence of objective function and constraint</p>
+    
 
-    <canvas id="cvs" width="1200" height="0600">[No canvas support]</canvas>
-
-          <br><br>
-          <p>Design variables</p>
+   <canvas id="cvs" width="1200" height="0600">[No canvas support]</canvas>
 
 	<canvas id="cvs2" width="1200" height="0600">[No canvas support]</canvas>
 	
+     <!--Start of constraint html part-->
+	
+	<canvas id="cvs3" width="1200" height="0600">[No canvas support]</canvas>
+	
+	<canvas id="cvs4" width="1200" height="0600">[No canvas support]</canvas>
+	
+
+	</center>
+<!--End of constraint html part-->
+	
     
     <script>
-        window.onload = function ()
-        {
+        window.onload = drawDiagrams();
+
+        function drawDiagrams(){
+
+            document.getElementById("nav1").style = "background-color:#FFBF00";
 		
 			var cc=['#000000','#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#33ff33',
 					'#666666','#990000','#339900','#330099','#999933','#9933ff','#66cccc',
@@ -208,21 +293,89 @@
 
 			
         }
+		
+		
+
+		
+		function showGraph1(){
+		
+			document.getElementById("cvs").style.visibility = "visible";
+			document.getElementById("cvs2").style.visibility = "hidden";
+			document.getElementById("cvs3").style.visibility = "hidden";
+			document.getElementById("cvs4").style.visibility = "hidden";
+			
+			document.getElementById("nav1").style = "background-color:#FFBF00";
+			document.getElementById("nav2").style = "background-color:#81DAF5";
+			document.getElementById("nav3").style = "background-color:#81DAF5";
+			document.getElementById("nav4").style = "background-color:#81DAF5";
+			
+			
+		}
+		
+		function showGraph2(){
+
+			document.getElementById("cvs").style.visibility = "hidden";
+			document.getElementById("cvs2").style.visibility = "visible";
+			document.getElementById("cvs3").style.visibility = "hidden";
+			document.getElementById("cvs4").style.visibility = "hidden";
+			
+			document.getElementById("nav1").style = "background-color:#81DAF5";
+			document.getElementById("nav2").style = "background-color:#FFBF00";
+			document.getElementById("nav3").style = "background-color:#81DAF5";
+			document.getElementById("nav4").style = "background-color:#81DAF5";
+		
+		}
+		
+		function showGraph3(){
+
+			document.getElementById("cvs").style.visibility = "hidden";
+			document.getElementById("cvs2").style.visibility = "hidden";
+			document.getElementById("cvs3").style.visibility = "visible";
+			document.getElementById("cvs4").style.visibility = "hidden";
+			
+			document.getElementById("nav1").style = "background-color:#81DAF5";
+			document.getElementById("nav2").style = "background-color:#81DAF5";
+			document.getElementById("nav3").style = "background-color:#FFBF00";
+			document.getElementById("nav4").style = "background-color:#81DAF5";
+		
+		}
+		
+		function showGraph4(){
+
+			document.getElementById("cvs").style.visibility = "hidden";
+			document.getElementById("cvs2").style.visibility = "hidden";
+			document.getElementById("cvs3").style.visibility = "hidden";
+			document.getElementById("cvs4").style.visibility = "visible";
+			
+			document.getElementById("nav1").style = "background-color:#81DAF5";
+			document.getElementById("nav2").style = "background-color:#81DAF5";
+			document.getElementById("nav3").style = "background-color:#81DAF5";
+			document.getElementById("nav4").style = "background-color:#FFBF00";
+		
+		}
+		
+		function resizeGraphs(){
+	
+			document.getElementById("cvs").width = window.innerWidth*0.9;
+			document.getElementById("cvs2").width = window.innerWidth*0.9;
+			document.getElementById("cvs3").width = window.innerWidth*0.9;
+			document.getElementById("cvs4").width = window.innerWidth*0.9;
+			
+			document.getElementById("cvs").height = window.innerHeight-300;
+			document.getElementById("cvs2").height = window.innerHeight-300;
+			document.getElementById("cvs3").height = window.innerHeight-300;
+			document.getElementById("cvs4").height = window.innerHeight-300;	
+			
+			document.getElementById("nav1").style = "background-color:#81DAF5";
+			document.getElementById("nav2").style = "background-color:#81DAF5";
+			document.getElementById("nav3").style = "background-color:#81DAF5";
+			document.getElementById("nav4").style = "background-color:#81DAF5";
+
+
+		}
+		
     </script>
 	
-	<p>Number of selected design variable:<input id="dataset" type="text" size="2"/></p>
-            <!--Start of constraint html part-->
-	<br>
-    <p>Convergence of constraints</p>
-<canvas id="cvs3" width="1200" height="0600">[No canvas support]</canvas>
-<p>Number of selected constraint:<input id="datasetg" type="text" size="2"></p>
-	<br>
-
-    <p>Convergence of violated constraints</p>
-<canvas id="cvs4" width="1200" height="0600">[No canvas support]</canvas>
-<p>Number of selected violated constraint:<input id="datasetgpos" type="text" size="2" ><p>
-		</center>
-<!--End of constraint html part-->
 </body>
 </html>
  <!-- neuer kommentar -->
