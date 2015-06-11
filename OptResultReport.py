@@ -4,7 +4,7 @@
 Title:          OptResultReport.py
 Units:          Unitless
 Date:           December 15, 2014
-Authors:        S. Rudolph, E.J. Wehrle, F. Wachter
+Authors:        S. Rudolph, E. J. Wehrle, F. Wachter
 ----------------------------------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------------------------------
@@ -238,7 +238,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             yLabel = ["$\mathsf{f}$", "$\mathsf{g}_{max}$"]
             DoubleConvPlot("fgMaxIterRendered", data, dataLabel, "Iteration", yLabel, Color, ResultsFolder, OptName,
                            figType=FileTypeRendered, figsizex=6, usetex=True, Tikz=TikzRendered)
-            data =[fIterNorm, gMaxIter]
+            data =[fIter, gMaxIter]
             dataLabel = [r"\$\f\$", r"$\gmax\$"]
             Color = ["b", "g"]
             #yLabel = [r"Objective function \$\f\$", r"Maximum constraint \$\gmax\$"]
@@ -537,24 +537,25 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
     # ---------------------------------------------------------------------------------------------------
     # Shadow prices table
     # ---------------------------------------------------------------------------------------------------
-            tRR = open(""+ResultsFolder+OptName+"_ShadowPricesTable.tex", "w")
-            optCrit = []
-            optCrit.append('\\begin{longtable}{ccc} \n')
-            optCrit.append('\\caption{Shadow prices} \n')
-            optCrit.append('\\tabularnewline \n')
-            optCrit.append('\\midrule \n')
-            optCrit.append('Property & Symbol & Value \\tabularnewline \n')
-            optCrit.append('\\midrule \n')
-            for uu in range(len(SPg)):
-                # optCrit.append('\\midrule \n')
-                temp = ['Shadow price of $g_{', str(uu+1), '}$ & $S_{g_{', str(uu+1), '}}$ & ', str(round(SPg[uu], 4)), '\\tabularnewline \n']
-                optCrit = optCrit + temp
-            optCrit.append('\\bottomrule \n')
-            optCrit.append('\\end{longtable}')
-            tRR.writelines(optCrit)
-            tRR.close()
-            # Convert tex file to lyx file
-            os.system("tex2lyx "+ResultsFolder+OptName+"_ShadowPricesTable.tex")
+            if np.size(SPg)>0:
+                tRR = open(""+ResultsFolder+OptName+"_ShadowPricesTable.tex", "w")
+                optCrit = []
+                optCrit.append('\\begin{longtable}{ccc} \n')
+                optCrit.append('\\caption{Shadow prices} \n')
+                optCrit.append('\\tabularnewline \n')
+                optCrit.append('\\midrule \n')
+                optCrit.append('Property & Symbol & Value \\tabularnewline \n')
+                optCrit.append('\\midrule \n')
+                for uu in range(len(SPg)):
+                    # optCrit.append('\\midrule \n')
+                    temp = ['Shadow price of $g_{', str(uu+1), '}$ & $S_{g_{', str(uu+1), '}}$ & ', str(round(SPg[uu], 4)), '\\tabularnewline \n']
+                    optCrit = optCrit + temp
+                optCrit.append('\\bottomrule \n')
+                optCrit.append('\\end{longtable}')
+                tRR.writelines(optCrit)
+                tRR.close()
+                # Convert tex file to lyx file
+                os.system("tex2lyx "+ResultsFolder+OptName+"_ShadowPricesTable.tex")
 
         # ---------------------------------------------------------------------------------------------------
         # Write LyX solution document and print as pdf

@@ -5567,7 +5567,18 @@ svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-import{}{AAA_fgMaxIter.pdf_tex}}
+import{}{AAA_fgMaxIter.pdf_tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+caption{Convergence of objective function $
+\backslash
+f$ and maximum constraint $
+\backslash
+gmax$}}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5575,23 +5586,6 @@ import{}{AAA_fgMaxIter.pdf_tex}}
 {
 \backslash
 typeout{Hinweis: Die Datei AAA_fgMaxIter.pdf_tex wurde nicht gefunden}}
-\end_layout
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Convergence of objective function 
-\begin_inset Formula $\f$
-\end_inset
-
- and maximum constraint 
-\begin_inset Formula $\gmax$
-\end_inset
-
-
 \end_layout
 
 \end_inset
@@ -5636,7 +5630,18 @@ svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-import{}{AAA_fgMaxIterNorm.pdf_tex}}
+import{}{AAA_fgMaxIterNorm.pdf_tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+caption{Convergence of normalized objective function $
+\backslash
+fn$ and maximum constraint $
+\backslash
+gmax$}}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5644,23 +5649,6 @@ import{}{AAA_fgMaxIterNorm.pdf_tex}}
 {
 \backslash
 typeout{Hinweis: Die Datei AAA_fgMaxIterNorm.pdf_tex wurde nicht gefunden}}
-\end_layout
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Convergence of normalized objective function 
-\begin_inset Formula $\fn$
-\end_inset
-
- and maximum constraint 
-\begin_inset Formula $\gmax$
-\end_inset
-
-
 \end_layout
 
 \end_inset
@@ -5770,7 +5758,20 @@ svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-input{AAA_fGradIter.pdf_tex}}
+input{AAA_fGradIter.pdf_tex}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+caption{Convergence of gradient of objective function $
+\backslash
+d_{
+\backslash
+x}
+\backslash
+f$}}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5778,19 +5779,6 @@ input{AAA_fGradIter.pdf_tex}}
 {
 \backslash
 typeout{Hinweis: Die Datei AAA_fGradIter.pdf_tex wurde nicht gefunden}}
-\end_layout
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Convergence of gradient of objective function 
-\begin_inset Formula $\d_{\x}\f$
-\end_inset
-
- 
 \end_layout
 
 \end_inset

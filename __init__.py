@@ -786,7 +786,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
                 cActiveType = []
             if np.size(xGradActive) == 0:
                 g_xLU_GradOptActive = gGradOptActive
-                c_xLU_ActiveType = cOptActive
+                c_xLU_OptActive = cOptActive
                 c_xLU_ActiveType = cActiveType
             elif np.size(gGradOptActive) == 0:
                 g_xLU_GradOptActive = xGradActive
