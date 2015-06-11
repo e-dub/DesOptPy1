@@ -179,6 +179,17 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
             allConVar = allConVar + ',data' + str(y)
 
 
+    #Tables erstellen
+
+    ##ObjFct and constraint table
+
+    ObjFct_table = ""
+    if xIter.size != 0:
+        for x in range(0, niter + 1):
+            ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + str(float(fIter[x])) + "</td>\n<td>" + str(float(np.max(gIter[x]))) + "</td>\n</tr>"
+
+
+
     html = open(template_directory + '/initial.html', 'r')  # HTML Template öffnen
     hstr = html.read()
     html.close()
@@ -199,6 +210,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
         hstrnew = hstrnew.replace('xxxxdatasetg',datasetsg)
         hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
         hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
+        hstrnew = hstrnew.replace('xxxxtableObjFct',ObjFct_table)
     else:
         hstrnew = hstr.replace('xxxxName',OptName)
         hstrnew = hstrnew.replace('xxxxTime',time_now)

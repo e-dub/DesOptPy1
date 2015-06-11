@@ -76,14 +76,24 @@
 			right: 0;
 			visibility: hidden;
 		}
-	
+
+        #banner {
+
+			margin:5px;
+			padding:0px;
+			border-bottom: 2px solid black;
+			background-color: white;
+
+		}
+
+
 	
 		
 	</style>
 
 </head>
 <body onresize="resizeGraphs()">
-
+<div id="banner" >
     <div style="float: left;margin: 0px 0px 0px 60px;"><img src="../title_tum.png" alt="titelbild" height="85" ></div>
     <div style="float: right;margin: 0px 60px 0px 0px;"><img src="../CM.png" alt="titelbild" height="85"></div>
     <center><h1>Design Optimization Status Report<br><font size="5">of</font><br>xxxxName<br>
@@ -96,8 +106,13 @@
 		<li id="nav3" onclick="showGraph3()" >Convergence of constraints</li>
 		<li id="nav4" onclick="showGraph4()" >Convergence of violated constraints</li>
 	</ul>
+</div>
 
-      <center>
+     <br><br>
+
+    <center>
+	    <button onclick="show_table()"> Show data in table</button>
+
     
 
    <canvas id="cvs" width="1200" height="0600">[No canvas support]</canvas>
@@ -117,6 +132,8 @@
     
     <script>
         window.onload = drawDiagrams();
+
+        var current_view=1;
 
         function drawDiagrams(){
 
@@ -205,7 +222,7 @@
 				.Set('gutter.bottom',30)
 				.Set('noyaxis',true)
 				.Set('ymin',ymin*1.1)
-				.Set('ymax',ymax*1.1)
+				.Set('ymax',Math.ceil(ymax))
                 .Set('xmax',niter)
 				.Set('crosshairs',true)
 				.Set('crosshairs.snap',true)
@@ -232,8 +249,8 @@
 				.Set('gutter.right',80)
 				.Set('gutter.bottom',30)
 				.Set('noyaxis',true)
-				.Set('ymin',gmin)
-				.Set('ymax',gmax)
+				.Set('ymin',Math.floor(gmin))
+				.Set('ymax',Math.ceil(gmax))
                 .Set('xmax',niter)
 				.Set('crosshairs',true)
 				.Set('crosshairs.snap',true)
@@ -247,6 +264,7 @@
 				.Set('chart.title.xaxis','Iteration')
 				.Set('title.yaxis',"Value of constraints")
 				.Set('chart.title.yaxis.pos',0.2)
+				.Set('background.hbars', [[0,Math.ceil(gmax),'rgba(255,0,0,0.1)'],[0,Math.floor(gmin),'rgba(0,255,0,0.1)']])
                 .Draw();	
 				
 			var scattergallpos = new RGraph.Scatter('cvs4'xxxxallConVar)
@@ -256,7 +274,7 @@
 				.Set('gutter.bottom',30)
 				.Set('noyaxis',true)
 				.Set('ymin',0)
-				.Set('ymax',gmax)
+				.Set('ymax',Math.ceil(gmax))
                 .Set('xmax',niter)
 				.Set('crosshairs',true)
 				.Set('crosshairs.snap',true)
@@ -308,7 +326,8 @@
 			document.getElementById("nav2").style = "background-color:#81DAF5";
 			document.getElementById("nav3").style = "background-color:#81DAF5";
 			document.getElementById("nav4").style = "background-color:#81DAF5";
-			
+
+			current_view=1;
 			
 		}
 		
@@ -323,7 +342,8 @@
 			document.getElementById("nav2").style = "background-color:#FFBF00";
 			document.getElementById("nav3").style = "background-color:#81DAF5";
 			document.getElementById("nav4").style = "background-color:#81DAF5";
-		
+
+		    current_view=2;
 		}
 		
 		function showGraph3(){
@@ -337,7 +357,8 @@
 			document.getElementById("nav2").style = "background-color:#81DAF5";
 			document.getElementById("nav3").style = "background-color:#FFBF00";
 			document.getElementById("nav4").style = "background-color:#81DAF5";
-		
+
+		    current_view=3;
 		}
 		
 		function showGraph4(){
@@ -351,7 +372,8 @@
 			document.getElementById("nav2").style = "background-color:#81DAF5";
 			document.getElementById("nav3").style = "background-color:#81DAF5";
 			document.getElementById("nav4").style = "background-color:#FFBF00";
-		
+
+		    current_view=4;
 		}
 		
 		function resizeGraphs(){
@@ -373,8 +395,59 @@
 
 
 		}
+
+		function show_table() {
+
+		    var myWindow = window.open();
+
+		    switch(current_view) {
+		    		case 1:
+		    			myWindow.document.write(tableObjFct.innerHTML);
+		    		break;
+		    		case 2:
+		    			myWindow.document.write(tableDesVar.innerHTML);
+		    		break;
+		    		case 3:
+		    			myWindow.document.write(tableConstr.innerHTML);
+		    		break;
+		    	}
+
+
+	    }
 		
     </script>
+
+<div id="tableObjFct" height=1px; width=1px; style="visibility: hidden">
+    <table>
+    <tr>
+        <th>Iteration</th>
+        <th>Objective Function</th>
+        <th>Constraint Value</th>
+   </tr>
+	xxxxtableObjFct
+        </table>
+</div>
+
+<div id="tableDesVar" height=1px; width=1px; style="visibility: hidden">
+   <table>
+    <tr>
+        <th>Iteration</th>
+        <th>Design Variables</th>
+   </tr>
+	xxxxtableDesVar
+   </table>
+</div>
+
+<div id="tableConstr" height=1px; width=1px; style="visibility: hidden">
+   <table>
+    <tr>
+        <th>Iteration</th>
+        <th>Objecti</th>
+        <th>Constraint Value</th>
+   </tr>
+	xxxxtableConstr
+       </table>
+</div>
 	
 </body>
 </html>
