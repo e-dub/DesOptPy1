@@ -17,12 +17,12 @@ DesOptPy -- DESign OPTimization for PYthon -- is an optimization toolbox for Pyt
 ---------------------------------------------------------------------------------------------------
 Change log
 ---------------------------------------------------------------------------------------------------
-2.0 alpha -- April 6, 2015 -- Preperation for release as open source
+2.0 alpha -- April 6, 2015 -- Preparation for release as open source
     Main file renamed from DesOpt.py to __init__.pyCMA
     Position of file (and rest of package) changed to /usr/local/lib/python2.7/dist-packages/DesOptPy/ from ~/DesOpt/.DesOptPy
 1.3 -- April 3, 2015
     Algorithm options added to call, only for pyOpt algorithms
-    Discrete variables added analoguous to APSIS (Schatz & Wehrle & Baier 2014), though without the
+    Discrete variables added analogous to APSIS (Schatz & Wehrle & Baier 2014), though without the
         reduction of design variables by 1, example in AxialBar
 
 1.2 -- February 15, 2015
@@ -51,19 +51,19 @@ To do and ideas
 ---------------------------------------------------------------------------------------------------
 Need to do immediately
 TDOO: Nightly automatic benchmark run to make sure everything working?
-TODO  max line lenght = 79? (PEP8)
+TODO  max line length = 79? (PEP8)
 TODO every iteration to output window (file)
     to output text file as well as status report.
 TODO normalize deltax?
 TODO extend to use with other solvers: IPOPT!, CVXOPT (http://cvxopt.org/), pyCOIN (http://www.ime.usp.br/~pjssilva/software.html#pycoin)
 TODO extend to use with  fmincon!!!!!
 TODO extend to use with OpenOpt
-TODO Evolutaionary strategies with PyEvolve, inspyred, DEAP, pybrain
-TODO Disrete optimization with python-zibopt?
+TODO Evolutionary strategies with PyEvolve, inspyred, DEAP, pybrain
+TODO DDiscreteoptimization with python-zibopt?
 TODO Multiobjective
     http://www.midaco-solver.com/index.php/more/multi-objective
     http://openopt.org/interalg
-TODO Langragian multiplier for one-dimensional optimization, line 423
+TODO Lagrangian multiplier for one-dimensional optimization, line 423
 TODO gGradIter is forced into
 TODO sens_mode='pgc'
 TODO pyTables? for outputs, readable in Excel
@@ -281,7 +281,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #       Define functions: system equation, normalization, etc.
 # -------------------------------------------------------------------------------------------------
     def OptSysEq(x):
-        x = np.array(x)  # NSGA2 gives a list back, this makes a float! TODO Iquire why it does this!
+        x = np.array(x)  # NSGA2 gives a list back, this makes a float! TODO Inquire why it does this!
         f, g = SysEq(x, gc)
         fail = 0
         global nEval
@@ -300,7 +300,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         return f, g, fail
 
     def OptSysEqNorm(xNorm):
-        xNorm = np.array(xNorm)  # NSGA2 gives a list back, this makes a float! TODO Iquire why it does this!
+        xNorm = np.array(xNorm)  # NSGA2 gives a list back, this makes a float! TODO Inquire why it does this!
         x = denormalize(xNorm, xL, xU, DesVarNorm)
         f, g, fail = OptSysEq(x)
         return f, g, fail
@@ -904,6 +904,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     if ResultReport is True:
         print("Entering preprocessing mode")
         OptResultReport.OptResultReport(OptName, diagrams=1, tables=1, lyx=1)
+        # try: OptResultReport.OptResultReport(OptName, diagrams=1, tables=1, lyx=1)
+        # except: print("Problem with generation of Result Report. Check if all preresequits are installed")
     if Video is True:
         OptVideo.OptVideo(OptName)
 
@@ -929,7 +931,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             t = 1
             freq = 350
             os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (t, freq))
-    #os.chdir(MainDir)
+    # os.chdir(MainDir)
     return (xOpt, fOpt, SPg)
 
 if __name__ == "__main__":
