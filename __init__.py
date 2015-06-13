@@ -287,7 +287,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         global nEval
         nEval += 1
         if StatusReport == 1:
-            OptHis2HTML.OptHis2HTML(OptName, OptAlg,DesOptDir )
+            OptHis2HTML.OptHis2HTML(OptName, OptAlg,DesOptDir, xL,xU, DesVarNorm )
         if xDis is not []:
             nD = len(xDis)
             gDis = [[]]*2*nD
@@ -603,7 +603,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #       Optimization post-processing
 # -------------------------------------------------------------------------------------------------
     if StatusReport == 1:
-            OptHis2HTML.OptHis2HTML(OptName, OptAlg,DesOptDir )
+            OptHis2HTML.OptHis2HTML(OptName, OptAlg,DesOptDir , xL,xU, DesVarNorm)
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
     hhmmss0 = time.strftime("%H", loctime0) + ' : ' + time.strftime("%M", loctime0) + ' : ' + time.strftime("%S", loctime0)

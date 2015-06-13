@@ -22,7 +22,7 @@ see DesOpt.py
 import numpy as np
 from time import localtime, strftime
 from pyOpt import History
-
+from Normalize import denormalize
 import shutil
 import os
 import sys
@@ -30,7 +30,7 @@ import glob
 
 
 
-def OptHis2HTML(OptName, Alg, DesOptDir):
+def OptHis2HTML(OptName, Alg, DesOptDir, xL,xU, DesVarNorm):
 
     pos_of_best_ind = []
     fIter = []
@@ -114,13 +114,28 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
     gIter = np.asarray(gIter)
     niter = len(fIter) - 1
 
+
+    if xIter.size != 0:
+        xIter_denormalized = np.zeros((niter+1, len(xIter[0])))
+        for y in range(0, niter+1):
+            xIter_denormalized[y,:] = denormalize(xIter[y,:],xL,xU,DesVarNorm)
+
     time_now = strftime("%Y-%b-%d %H:%M:%S", localtime())  # Aktualisierungszeit auslesen
-    ymax = 0
-    ymin = 0
+    ymax = -200000
+    ymin = 20000
+    ymax_denorm = -200000
+    ymin_denorm = 20000
     arr_gmin = [[]] * len(fIter)
-    gmin1 = 0
-    gmax = 0
-    gmin = 0
+
+    gmax = -200000
+    gmin = 20000
+    number_des_vars = "0"
+    number_constraints = "0"
+    objFctmax = -20000
+    objFctmin = 20000
+
+
+
 
     value = ""
     value2 = ""
@@ -135,10 +150,21 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
                 float(np.max(gIter[x]))) + '],'  # Daten für Nebenb-diagramm aufbereiten
 
     for x in range(0, niter + 1):  # Maximale y-Achsen Werte bestimmen
+        if (np.max(fIter[x]) > objFctmax):
+            objFctmax = np.max(fIter[x])
+        if (np.min(fIter[x]) < objFctmin):
+            objFctmin = np.min(fIter[x])
+
         if (np.max(xIter[x]) > ymax):
             ymax = np.max(xIter[x])
         if (np.min(xIter[x]) < ymin):
             ymin = np.min(xIter[x])
+
+        if (np.max(xIter_denormalized[x]) > ymax_denorm):           # fuer denormalized
+            ymax_denorm = np.max(xIter_denormalized[x])
+        if (np.min(xIter_denormalized[x]) < ymin_denorm):
+            ymin_denorm = np.min(xIter_denormalized[x])
+
         if gIter.size != 0:
             if (np.max(gIter[x]) > gmax):
                 gmax = np.max(gIter[x])
@@ -146,15 +172,25 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
             if (np.min(gIter[x]) < gmin):
                 gmin = np.min(gIter[x])
 
+
     datasets = ""
+    datasets_denorm = ""
     datasetsg = ""
 
     if xIter.size != 0:
-        for x in range(0, len(xIter[0])):  # Datasets von Obj-fkt erstellen
+        for x in range(0, len(xIter[0])):  # Datasets von Designvariables erstellen
             datasets += 'var ' + 'data' + str(x) + '=['
             for y in range(0, niter + 1):
                 datasets += '[' + str(y) + ',' + str(xIter[y][x]) + '],'
             datasets += '];\n\t\t\t'
+
+    if xIter.size != 0:
+        for x in range(0, len(xIter[0])):  # Datasets von denormalisierten Designvariables erstellen
+
+            datasets_denorm += 'var ' + 'data' + str(x) + '=['
+            for y in range(0, niter + 1):
+                datasets_denorm += '[' + str(y) + ',' + str(xIter_denormalized[y][x]) + '],'
+            datasets_denorm += '];\n\t\t\t'
 
     if gIter.size != 0:
         for x in range(0, len(gIter[0])):  # Datasets von Con-fkt erstellen
@@ -185,8 +221,47 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
 
     ObjFct_table = ""
     if xIter.size != 0:
-        for x in range(0, niter + 1):
-            ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + str(float(fIter[x])) + "</td>\n<td>" + str(float(np.max(gIter[x]))) + "</td>\n</tr>"
+        if gIter.size != 0:
+            for x in range(0, niter + 1):
+                ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + str(round(fIter[x],5)) + "</td>\n<td>" + str(round(np.max(gIter[x]),5)) + "</td>\n</tr>"
+        else:
+            for x in range(0, niter + 1):
+                ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + str(round(fIter[x],5)) + "</td>\n<td> no constraints </td>\n</tr>"
+
+    ##Design Variable table generation
+
+    DesVar_table = "<td></td>"
+    if xIter.size != 0:
+        number_des_vars = str(len(xIter[0]))
+
+        for x in range(0, len(xIter[0])):       #header erzeugen
+            DesVar_table += "<td>" + "x_" + str(x+1) + "</td>"
+
+        for y in range(0, niter + 1):           # daten befuellen
+            DesVar_table += "<tr>\n<td>" + str(y) + "</td>"
+            for x in range(0, len(xIter[0])):
+                DesVar_table += "<td>" + str(round(xIter[y][x],5)) + "  |  " + str(round(xIter_denormalized[y][x],5))  + "</td>"
+            DesVar_table += "</tr>"
+
+    ##Constraint  table generation
+
+    Constraint_table = "<td></td>"
+    if gIter.size != 0:
+        number_constraints = str(len(gIter[0]))
+        for x in range(0, len(gIter[0])):       #header erzeugen
+            Constraint_table += "<td>" + "g_" + str(x+1) + "</td>"
+        for y in range(0, niter + 1):           # daten befuellen
+            Constraint_table += "<tr>\n<td>" + str(y) + "</td>"
+            for x in range(0, len(gIter[0])):
+                if(round(gIter[y][x],5)>0):
+                    Constraint_table += "<td class=\"negativ\">" + str(round(gIter[y][x],5))  + "</td>"
+                else:
+                    Constraint_table += "<td class=\"positiv\">" + str(round(gIter[y][x],5))  + "</td>"
+            Constraint_table += "</tr>"
+
+
+
+
 
 
 
@@ -200,9 +275,15 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
         hstrnew = hstrnew.replace('xxxxTime',time_now)
         hstrnew = hstrnew.replace('xxxxValue1',value)
         hstrnew = hstrnew.replace('xxxxValue2',value2)
+        hstrnew = hstrnew.replace('xxxxallDesVar_denorm',allDesVar)
+        hstrnew = hstrnew.replace('xxxxdatasetf_denorm',datasets_denorm)
+        hstrnew = hstrnew.replace('xxxxXmax',str(ymax_denorm))
+        hstrnew = hstrnew.replace('xxxxXmin',str(ymin_denorm))
         hstrnew = hstrnew.replace('xxxxnIter',str(niter))
         hstrnew = hstrnew.replace('xxxxymax',str(ymax))
         hstrnew = hstrnew.replace('xxxxymin',str(ymin))
+        hstrnew = hstrnew.replace('xxxxObjFctmin',str(objFctmin))
+        hstrnew = hstrnew.replace('xxxxObjFctmax',str(objFctmax))
         hstrnew = hstrnew.replace('xxxxdatasetf',datasets)
         hstrnew = hstrnew.replace('xxxxallDesVar',allDesVar)
         hstrnew = hstrnew.replace('xxxxgmax',str(gmax))
@@ -211,14 +292,24 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
         hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
         hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
         hstrnew = hstrnew.replace('xxxxtableObjFct',ObjFct_table)
+        hstrnew = hstrnew.replace('xxxxtableDesVar',DesVar_table)
+        hstrnew = hstrnew.replace('xxxxnumber_des_var',number_des_vars)
+        hstrnew = hstrnew.replace('xxxxtableConstr',Constraint_table)
+        hstrnew = hstrnew.replace('xxxxnumber_constraints',number_constraints)
     else:
         hstrnew = hstr.replace('xxxxName',OptName)
         hstrnew = hstrnew.replace('xxxxTime',time_now)
         hstrnew = hstrnew.replace('xxxxValue1',value)
         hstrnew = hstrnew.replace('xxxxValue2',value2)
+        hstrnew = hstrnew.replace('xxxxallDesVar_denorm',allDesVar)
+        hstrnew = hstrnew.replace('xxxxdatasetf_denorm',datasets_denorm)
+        hstrnew = hstrnew.replace('xxxxXmax',str(ymax_denorm))
+        hstrnew = hstrnew.replace('xxxxXmin',str(ymin_denorm))
         hstrnew = hstrnew.replace('xxxxnIter',str(niter))
         hstrnew = hstrnew.replace('xxxxymax',str(ymax))
         hstrnew = hstrnew.replace('xxxxymin',str(ymin))
+        hstrnew = hstrnew.replace('xxxxObjFctmin',str(objFctmin))
+        hstrnew = hstrnew.replace('xxxxObjFctmax',str(objFctmax))
         hstrnew = hstrnew.replace('xxxxdatasetf',datasets)
         hstrnew = hstrnew.replace('xxxxallDesVar',allDesVar)
         hstrnew = hstrnew.replace('xxxxgmax',str(gmax))
@@ -226,6 +317,12 @@ def OptHis2HTML(OptName, Alg, DesOptDir):
         hstrnew = hstrnew.replace('xxxxdatasetg',datasetsg)
         hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
         hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
+        hstrnew = hstrnew.replace('xxxxtableObjFct',ObjFct_table)
+        hstrnew = hstrnew.replace('xxxxtableDesVar',DesVar_table)
+        hstrnew = hstrnew.replace('xxxxnumber_des_var',number_des_vars)
+        hstrnew = hstrnew.replace('xxxxtableConstr',Constraint_table)
+        hstrnew = hstrnew.replace('xxxxnumber_constraints',number_constraints)
+
 
         hstrnew = hstrnew[0:hstrnew.find("<!--Start of constraint part-->")] + hstrnew[hstrnew.find("<!--End of constraint part-->"):-1]
         hstrnew = hstrnew[0:hstrnew.find("<!--Start of constraint html part-->")] + hstrnew[hstrnew.find("<!--End of constraint html part-->"):-1]
