@@ -215,7 +215,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     OptTime0 = time.time()
     OptNodes = "all"
     MainDir = os.getcwd()
-    if operatingSystem == "Linux" or operatingSystem == "Darwin":
+    if operatingSystem  != 'Windows':
         DirSplit = "/"
         homeDir = "/home/"
     else:
