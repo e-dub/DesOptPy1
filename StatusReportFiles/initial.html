@@ -1,64 +1,83 @@
+<!--
+
+    Autor: Florian Wachter
+    E-Mail: florian.wachter@tum.de
+    Date: 22.06.2015
+
+
+    This is the template for the status report file. The Graphs are done with RGraph
+    The Style Sheet is located in the style.css file.
+    Parts surrounded with "Start of constraint html part" and "End of ..." are deleted if the
+    optimization problem is unconstrained.
+
+    This document is divided into 3 parts.
+        * Definition of the html layout and its context.
+        * Javascript code with generates the diagrams and handles buttons etc.
+        * Templates for the tables which are shown when the user presses the "Show data in table" button
+
+-->
+
 <!DOCTYPE html >
 <html>
 <head>
-    <link rel="stylesheet" href="demos.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="../style.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="demos.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
 
-    <script src="../RGraph.common.core.js" ></script>
-    <script src="../RGraph.scatter.js" ></script>
-	<script src="../RGraph.common.dynamic.js" ></script>
-	<script src="../RGraph.common.resizing.js" ></script>
-    <script src="../RGraph.common.key.js" ></script>
-   
+    <script src="../RGraph.common.core.js"></script>
+    <script src="../RGraph.scatter.js"></script>
+    <script src="../RGraph.common.dynamic.js"></script>
+    <script src="../RGraph.common.resizing.js"></script>
+    <script src="../RGraph.common.key.js"></script>
+
     <title>Statusmonitoring</title>
-   
-	<meta http-equiv="refresh" content="300" >
+
+    <meta http-equiv="refresh" content="300">
 
 
 </head>
 <body onresize="resizeGraphs()">
-<div id="banner" >
-    <div style="float: left;margin: 0px 0px 0px 60px;"><img src="../title_tum.png" alt="titelbild" height="85" ></div>
+<div id="banner">
+    <div style="float: left;margin: 0px 0px 0px 60px;"><img src="../title_tum.png" alt="titelbild" height="85"></div>
     <div style="float: right;margin: 0px 60px 0px 0px;"><img src="../CM.png" alt="titelbild" height="85"></div>
     <center><h1>Design Optimization Status Report<br><font size="5">of</font><br>xxxxName<br>
-    <font size="5">Last Update: xxxxTime</font></h1></center>
+        <font size="5">Last Update: xxxxTime</font></h1></center>
 </div>
-	
+
 <div id="nav_div">
-	<ul id="nav">
-		<li id="nav1" onclick="showGraph1()" >Objective and biggest constraint</li>
-		<li id="nav2" onclick="showGraph2()" >Design variables</li>
-        <li id="nav5" onclick="showGraph5()" >Design variables denormalized</li>
+    <ul id="nav">
+        <li id="nav1" onclick="showGraph1()">Objective and biggest constraint</li>
+        <li id="nav2" onclick="showGraph2()">Design variables</li>
+        <li id="nav5" onclick="showGraph5()">Design variables denormalized</li>
         <!--Start of constraint html part-->
-		<li id="nav3" onclick="showGraph3()" >Constraints</li>
-		<li id="nav4" onclick="showGraph4()" >Violated constraints</li>
+        <li id="nav3" onclick="showGraph3()">Constraints</li>
+        <li id="nav4" onclick="showGraph4()">Violated constraints</li>
         <!--End of constraint html part-->
-	</ul>
+    </ul>
 </div>
 
-     <br>
+<br>
 
-    <center>
-	    <button onclick="show_table()" id="btn_show"> Show data in table</button>
+<center>
+    <button onclick="show_table()" id="btn_show"> Show data in table</button>
 
-   <canvas id="cvs" width="1200" height="0600">[No canvas support]</canvas>
+    <canvas id="cvs" width="1200" height="0600">[No canvas support]</canvas>
 
-	<canvas id="cvs2" width="1200" height="0600">[No canvas support]</canvas>
+    <canvas id="cvs2" width="1200" height="0600">[No canvas support]</canvas>
 
     <canvas id="cvs5" width="1200" height="0600">[No canvas support]</canvas>
-	
-     <!--Start of constraint html part-->
-	
-	<canvas id="cvs3" width="1200" height="0600">[No canvas support]</canvas>
-	
-	<canvas id="cvs4" width="1200" height="0600">[No canvas support]</canvas>
-	
 
-	</center>
+    <!--Start of constraint html part-->
+
+    <canvas id="cvs3" width="1200" height="0600">[No canvas support]</canvas>
+
+    <canvas id="cvs4" width="1200" height="0600">[No canvas support]</canvas>
+
+
+</center>
 <!--End of constraint html part-->
-	
-    
-    <script>
+
+
+<script>
 
 
         var current_view=1;
@@ -410,51 +429,57 @@
 	    }
 
 
-    </script>
+
+</script>
+
+<!-- Templates for the tables -->
 
 <div id="tableObjFct" height=1px; width=1px; style="visibility: hidden">
     <head>
-        <link rel="stylesheet" href="../style.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
     </head>
 
     <table>
-    <tr>
-        <th>Iteration</th>
-        <th>Objective Function</th>
-        <th>Constraint Value</th>
-   </tr>
-	xxxxtableObjFct
-        </table>
+        <tr>
+            <th>Iteration</th>
+            <th>Objective Function</th>
+            <th>Constraint Value</th>
+        </tr>
+        xxxxtableObjFct
+    </table>
 </div>
 
 <div id="tableDesVar" height=1px; width=1px; style="visibility: hidden">
     <head>
-        <link rel="stylesheet" href="../style.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
     </head>
 
     <table>
-    <tr>
-        <th>Iteration</th>
-        <th colspan="xxxxnumber_des_var">Design Variables  |  Denormalized</th>
-   </tr>
-	xxxxtableDesVar
-   </table>
+        <tr>
+            <th>Iteration</th>
+            <th colspan="xxxxnumber_des_var">Design Variables | Denormalized</th>
+        </tr>
+        xxxxtableDesVar
+    </table>
 </div>
 
 <div id="tableConstr" height=1px; width=1px; style="visibility: hidden">
     <head>
-        <link rel="stylesheet" href="../style.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
     </head>
 
     <table>
-    <tr>
-       <th>Iteration</th>
-        <th colspan="xxxxnumber_constraints">Constraints</th>
-   </tr>
-	xxxxtableConstr
-       </table>
+        <tr>
+            <th>Iteration</th>
+            <th colspan="xxxxnumber_constraints">Constraints</th>
+        </tr>
+        xxxxtableConstr
+    </table>
 </div>
+
+
+<!-- Templates for the tables end here -->
 
 </body>
 </html>
- <!-- neuer kommentar -->
+<!-- neuer kommentar -->
