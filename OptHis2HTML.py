@@ -30,7 +30,11 @@ import glob
 
 
 
-def OptHis2HTML(OptName, Alg, DesOptDir, xL,xU, DesVarNorm):
+def OptHis2HTML(OptName, Alg, DesOptDir, xL,xU, DesVarNorm, StatusDirectory=""):
+
+    if StatusDirectory == "":
+        StatusDirectory = DesOptDir
+
 
     pos_of_best_ind = []
     fIter = []
@@ -315,34 +319,36 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL,xU, DesVarNorm):
         hstrnew = hstrnew.replace('xxxxgmax',str(gmax))
         hstrnew = hstrnew.replace('xxxxgmin',str(gmin))
         hstrnew = hstrnew.replace('xxxxdatasetg',datasetsg)
-        hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
-        hstrnew = hstrnew.replace('xxxxallConVar',allConVar)
         hstrnew = hstrnew.replace('xxxxtableObjFct',ObjFct_table)
         hstrnew = hstrnew.replace('xxxxtableDesVar',DesVar_table)
         hstrnew = hstrnew.replace('xxxxnumber_des_var',number_des_vars)
-        hstrnew = hstrnew.replace('xxxxtableConstr',Constraint_table)
-        hstrnew = hstrnew.replace('xxxxnumber_constraints',number_constraints)
+
+        try:                    # remove the hmtl parts which are only needed for constrained problems
+            for i in range(0,10):
+                hstrnew = hstrnew[0:hstrnew.find("<!--Start of constraint html part-->")] + hstrnew[hstrnew.find("<!--End of constraint html part-->")+34:-1]
+        except:
+            print ""
 
 
-        hstrnew = hstrnew[0:hstrnew.find("<!--Start of constraint part-->")] + hstrnew[hstrnew.find("<!--End of constraint part-->"):-1]
-        hstrnew = hstrnew[0:hstrnew.find("<!--Start of constraint html part-->")] + hstrnew[hstrnew.find("<!--End of constraint html part-->"):-1]
 
 
     html = open('initial1.html', 'w')
     html.write(hstrnew)
     html.close()
 
-    if not os.path.exists(DesOptDir + os.sep + "Results" + os.sep + OptName):
-        os.makedirs(DesOptDir + os.sep + "Results" + os.sep + OptName)
+    if not os.path.exists(StatusDirectory + os.sep + "Results" + os.sep + OptName):
+        os.makedirs(StatusDirectory + os.sep + "Results" + os.sep + OptName)
 
     shutil.copy("initial1.html",
-                DesOptDir + os.sep + "Results" + os.sep + OptName + os.sep + OptName + "_Status.html")
+                StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep + OptName + "_Status.html")
 
-    if not os.path.exists(DesOptDir + os.sep + "Results" + os.sep + "RGraph.scatter.js"):
+    if not os.path.exists(StatusDirectory + os.sep + "Results" + os.sep + "RGraph.scatter.js"):
         for file in glob.glob(template_directory + "*.png"):
-            shutil.copy(file,DesOptDir + os.sep + "Results" + os.sep)
+            shutil.copy(file,StatusDirectory + os.sep + "Results" + os.sep)
         for file in glob.glob(template_directory + "*.js"):
-            shutil.copy(file,DesOptDir + os.sep + "Results" + os.sep)
+            shutil.copy(file,StatusDirectory + os.sep + "Results" + os.sep)
+        for file in glob.glob(template_directory + "*.css"):
+            shutil.copy(file,StatusDirectory + os.sep + "Results" + os.sep)
     return 0
 
 

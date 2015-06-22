@@ -1,0 +1,105 @@
+
+		#nav_div {
+			text-align: center;
+		}
+
+		#nav {
+			display: inline-block;
+			margin: 0;
+			padding: 0;
+			/* For IE, the outcast */
+			zoom:1;
+			*display: inline;
+			list-style:none;
+		}
+
+		#nav li {
+			float:left;
+			margin:2px;
+			padding:4px;
+			border: 1px solid rgb(152,198,234);
+			background-color: rgb(152,198,234);
+			border-radius:3px;
+
+		}
+		#nav a {
+			display:block;
+			text-align:center;
+			width:150px; /* fixed width */
+			text-decoration:none;
+		}
+
+		#cvs {
+			position: absolute;
+			top: 300px;
+			margin-left: auto;
+			margin-right: auto;
+			left: 0;
+			right: 0;
+			visibility: visible;
+		}
+
+		#cvs2 {
+			position: absolute;
+			top: 300px;
+			margin-left: auto;
+			margin-right: auto;
+			left: 0;
+			right: 0;
+			visibility: hidden;
+		}
+
+		#cvs3 {
+			position: absolute;
+			top: 300px;
+			margin-left: auto;
+			margin-right: auto;
+			left: 0;
+			right: 0;
+			visibility: hidden;
+		}
+
+		#cvs4 {
+			position: absolute;
+			top: 300px;
+			margin-left: auto;
+			margin-right: auto;
+			left: 0;
+			right: 0;
+			visibility: hidden;
+		}
+
+        #cvs5 {
+			position: absolute;
+			top: 300px;
+			margin-left: auto;
+			margin-right: auto;
+			left: 0;
+			right: 0;
+			visibility: hidden;
+		}
+
+        #banner {
+
+			margin:5px;
+			padding:0px;
+			border-bottom: 2px solid black;
+			background-color: white;
+
+		}
+
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+     padding: 5px;
+
+}
+
+td.negativ {
+  background-color : rgba(255,0,0,0.1);
+}
+td.positiv {
+  background-color : rgba(0,255,0,0.1);
+}
+

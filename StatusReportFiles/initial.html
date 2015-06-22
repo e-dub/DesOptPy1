@@ -2,6 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="demos.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="../style.css" type="text/css" media="screen" />
 
     <script src="../RGraph.common.core.js" ></script>
     <script src="../RGraph.scatter.js" ></script>
@@ -12,102 +13,7 @@
     <title>Statusmonitoring</title>
    
 	<meta http-equiv="refresh" content="300" >
-	<style>
-	
-	
-		#nav_div {
-			text-align: center;
-		}
 
-		#nav {
-			display: inline-block;
-			margin: 0;
-			padding: 0;
-			/* For IE, the outcast */
-			zoom:1;
-			*display: inline;
-			list-style:none;
-		}
-
-		#nav li {
-			float:left;
-			margin:2px;
-			padding:4px;
-			border: 1px solid #81DAF5;
-			background-color: #81DAF5;
-			border-radius:3px;
-
-		}
-		#nav a {
-			display:block;
-			text-align:center;
-			width:150px; /* fixed width */
-			text-decoration:none;
-		}
-
-		#cvs {
-			position: absolute;
-			top: 290px;
-			margin-left: auto;
-			margin-right: auto;
-			left: 0;
-			right: 0;
-			visibility: visible;
-		}
-
-		#cvs2 {
-			position: absolute;
-			top: 290px;
-			margin-left: auto;
-			margin-right: auto;
-			left: 0;
-			right: 0;
-			visibility: hidden;
-		}
-
-		#cvs3 {
-			position: absolute;
-			top: 290px;
-			margin-left: auto;
-			margin-right: auto;
-			left: 0;
-			right: 0;
-			visibility: hidden;
-		}
-
-		#cvs4 {
-			position: absolute;
-			top: 290px;
-			margin-left: auto;
-			margin-right: auto;
-			left: 0;
-			right: 0;
-			visibility: hidden;
-		}
-
-        #cvs5 {
-			position: absolute;
-			top: 290px;
-			margin-left: auto;
-			margin-right: auto;
-			left: 0;
-			right: 0;
-			visibility: hidden;
-		}
-
-        #banner {
-
-			margin:5px;
-			padding:0px;
-			border-bottom: 2px solid black;
-			background-color: white;
-
-		}
-
-
-	
-		
-	</style>
 
 </head>
 <body onresize="resizeGraphs()">
@@ -123,8 +29,10 @@
 		<li id="nav1" onclick="showGraph1()" >Objective and biggest constraint</li>
 		<li id="nav2" onclick="showGraph2()" >Design variables</li>
         <li id="nav5" onclick="showGraph5()" >Design variables denormalized</li>
+        <!--Start of constraint html part-->
 		<li id="nav3" onclick="showGraph3()" >Constraints</li>
 		<li id="nav4" onclick="showGraph4()" >Violated constraints</li>
+        <!--End of constraint html part-->
 	</ul>
 </div>
 
@@ -286,7 +194,7 @@
 				.Set('chart.title.yaxis.pos',0.2)
                 .Draw();
 
-            <!--Start of constraint part-->
+            <!--Start of constraint html part-->
 
 
 			var gmax = xxxxgmax;
@@ -339,25 +247,7 @@
 				.Set('chart.title.yaxis.pos',0.2)
                 .Draw();
 
-             <!--End of constraint part-->
-
-			scatterxall.oncrosshairs = function (obj)
-            {
-                document.getElementById("dataset").value =  obj.canvas.__crosshairs_snap_dataset__;
-
-            }
-			scattergall.oncrosshairs = function (obj)
-            {
-                document.getElementById("datasetg").value =  obj.canvas.__crosshairs_snap_dataset__;
-
-            }
-
-			scattergallpos.oncrosshairs = function (obj)
-            {
-                document.getElementById("datasetgpos").value =  obj.canvas.__crosshairs_snap_dataset__;
-
-            }
-
+             <!--End of constraint html part-->
 
 
         }
@@ -369,14 +259,18 @@
 
 			document.getElementById("cvs").style.visibility = "visible";
 			document.getElementById("cvs2").style.visibility = "hidden";
+			<!--Start of constraint html part-->
 			document.getElementById("cvs3").style.visibility = "hidden";
 			document.getElementById("cvs4").style.visibility = "hidden";
+			<!--End of constraint html part-->
 			document.getElementById("cvs5").style.visibility = "hidden";
 
 			document.getElementById("nav1").style = "background-color:#FFBF00";
 			document.getElementById("nav2").style = "background-color:#81DAF5";
+			<!--Start of constraint html part-->
 			document.getElementById("nav3").style = "background-color:#81DAF5";
 			document.getElementById("nav4").style = "background-color:#81DAF5";
+			<!--End of constraint html part-->
 			document.getElementById("nav5").style = "background-color:#81DAF5";
 
 			current_view=1;
@@ -387,18 +281,24 @@
 
 			document.getElementById("cvs").style.visibility = "hidden";
 			document.getElementById("cvs2").style.visibility = "visible";
+			<!--Start of constraint html part-->
 			document.getElementById("cvs3").style.visibility = "hidden";
 			document.getElementById("cvs4").style.visibility = "hidden";
+			<!--End of constraint html part-->
 			document.getElementById("cvs5").style.visibility = "hidden";
 
 			document.getElementById("nav1").style = "background-color:#81DAF5";
 			document.getElementById("nav2").style = "background-color:#FFBF00";
+			<!--Start of constraint html part-->
 			document.getElementById("nav3").style = "background-color:#81DAF5";
 			document.getElementById("nav4").style = "background-color:#81DAF5";
+			<!--End of constraint html part-->
 			document.getElementById("nav5").style = "background-color:#81DAF5";
 
 		    current_view=2;
 		}
+
+        <!--Start of constraint html part-->
 
 		function showGraph3(){
 
@@ -418,6 +318,8 @@
 		    current_view=3;
 		}
 
+
+
 		function showGraph4(){
 
 			document.getElementById("cvs").style.visibility = "hidden";
@@ -435,18 +337,24 @@
 		    current_view=4;
 		}
 
+        <!--End of constraint html part-->
+
 		function showGraph5(){
 
 			document.getElementById("cvs").style.visibility = "hidden";
 			document.getElementById("cvs2").style.visibility = "hidden";
+			<!--Start of constraint html part-->
 			document.getElementById("cvs3").style.visibility = "hidden";
 			document.getElementById("cvs4").style.visibility = "hidden";
+			<!--End of constraint html part-->
 			document.getElementById("cvs5").style.visibility = "visible";
 
 			document.getElementById("nav1").style = "background-color:#81DAF5";
 			document.getElementById("nav2").style = "background-color:#81DAF5";
+			<!--Start of constraint html part-->
 			document.getElementById("nav3").style = "background-color:#81DAF5";
 			document.getElementById("nav4").style = "background-color:#81DAF5";
+			<!--End of constraint html part-->
 			document.getElementById("nav5").style = "background-color:#FFBF00";
 
 		    current_view=5;
@@ -456,23 +364,24 @@
 
 			document.getElementById("cvs").width = window.innerWidth*0.9;
 			document.getElementById("cvs2").width = window.innerWidth*0.9;
-			document.getElementById("cvs3").width = window.innerWidth*0.9;
-			document.getElementById("cvs4").width = window.innerWidth*0.9;
 			document.getElementById("cvs5").width = window.innerWidth*0.9;
 
-			document.getElementById("cvs").height = window.innerHeight-300;
-			document.getElementById("cvs2").height = window.innerHeight-300;
-			document.getElementById("cvs3").height = window.innerHeight-300;
-			document.getElementById("cvs4").height = window.innerHeight-300;
-            document.getElementById("cvs5").height = window.innerHeight-300;
+			document.getElementById("cvs").height = window.innerHeight-310;
+			document.getElementById("cvs2").height = window.innerHeight-310;
+            document.getElementById("cvs5").height = window.innerHeight-310;
 
 			document.getElementById("nav1").style = "background-color:#81DAF5";
 			document.getElementById("nav2").style = "background-color:#81DAF5";
-			document.getElementById("nav3").style = "background-color:#81DAF5";
+			document.getElementById("nav5").style = "background-color:#81DAF5";
+
+			<!--Start of constraint html part-->
+			document.getElementById("cvs3").width = window.innerWidth*0.9;
+			document.getElementById("cvs4").width = window.innerWidth*0.9;
+            document.getElementById("cvs3").height = window.innerHeight-310;
+			document.getElementById("cvs4").height = window.innerHeight-310;
+            document.getElementById("nav3").style = "background-color:#81DAF5";
 			document.getElementById("nav4").style = "background-color:#81DAF5";
-			document.getElementById("cvs5").height = window.innerHeight-300;
-
-
+			<!--End of constraint html part-->
 		}
 
 		function show_table() {
@@ -505,14 +414,8 @@
 
 <div id="tableObjFct" height=1px; width=1px; style="visibility: hidden">
     <head>
-<style>
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-     padding: 5px;
-}
-</style>
-</head>
+        <link rel="stylesheet" href="../style.css" type="text/css" media="screen" />
+    </head>
 
     <table>
     <tr>
@@ -525,15 +428,10 @@ table, th, td {
 </div>
 
 <div id="tableDesVar" height=1px; width=1px; style="visibility: hidden">
-       <head>
-<style>
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-     padding: 5px;
-}
-</style>
-</head>
+    <head>
+        <link rel="stylesheet" href="../style.css" type="text/css" media="screen" />
+    </head>
+
     <table>
     <tr>
         <th>Iteration</th>
@@ -544,20 +442,10 @@ table, th, td {
 </div>
 
 <div id="tableConstr" height=1px; width=1px; style="visibility: hidden">
-       <head>
-<style>
-table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-td.negativ {
-  background-color : rgba(255,0,0,0.1);
-}
-td.positiv {
-  background-color : rgba(0,255,0,0.1);
-}
-</style>
-</head>
+    <head>
+        <link rel="stylesheet" href="../style.css" type="text/css" media="screen" />
+    </head>
+
     <table>
     <tr>
        <th>Iteration</th>
