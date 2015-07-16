@@ -46,17 +46,6 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
     template_directory = os.path.dirname(
         os.path.realpath(__file__)) + "/StatusReportFiles/"  # directory with the html files etc.
 
-    html_index = open(template_directory + "/index.html", 'r')  # website root Template öffnen
-    html_index_string = html_index.read()
-    html_index_split = html_index_string.split('<!append new project after here!>')
-    if (html_index_split[0].find(OptName) == -1):
-        html_index_string = html_index_split[
-                                0] + "<br><a href=\"" + OptName + "/" + OptName + "_Status.html\">" + OptName + "</a>\r\n" + '<!append new project after here!>\r\n' + \
-                            html_index_split[1]
-    html_index.close()
-    html_index = open(DesOptDir + "\\Results\\index.html", 'w')
-    html_index.write(html_index_string)
-    html_index.close()
 
     OptHist = History(OptName, "r")  # Instanz einer History erstellen
 
