@@ -45,7 +45,7 @@
 
 <div id="nav_div">
     <ul id="nav">
-        <li id="nav1" onclick="showGraph1()">Objective and biggest constraint</li>
+        <li id="nav1" onclick="showGraph1()">Objective and maximum constraint</li>
         <li id="nav2" onclick="showGraph2()">Design variables</li>
         <li id="nav5" onclick="showGraph5()">Design variables denormalized</li>
         <!--Start of constraint html part-->
@@ -119,7 +119,7 @@
                 .Set('labels.above.decimals',2)
 				.Set('chart.line.colors',['blue'])
 				.Set('title.yaxis',"Value of objective function")
-				.Set('key', ['Objective function'])
+				.Set('key', ['Objective'])
 				.Set('chart.key.colors', ['blue'])
 				.Set('chart.key.position', 'gutter')
 				.Set('chart.key.position.x', 450)
@@ -146,13 +146,13 @@
                 .Set('labels.above.decimals',2)
 				.Set('chart.yaxispos', 'right')
 				.Set('line.colors',['green'])
-				.Set('title.yaxis',"Value of constraint")
+				.Set('title.yaxis',"Value of maxmimum constraint")
 				.Set('title.yaxis.position',"right")
-				.Set('key', ['Constraint'])
+				.Set('key', ['Maximum constraint'])
 				.Set('chart.key.colors', ['green'])
 				.Set('chart.key.position', 'gutter')
 				.Set('chart.key.position.x', 650)
-				.Set('key', ['Constraint'])
+				.Set('key', ['Maximum constraint'])
 				.Set('chart.key.colors', ['green'])
 				.Set('chart.key.position', 'gutter')
 				.Set('chart.key.position.x', 650)
