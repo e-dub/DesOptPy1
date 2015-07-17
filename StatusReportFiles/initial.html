@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="demos.css" type="text/css" media="screen"/>
     <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
 
+    <script src="../jquery.min.js"></script>
     <script src="../RGraph.common.core.js"></script>
     <script src="../RGraph.scatter.js"></script>
     <script src="../RGraph.common.dynamic.js"></script>
@@ -67,6 +68,11 @@
 
     <canvas id="cvs5" width="1200" height="0600">[No canvas support]</canvas>
 
+    <div id="coordinates">
+        Iteration: <input size=2 type="text" id="x" />
+        Value: <input size=6 type="text" id="y" />
+    </div>
+
     <!--Start of constraint html part-->
 
     <canvas id="cvs3" width="1200" height="0600">[No canvas support]</canvas>
@@ -104,33 +110,6 @@
 			var data2 = [xxxxValue2];
             var niter = xxxxnIter;
 
-            var scatter1 = new RGraph.Scatter('cvs', data1)
-                .Set('line', true)
-				.Set('gutter.left',80)
-				.Set('gutter.right',80)
-				.Set('gutter.bottom',30)
-				.Set('xmin',0)
-                .Set('xmax',niter)
-                .Set('ymin',Math.floor(xxxxObjFctmin))
-                .Set('ymax',Math.ceil(xxxxObjFctmax))
-				.Set('ticksize',4)
-                .Set('tickmarks','diamond')
-                .Set('background.grid.autofit.numvlines',niter)
-				.Set('chart.defaultcolor',['blue'])
-                .Set('labels.above.decimals',2)
-				.Set('chart.line.colors',['blue'])
-				.Set('title.yaxis',"Value of objective function")
-				.Set('key', ['Objective'])
-				.Set('chart.key.colors', ['blue'])
-				.Set('chart.key.position', 'gutter')
-				.Set('chart.key.position.x', 450)
-				.Set('chart.resizable',true)
-				.Set('chart.scale.decimals',2)
-				.Set('chart.xscale',true)
-				.Set('chart.xscale.numlabels',niter)
-				.Set('chart.title.xaxis','Iteration')
-				.Set('chart.title.yaxis.pos',0.2)
-                .Draw();
 
 			var scatter2 = new RGraph.Scatter('cvs', data2)
                 .Set('line', true)
@@ -140,8 +119,8 @@
 				.Set('xmin',0)
                 .Set('xmax',niter)
                 .Set('ymin',-1)
-				.Set('ticksize',4)
-				.Set('tickmarks','plus')
+				.Set('ticksize',7)
+				.Set('tickmarks','circle')
 				.Set('background.grid.vlines', false)
 				.Set('chart.defaultcolor',['green'])
                 .Set('labels.above.decimals',2)
@@ -161,6 +140,46 @@
 				.Set('chart.scale.decimals',2)
 				.Set('chart.title.yaxis.pos',0.8)
                 .Draw();
+
+            var scatter1 = new RGraph.Scatter('cvs', data1)
+                .Set('line', true)
+				.Set('gutter.left',80)
+				.Set('gutter.right',80)
+				.Set('gutter.bottom',30)
+				.Set('xmin',0)
+                .Set('xmax',niter)
+                .Set('ymin',Math.floor(xxxxObjFctmin))
+                .Set('ymax',Math.ceil(xxxxObjFctmax))
+				.Set('ticksize',7)
+                .Set('tickmarks','diamond')
+                .Set('background.grid.autofit.numvlines',niter)
+				.Set('chart.defaultcolor',['blue'])
+                .Set('labels.above.decimals',2)
+				.Set('chart.line.colors',['blue'])
+				.Set('title.yaxis',"Value of objective function")
+				.Set('key', ['Objective'])
+				.Set('chart.key.colors', ['blue'])
+				.Set('chart.key.position', 'gutter')
+				.Set('chart.key.position.x', 450)
+				.Set('chart.resizable',true)
+				.Set('chart.scale.decimals',2)
+				.Set('chart.xscale',true)
+				.Set('chart.xscale.numlabels',niter)
+				.Set('chart.title.xaxis','Iteration')
+				.Set('chart.title.yaxis.pos',0.2)
+                .Draw();
+
+
+            scatter1.canvas.onmousemove = function (e)
+				{
+					var obj = e.target.__object__;
+					var x   = obj.getXValue(e);
+					var y   = obj.getYValue(e);
+
+					document.getElementById("x").value = x.toFixed(0);
+					document.getElementById("y").value = y.toFixed(4);
+
+				}
 
 			var ymax = xxxxymax;
 			var ymin = xxxxymin;
@@ -188,6 +207,17 @@
 				.Set('chart.title.yaxis.pos',0.2)
                 .Draw();
 
+            scatterxall.canvas.onmousemove = function (e)
+				{
+					var obj = e.target.__object__;
+					var x   = obj.getXValue(e);
+					var y   = obj.getYValue(e);
+
+					document.getElementById("x").value = x.toFixed(0);
+					document.getElementById("y").value = y.toFixed(4);
+
+				}
+
             var ymax = xxxxXmax;
 			var ymin = xxxxXmin;
 			xxxxdatasetf_denorm
@@ -211,6 +241,19 @@
 				.Set('title.yaxis',"Value of design variables")
 				.Set('chart.title.yaxis.pos',0.2)
                 .Draw();
+
+
+
+             scatterxall_denorm.canvas.onmousemove = function (e)
+				{
+					var obj = e.target.__object__;
+					var x   = obj.getXValue(e);
+					var y   = obj.getYValue(e);
+
+					document.getElementById("x").value = x.toFixed(0);
+					document.getElementById("y").value = y.toFixed(4);
+
+				}
 
             <!--Start of constraint html part-->
 
@@ -242,6 +285,17 @@
 				.Set('background.hbars', [[0,Math.ceil(gmax),'rgba(255,0,0,0.1)'],[0,Math.floor(gmin),'rgba(0,255,0,0.1)']])
                 .Draw();
 
+                scattergall.canvas.onmousemove = function (e)
+                   {
+                       var obj = e.target.__object__;
+                       var x   = obj.getXValue(e);
+                       var y   = obj.getYValue(e);
+
+                       document.getElementById("x").value = x.toFixed(0);
+                       document.getElementById("y").value = y.toFixed(4);
+
+                   }
+
 			var scattergallpos = new RGraph.Scatter('cvs4'xxxxallConVar)
                 .Set('line', true)
 				.Set('gutter.left',80)
@@ -262,6 +316,17 @@
 				.Set('title.yaxis',"Value of vioated constraints")
 				.Set('chart.title.yaxis.pos',0.2)
                 .Draw();
+
+            scattergallpos.canvas.onmousemove = function (e)
+                   {
+                       var obj = e.target.__object__;
+                       var x   = obj.getXValue(e);
+                       var y   = obj.getYValue(e);
+
+                       document.getElementById("x").value = x.toFixed(0);
+                       document.getElementById("y").value = y.toFixed(4);
+
+                   }
 
              <!--End of constraint html part-->
 

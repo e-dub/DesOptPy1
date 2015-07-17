@@ -1,7 +1,16 @@
 
         body { font-family: Verdana, 'Lucida Sans Unicode', sans-serif }
 
+        /*   coordinates is the div which shows the x and y values */
 
+        #coordinates {
+
+            position: absolute;
+			top: 330px;
+			left: 0;
+			right: 0;
+
+        }
 
 
 		#nav_div {
