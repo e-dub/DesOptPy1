@@ -164,20 +164,38 @@ def DesOpt(SysEq, x0, xU, xL, gc=[], hc=[], SensEq=[], Alg="SLSQP", SensCalc="FD
            Debug=False, PrintOut=True, OptNameAdd=""):
 '''
 
+HistDat = []
 if IsPyGMO is True:
     class OptSysEqPyGMO(base):
-        def __init__(self, SysEq=None, xL=0.0, xU=2.0,  gc=[], dim=1, nEval=0):
+        def __init__(self, SysEq=None, xL=0.0, xU=2.0,  gc=[], OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
+                     DesVarNorm="DesVarNorm", StatusReport=False, dim=1, nEval=0):
             super(OptSysEqPyGMO, self).__init__(dim)
             self.set_bounds(xL, xU)
             self.__dim = dim
             self.gc = gc
             self.SysEq = SysEq
             self.nEval = nEval
+            self.OptName = OptName
+            self.Alg = Alg
+            self.xL = xL
+            self.xU = xU
+            self.DesOptDir = DesOptDir
+            self.DesVarNorm = DesVarNorm
+            self.StatusReport = StatusReport
+            self.AlgInst = pyOpt.Optimizer(self.Alg)
 
         def _objfun_impl(self, x):
             self.nEval += 1
             f, g = self.SysEq(x, self.gc)
             gnew = np.zeros(np.shape(g))
+            global HistData
+            if self.nEval == 1:
+                HistData = pyOpt.History(self.OptName, 'w', optimizer=self.AlgInst, opt_prob=self.OptName)
+            HistData.write(x, "x")
+            HistData.write(f, "obj")
+            HistData.write(g, "con")
+            if self.StatusReport == 1:
+                OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.xL, self.xU, self.DesVarNorm)
             if g is not []:
                 for ii in range(np.size(g)):
                     if g[ii] > 0.0:
@@ -542,10 +560,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         DesVarNorm = "None"
         ngen = 500
         nindiv = max(nx*3, 7)
-        print nindiv
+        #print nindiv
         dim = np.size(x0)
         # prob = OptSysEqPyGMO(dim=dim)
-        prob = OptSysEqPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim)
+        prob = OptSysEqPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
+                             DesVarNorm=DesVarNorm, StatusReport=StatusReport)
         # prob = problem.death_penalty(prob_old, problem.death_penalty.method.KURI)
         if Alg[6:] in ["de", "bee_colony", "nsga_II", "pso", "pso_gen", "cmaes", "py_cmaes",
                        "spea2", "nspso", "pade", "sea", "vega", "sga", "sga_gray", "de_1220",
@@ -570,10 +589,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         isl.join()
         xOpt = isl.population.champion.x
         fOpt = isl.population.champion.f[0]
+        #print fOpt
         nEval = isl.population.problem.fevals
-        fOpt, gOpt, fail = OptSysEq(xOpt)
-        xIter = []
-        fIter = []
+        #fOpt, gOpt, fail = OptSysEq(xOpt)
+        #xIter = []
+        #fIter = []
     elif Alg[:5] == "scipy":
         import scipy.optimize as sciopt
         bounds = [[]]*len(x0)
