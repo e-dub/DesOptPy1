@@ -133,6 +133,7 @@ except:
     IsPyGMO = False
 
 
+
 '''
 Constrained like this...does not work yet...
 
@@ -272,6 +273,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     print("Optimization start:      " + StartTime.strftime("%Y%m%d%H%M"))
     print("Optimization name:       " + OptName)
     print("------------------------------------------------------------------------------")
+
+
 
 # -------------------------------------------------------------------------------------------------
 #       Optimization problem

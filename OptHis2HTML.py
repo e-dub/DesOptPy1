@@ -31,6 +31,7 @@ import glob
 
 def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory=""):
 
+
     if StatusDirectory == "":           #Change the target directory for the status report files if the user wants to
         StatusDirectory = DesOptDir
 
