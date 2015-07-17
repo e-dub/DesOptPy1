@@ -253,7 +253,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
     html.close()
 
     # Neue HTML Datei erstellen
-    if gIter.size != 0:
+    if gIter.size != 0 or gIter.size > 100:
         hstrnew = hstr.replace('xxxxName', OptName)
         hstrnew = hstrnew.replace('xxxxTime', time_now)
         hstrnew = hstrnew.replace('xxxxValue1', value)
