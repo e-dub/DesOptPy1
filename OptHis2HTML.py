@@ -253,6 +253,11 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
     hstr = html.read()
     html.close()
 
+    if len(fAll) > 50:
+        xxxxNumLabels = str(30)
+    else:
+        xxxxNumLabels = str(niter)
+
     # Neue HTML Datei erstellen
     if gIter.size != 0 or gIter.size > 100:
         hstrnew = hstr.replace('xxxxName', OptName)
@@ -280,6 +285,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
         hstrnew = hstrnew.replace('xxxxnumber_des_var', number_des_vars)
         hstrnew = hstrnew.replace('xxxxtableConstr', Constraint_table)
         hstrnew = hstrnew.replace('xxxxnumber_constraints', number_constraints)
+        hstrnew = hstrnew.replace('xxxxNumLabels', xxxxNumLabels)
     else:
         hstrnew = hstr.replace('xxxxName', OptName)
         hstrnew = hstrnew.replace('xxxxTime', time_now)
@@ -301,7 +307,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
         hstrnew = hstrnew.replace('xxxxdatasetg', datasetsg)
         hstrnew = hstrnew.replace('xxxxtableObjFct', ObjFct_table)
         hstrnew = hstrnew.replace('xxxxtableDesVar', DesVar_table)
-        hstrnew = hstrnew.replace('xxxxnumber_des_var', number_des_vars)
+        hstrnew = hstrnew.replace('xxxxNumLabels', xxxxNumLabels)
 
         try:  # remove the hmtl parts which are only needed for constrained problems
             for i in range(0, 10):
