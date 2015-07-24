@@ -471,19 +471,29 @@
 
 		    switch(current_view) {
 		    		case 1:
+		    		    myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
 		    			myWindow.document.write(tableObjFct.innerHTML);
+		    			myWindow.document.close();
 		    		break;
 		    		case 2:
+		    		    myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
 		    			myWindow.document.write(tableDesVar.innerHTML);
+		    			myWindow.document.close();
 		    		break;
 		    		case 3:
+		    		    myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
 		    			myWindow.document.write(tableConstr.innerHTML);
+		    			myWindow.document.close();
 		    		break;
 		    		case 4:
+		    		    myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
 		    			myWindow.document.write(tableConstr.innerHTML);
+		    			myWindow.document.close();
 		    		break;
 		    		case 5:
+		    		    myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
 		    			myWindow.document.write(tableDesVar.innerHTML);
+		    			myWindow.document.close();
 		    		break;
 		    	}
 
@@ -498,10 +508,10 @@
 
 <div id="tableObjFct" height=1px; width=1px; style="visibility: hidden">
     <head>
-        <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="../filtergrid.css" type="text/css" media="screen">
     </head>
 
-    <table>
+    <table id="table1">
         <tr>
             <th>Iteration</th>
             <th>Objective Function</th>
@@ -509,34 +519,73 @@
         </tr>
         xxxxtableObjFct
     </table>
+    <script language="javascript" type="text/javascript">
+    var table1_Props = {
+		filters_row_index: 1,
+        alternate_rows: true,
+		col_width: ["60px","130px","130px"],//prevents column width variations
+        rows_counter: true,
+        rows_counter_text: "Total rows: ",
+        btn_reset: true,
+        mark_active_columns: true,
+        selectable: true,
+	};
+	var tf3 = setFilterGrid( "table1",table1_Props );
+</script>
 </div>
 
 <div id="tableDesVar" height=1px; width=1px; style="visibility: hidden">
     <head>
-        <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="../filtergrid.css" type="text/css" media="screen">
     </head>
 
-    <table>
+    <table id="table1">
         <tr>
             <th>Iteration</th>
-            <th colspan="xxxxnumber_des_var">Design Variables | Denormalized</th>
+            <th colspan="xxxxnumber_des_var">Design Variables</th>
         </tr>
         xxxxtableDesVar
     </table>
+    <script language="javascript" type="text/javascript">
+    var table1_Props = {
+		filters_row_index: 1,
+        alternate_rows: true,
+		col_width: ["120px","170px",null,null,null],//prevents column width variations
+        rows_counter: true,
+        rows_counter_text: "Total rows: ",
+        btn_reset: true,
+        mark_active_columns: true,
+        selectable: true,
+	};
+	var tf3 = setFilterGrid( "table1",table1_Props );
+</script>
 </div>
 
 <div id="tableConstr" height=1px; width=1px; style="visibility: hidden">
     <head>
-        <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
+        <link rel="stylesheet" href="../filtergrid.css" type="text/css" media="screen">
     </head>
 
-    <table>
+    <table id="table1">
         <tr>
             <th>Iteration</th>
             <th colspan="xxxxnumber_constraints">Constraints</th>
         </tr>
         xxxxtableConstr
     </table>
+    <script language="javascript" type="text/javascript">
+    var table1_Props = {
+		filters_row_index: 1,
+        alternate_rows: true,
+		col_width: ["120px","170px",null,null,null],//prevents column width variations
+        rows_counter: true,
+        rows_counter_text: "Total rows: ",
+        btn_reset: true,
+        mark_active_columns: true,
+        selectable: true,
+	};
+	var tf3 = setFilterGrid( "table1",table1_Props );
+</script>
 </div>
 
 

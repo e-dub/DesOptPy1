@@ -210,12 +210,12 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
     if xIter.size != 0:
         if gIter.size != 0:
             for x in range(0, niter + 1):
-                ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + str(round(fIter[x], 5)) + "</td>\n<td>" + str(
-                    round(np.max(gIter[x]), 5)) + "</td>\n</tr>"
+                ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + str(round(fIter[x], 4)) + "</td>\n<td>" + str(
+                    round(np.max(gIter[x]), 4)) + "</td>\n</tr>"
         else:
             for x in range(0, niter + 1):
                 ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + str(
-                    round(fIter[x], 5)) + "</td>\n<td> no constraints </td>\n</tr>"
+                    round(fIter[x], 4)) + "</td>\n<td> no constraints </td>\n</tr>"
 
     ##Design Variable table generation
 
@@ -224,13 +224,13 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
         number_des_vars = str(len(xIter[0]))
 
         for x in range(0, len(xIter[0])):  #header erzeugen
-            DesVar_table += "<td>" + "x_" + str(x + 1) + "</td>"
+            DesVar_table += "<td>" + "x_" + str(x + 1) + "</td>" + "<td>" + "x_" + str(x + 1) + " denormalized</td>"
 
         for y in range(0, niter + 1):  # daten befuellen
             DesVar_table += "<tr>\n<td>" + str(y) + "</td>"
             for x in range(0, len(xIter[0])):
-                DesVar_table += "<td>" + str(round(xIter[y][x], 5)) + "  |  " + str(
-                    round(xIter_denormalized[y][x], 5)) + "</td>"
+                DesVar_table += "<td>" + str(round(xIter[y][x], 4)) + "</td><td>" + str(
+                    round(xIter_denormalized[y][x], 4)) + "</td>"
             DesVar_table += "</tr>"
 
     ##Constraint  table generation
@@ -243,10 +243,10 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
         for y in range(0, niter + 1):  # daten befuellen
             Constraint_table += "<tr>\n<td>" + str(y) + "</td>"
             for x in range(0, len(gIter[0])):
-                if (round(gIter[y][x], 5) > 0):
-                    Constraint_table += "<td class=\"negativ\">" + str(round(gIter[y][x], 5)) + "</td>"
+                if (round(gIter[y][x], 4) > 0):
+                    Constraint_table += "<td class=\"negativ\">" + str(round(gIter[y][x], 4)) + "</td>"
                 else:
-                    Constraint_table += "<td class=\"positiv\">" + str(round(gIter[y][x], 5)) + "</td>"
+                    Constraint_table += "<td class=\"positiv\">" + str(round(gIter[y][x], 4)) + "</td>"
             Constraint_table += "</tr>"
 
     html = open(template_directory + '/initial.html', 'r')  # HTML Template öffnen
@@ -282,7 +282,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
         hstrnew = hstrnew.replace('xxxxallConVar', allConVar)
         hstrnew = hstrnew.replace('xxxxtableObjFct', ObjFct_table)
         hstrnew = hstrnew.replace('xxxxtableDesVar', DesVar_table)
-        hstrnew = hstrnew.replace('xxxxnumber_des_var', number_des_vars)
+        hstrnew = hstrnew.replace('xxxxnumber_des_var', number_des_vars*2)
         hstrnew = hstrnew.replace('xxxxtableConstr', Constraint_table)
         hstrnew = hstrnew.replace('xxxxnumber_constraints', number_constraints)
         hstrnew = hstrnew.replace('xxxxNumLabels', xxxxNumLabels)
