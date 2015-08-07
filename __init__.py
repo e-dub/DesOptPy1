@@ -287,7 +287,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         except: pass
         os.mkdir(ResultsDir + DirSplit + OptName)
         os.mkdir(ResultsDir + os.sep + OptName + os.sep + "ResultReport" + os.sep)
-        shutil.copytree(os.getcwd(),RunDir + os.sep + OptName)
+        shutil.copytree(os.getcwd(), RunDir + os.sep + OptName)
     #if SensCalc == "ParaFD":
     #    import OptSensParaFD
     #    os.system("cp -r ParaPythonFn " + homeDir + userName + "/DesOptRun/" + OptName)
