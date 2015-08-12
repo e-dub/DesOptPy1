@@ -72,7 +72,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
             xIter.append(xAll[pos_of_best_ind[i]])
             gIter.append(gAll[pos_of_best_ind[i]])
 
-        print fAll.__len__() / PopSize
+        #print fAll.__len__() / PopSize
     else:
         fIter = [[]] * len(fGradIter)
         xIter = [[]] * len(fGradIter)

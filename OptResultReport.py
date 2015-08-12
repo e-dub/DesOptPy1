@@ -409,7 +409,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         if Alg[:5] != "PyGMO":
             for uu in OptAlg.options:
                 if str(uu) != "defaults" and str(uu) != "IFILE":
-                    temp = [str(uu),'&',str(OptAlg.options[uu][1]),'\\tabularnewline \n']
+                    temp = ["\\verb!", str(uu), '! & ',  str(OptAlg.options[uu][1]), ' \\tabularnewline \n']
                     optCrit=optCrit + temp
                 #optCrit.append('\\bottomrule \n')
         optCrit.append('\\bottomrule \n')
