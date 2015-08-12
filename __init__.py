@@ -671,7 +671,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     gGradIter = OptHist.read([0, -1], ["grad_con"])[0]["grad_con"]
     fGradIter = OptHist.read([0, -1], ["grad_obj"])[0]["grad_obj"]
     failIter = OptHist.read([0, -1], ["fail"])[0]["fail"]
-    if Alg == "COBYLA" or Alg == "NSGA2":
+    if Alg == "COBYLA" or Alg == "NSGA2" or Alg[:5] == "PyGMO":
         fIter = fAll
         xIter = xAll
         gIter = gAll
@@ -780,11 +780,17 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         gOpt = gIter[nIter - 1]
         gOptActiveIndex = gOpt > -epsActive
         gOptActive = gOpt[gOpt > -epsActive]
-    else:
+    elif np.size(gc) == 0:
         gOptActiveIndex = [[False]] * len(gc)
         gOptActive = np.array([])
         gMaxIter = np.array([] * nIter)
         gOpt = np.array([])
+    else:
+        gMaxIter = np.zeros([nIter])
+        for ii in range(len(gIter)):
+            gMaxIter[ii] = max(gIter[ii])
+        gOptActiveIndex = gOpt > -epsActive
+        gOptActive = gOpt[gOpt > -epsActive]
     if xLU_Active == []:
         g_xLU_OptActive = gOptActive
     elif gOptActive == []:

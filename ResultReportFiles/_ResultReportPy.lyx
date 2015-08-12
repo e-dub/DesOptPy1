@@ -172,10 +172,6 @@ pagenumbering{roman}
 \end_inset
 
 
-\begin_inset space \hfill{}
-\end_inset
-
-
 \begin_inset Box Frameless
 position "c"
 hor_pos "c"
@@ -183,7 +179,7 @@ has_inner_box 1
 inner_pos "c"
 use_parbox 1
 use_makebox 0
-width "2cm"
+width "100text%"
 special "none"
 height "1in"
 height_special "totalheight"
@@ -191,7 +187,7 @@ status open
 
 \begin_layout Plain Layout
 \noindent
-\align left
+\align center
 \begin_inset Graphics
 	filename DesOptPy.png
 	lyxscale 10
@@ -202,10 +198,6 @@ status open
 
 \end_layout
 
-\end_inset
-
-
-\begin_inset space \hfill{}
 \end_inset
 
 

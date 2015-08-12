@@ -406,10 +406,11 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         #optCrit.append('\\midrule \n')
         #optCrit.append('\\midrule \n')os.system(
         optCrit.append('\\midrule \n')
-        for uu in OptAlg.options:
-            if str(uu) != "defaults" and str(uu) != "IFILE":
-                temp = [str(uu),'&',str(OptAlg.options[uu][1]),'\\tabularnewline \n']
-                optCrit=optCrit + temp
+        if Alg[:5] != "PyGMO":
+            for uu in OptAlg.options:
+                if str(uu) != "defaults" and str(uu) != "IFILE":
+                    temp = [str(uu),'&',str(OptAlg.options[uu][1]),'\\tabularnewline \n']
+                    optCrit=optCrit + temp
                 #optCrit.append('\\bottomrule \n')
         optCrit.append('\\bottomrule \n')
         optCrit.append('\\end{tabular} \n')
@@ -493,7 +494,10 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         srT.append('\\midrule \n')
         # srT.append('\\midrule \n')
         # temp = [r'Objective function  & $\f$ & ',str(round(fIter[0][0],4)),'&',str(round(fOpt[0],4)),'\\tabularnewline']
-        temp = [r'Objective function  & $\f$ & ', str(round(fIter[0][0], 4)), '&', str(round(fOpt[0], 4)), '\\tabularnewline \n']
+        if  Alg[:5] == "PyGMO":
+            temp = [r'Objective function  & $\f$ & ', str(round(fIter[0][0], 4)), '&', str(round(fOpt, 4)), '\\tabularnewline \n']
+        else:
+            temp = [r'Objective function  & $\f$ & ', str(round(fIter[0][0], 4)), '&', str(round(fOpt[0], 4)), '\\tabularnewline \n']
         srT = srT + temp
         if np.size(gc) > 0:
             for ii in range(ng):
