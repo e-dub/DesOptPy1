@@ -649,7 +649,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #       Optimization post-processing
 #-----------------------------------------------------------------------------------------------------------------------
     if StatusReport == 1:
-            OptHis2HTML.OptHis2HTML(OptName, OptAlg,DesOptDir , xL,xU, DesVarNorm)
+            OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir , xL,xU, DesVarNorm)
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
     hhmmss0 = time.strftime("%H", loctime0)+' : '+time.strftime("%M", loctime0)+' : '+time.strftime("%S", loctime0)
@@ -904,8 +904,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #-----------------------------------------------------------------------------------------------------------------------
 #   §5.2    Save in MATLAB format
 #-----------------------------------------------------------------------------------------------------------------------
-    OptSolData['OptAlg'] = []
+    #OptSolData['OptAlg'] = []
     spio.savemat(OptName + '_OptSol.mat', OptSolData, oned_as='row')
+
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 #
@@ -926,11 +928,12 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #-----------------------------------------------------------------------------------------------------------------------
     if ResultReport is True:
         print("Entering preprocessing mode")
-        OptResultReport.OptResultReport(OptName, diagrams=1, tables=1, lyx=1)
+        OptResultReport.OptResultReport(OptName, OptAlg, DesOptDir, diagrams=1, tables=1, lyx=1)
         # try: OptResultReport.OptResultReport(OptName, diagrams=1, tables=1, lyx=1)
         # except: print("Problem with generation of Result Report. Check if all prerequisites are installed")
     if Video is True:
         OptVideo.OptVideo(OptName)
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 #   § Print out

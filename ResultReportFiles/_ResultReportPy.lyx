@@ -172,6 +172,10 @@ pagenumbering{roman}
 \end_inset
 
 
+\begin_inset space \hfill{}
+\end_inset
+
+
 \begin_inset Box Frameless
 position "c"
 hor_pos "c"
@@ -202,19 +206,6 @@ status open
 
 
 \begin_inset space \hfill{}
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset CommandInset line
-LatexCommand rule
-offset "0.5ex"
-width "100col%"
-height "1pt"
-
 \end_inset
 
 

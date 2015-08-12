@@ -153,9 +153,10 @@ def DoubleConvPlot(figName, data, dataLabel, xLabel, yLabel, Color, ResultsFolde
     fail = 0
     return fail
 
-def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
-    DirRunFiles = "../DesOpt/Results/"+optname+"/RunFiles/"
-    file_OptSolData = open(DirRunFiles+"/"+optname+"_OptSol.pkl")
+def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
+    DirRunFiles = DesOptDir + "/Results/"+optname+"/RunFiles/"
+    ResultsFolder = DesOptDir + "/Results/"+optname+"/ResultReport/"
+    file_OptSolData = open(DirRunFiles+optname+"_OptSol.pkl")
     OptSolData = pickle.load(file_OptSolData)
     x0 = OptSolData['x0']
     xOpt = OptSolData['xOpt']
@@ -189,7 +190,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
     nIter = OptSolData['nIter']
     SPg = OptSolData['SPg']
     gc = OptSolData['gc']
-    OptAlg = OptSolData['OptAlg']
+    #OptAlg = OptSolData['OptAlg']
     x0norm = OptSolData['x0norm']
     xL = OptSolData['xL']
     xU = OptSolData['xU']
@@ -198,7 +199,6 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
     Opt1Order = OptSolData['Opt1Order']
     hhmmss0 = OptSolData['hhmmss0']
     hhmmss1 = OptSolData['hhmmss1']
-    ResultsFolder = "../DesOpt/Results/"+OptName+"/ResultReport/"
     if operatingSystem != 'Windows':
         InkscapeCall = "inkscape"
         LyxCall = "lyx"
@@ -561,11 +561,13 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
         # Write LyX solution document and print as pdf
         # ---------------------------------------------------------------------------------------------------
         templatePath = os.path.dirname(os.path.realpath(__file__)) + "/ResultReportFiles/"
-        shutil.copy(templatePath + "/TUM.eps", ResultsFolder+"TUM.eps")
-        shutil.copy(templatePath + "/FG_CM_blau_oZ_CMYK.eps", ResultsFolder + "FG_CM_blau_oZ_CMYK.eps")
-        shutil.copy(templatePath + "/FGCM_Background.pdf", ResultsFolder + "FGCM_Background.pdf")
-        FileName = ["_ResultPresentationPy.lyx", "_ResultReportPy.lyx"]
-        for ii in range(2):
+        shutil.copy(templatePath + "/DesOptPy.png", ResultsFolder+"DesOptPy.png")
+        # shutil.copy(templatePath + "/TUM.eps", ResultsFolder+"TUM.eps")
+        # shutil.copy(templatePath + "/FG_CM_blau_oZ_CMYK.eps", ResultsFolder + "FG_CM_blau_oZ_CMYK.eps")
+        # shutil.copy(templatePath + "/FGCM_Background.pdf", ResultsFolder + "FGCM_Background.pdf")
+        # FileName = ["_ResultPresentationPy.lyx", "_ResultReportPy.lyx"]
+        FileName = ["_ResultReportPy.lyx"]
+        for ii in range(len(FileName)):
             fRR = open(templatePath + FileName[ii], "r+")
             contentRR = fRR.readlines()
             # Replace Modelname and Date
@@ -600,7 +602,7 @@ def OptResultReport(optname,diagrams=1,tables=0,lyx=0):
             fRR.writelines(contentRR)
             fRR.close()
     if lyx == 1:
-        for ii in range(2):
+        for ii in range(len(FileName)):
             os.system(LyxCall + " --export pdf2 " + ResultsFolder + OptName + FileName[ii])
 
 
