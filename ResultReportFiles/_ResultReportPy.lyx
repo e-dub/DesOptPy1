@@ -189,7 +189,8 @@ status open
 \noindent
 \align left
 \begin_inset Graphics
-	filename TUM.eps
+	filename DesOptPy.png
+	lyxscale 10
 	height 2cm
 
 \end_inset
@@ -201,84 +202,6 @@ status open
 
 
 \begin_inset space \hfill{}
-\end_inset
-
-
-\begin_inset Box Frameless
-position "c"
-hor_pos "c"
-has_inner_box 1
-inner_pos "c"
-use_parbox 1
-use_makebox 0
-width "50col%"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-
-\lang ngerman
-Technische Universität München
-\begin_inset Newline newline
-\end_inset
-
-Ingenieurfakultät Bau Geo Umwelt 
-\begin_inset Newline newline
-\end_inset
-
-Fachgebiet 
-\lang english
-Computational Mechanics
-\lang ngerman
-
-\begin_inset Newline newline
-\end_inset
-
-Univ.
- Prof.
- Dr.-Ing.
- habil.
- F.
- Duddeck
-\end_layout
-
-\end_inset
-
-
-\begin_inset space \hfill{}
-\end_inset
-
-
-\begin_inset Box Frameless
-position "c"
-hor_pos "c"
-has_inner_box 1
-inner_pos "c"
-use_parbox 1
-use_makebox 0
-width "2cm"
-special "none"
-height "1in"
-height_special "totalheight"
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align right
-\begin_inset Graphics
-	filename FG_CM_blau_oZ_CMYK.eps
-	lyxscale 200
-	height 2cm
-
-\end_inset
-
-
-\end_layout
-
 \end_inset
 
 
@@ -303,71 +226,6 @@ Design Optimization Result Report
 
 \begin_layout Title
 XXXmodelname
-\end_layout
-
-\begin_layout Author
-E.
- J.
- Wehrle
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-Erich Wehrle
-\begin_inset Newline newline
-\end_inset
-
-Postdoctoral Researcher
-\begin_inset Newline newline
-\end_inset
-
-Chair of Computational Mechanics  
-\begin_inset Newline newline
-\end_inset
-
-Technische Universität München 
-\begin_inset Newline newline
-\end_inset
-
-Arcisstraße 21 
-\begin_inset Newline newline
-\end_inset
-
-80333 München 
-\begin_inset Newline newline
-\end_inset
-
-Germany 
-\begin_inset Newline newline
-\end_inset
-
-Office: Augustenstraße 44 
-\begin_inset Newline newline
-\end_inset
-
-+49-89-289-28663
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset CommandInset href
-LatexCommand href
-name "wehrle@tum.de"
-target "wehrle@tum.de"
-type "mailto:"
-
-\end_inset
-
-
-\begin_inset space \hfill{}
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Date
