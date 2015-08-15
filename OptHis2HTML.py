@@ -40,8 +40,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
     xIter = []
     gIter = []
 
-    directory_startscript = sys.argv[0]
-    (DesOpt_Base, tail) = os.path.split(directory_startscript)
+
 
     # template_directory= DesOpt_Base + "/.DesOptPy/_OptStatusReport/"  # directory with the html files etc.
     template_directory = os.path.dirname(
@@ -224,7 +223,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
         number_des_vars = str(len(xIter[0]))
 
         for x in range(0, len(xIter[0])):  #header erzeugen
-            DesVar_table += "<td>" + "x_" + str(x + 1) + "</td>" + "<td>" + "x_" + str(x + 1) + " denormalized</td>"
+            DesVar_table += "<td>" + "x&#770;<sub>" + str(x + 1) + "</sub></td>" + "<td>" + "x<sub>" + str(x + 1) + " </sub></td>"
 
         for y in range(0, niter + 1):  # daten befuellen
             DesVar_table += "<tr>\n<td>" + str(y) + "</td>"
@@ -239,7 +238,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
     if gIter.size != 0:
         number_constraints = str(len(gIter[0]))
         for x in range(0, len(gIter[0])):  #header erzeugen
-            Constraint_table += "<td>" + "g_" + str(x + 1) + "</td>"
+            Constraint_table += "<td>" + "g<sub>" + str(x + 1) + "</sub></td>"
         for y in range(0, niter + 1):  # daten befuellen
             Constraint_table += "<tr>\n<td>" + str(y) + "</td>"
             for x in range(0, len(gIter[0])):

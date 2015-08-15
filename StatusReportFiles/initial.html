@@ -39,9 +39,11 @@
 </head>
 <body onresize="resizeGraphs()">
 <div id="banner">
-    <div style="float: left;margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" alt="titelbild" height="85"></div>
-    <center><h1>Design Optimization Status Report<br><font size="5">of</font><br>xxxxName<br>
-        <font size="5">Last Update: xxxxTime</font></h1></center>
+    <div style="float: left;margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" alt="Picture1" height="85"></div>
+    <div style="float: right;margin: 0px 60px 0px 00px;"><img src="../DesOptPy2.png" alt="Picture2" height="85"></div>
+    <center><h2>Design Optimization Status Report<br><font size="5">of</font><br>xxxxName<br>
+        <font size="5">Last Update: xxxxTime</font></h2></center>
+
 </div>
 
 <div id="nav_div">
@@ -59,7 +61,6 @@
 <br>
 
 <center>
-    <button onclick="show_table()" id="btn_show"> Show data in table</button>
 
     <canvas id="cvs" width="1200" height="0600">[No canvas support]</canvas>
 
@@ -68,8 +69,9 @@
     <canvas id="cvs5" width="1200" height="0600">[No canvas support]</canvas>
 
     <div id="coordinates">
-        Iteration: <input size=2 type="text" id="x" />
-        Value: <input size=6 type="text" id="y" />
+        Iteration: <input size=2 type="text" id="x" style="border: medium none white;" />
+        Value: <input size=6 type="text" id="y" style="border: medium none white;" />
+        <button onclick="show_table()" id="btn_show" > Show data in table</button>
     </div>
 
     <!--Start of constraint html part-->
@@ -92,7 +94,11 @@
 
         function drawDiagrams(){
 
-            document.getElementById("nav1").style = "background-color:#FFBF00";
+            document.getElementById("nav1").className = "active";
+            document.getElementById("nav2").className = "deactive";
+            document.getElementById("nav3").className = "deactive";
+            document.getElementById("nav4").className = "deactive";
+            document.getElementById("nav5").className = "deactive";
 
 			var cc=['#000000','#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#33ff33',
 					'#666666','#990000','#339900','#330099','#999933','#9933ff','#66cccc',
@@ -334,7 +340,6 @@
 
 
 
-
 		function showGraph1(){
 
 			document.getElementById("cvs").style.visibility = "visible";
@@ -345,13 +350,13 @@
 			<!--End of constraint html part-->
 			document.getElementById("cvs5").style.visibility = "hidden";
 
-			document.getElementById("nav1").style = "background-color:#FFBF00";
-			document.getElementById("nav2").style = "background-color:#81DAF5";
+			document.getElementById("nav1").className = "active";
+			document.getElementById("nav2").className = "deactive";
 			<!--Start of constraint html part-->
-			document.getElementById("nav3").style = "background-color:#81DAF5";
-			document.getElementById("nav4").style = "background-color:#81DAF5";
+			document.getElementById("nav3").className = "deactive";
+			document.getElementById("nav4").className = "deactive";
 			<!--End of constraint html part-->
-			document.getElementById("nav5").style = "background-color:#81DAF5";
+			document.getElementById("nav5").className = "deactive";
 
 			current_view=1;
 
@@ -367,13 +372,13 @@
 			<!--End of constraint html part-->
 			document.getElementById("cvs5").style.visibility = "hidden";
 
-			document.getElementById("nav1").style = "background-color:#81DAF5";
-			document.getElementById("nav2").style = "background-color:#FFBF00";
+			document.getElementById("nav1").className = "deactive";
+			document.getElementById("nav2").className = "active";
 			<!--Start of constraint html part-->
-			document.getElementById("nav3").style = "background-color:#81DAF5";
-			document.getElementById("nav4").style = "background-color:#81DAF5";
+			document.getElementById("nav3").className = "deactive";
+			document.getElementById("nav4").className = "deactive";
 			<!--End of constraint html part-->
-			document.getElementById("nav5").style = "background-color:#81DAF5";
+			document.getElementById("nav5").className = "deactive";
 
 		    current_view=2;
 		}
@@ -388,11 +393,11 @@
 			document.getElementById("cvs4").style.visibility = "hidden";
 			document.getElementById("cvs5").style.visibility = "hidden";
 
-			document.getElementById("nav1").style = "background-color:#81DAF5";
-			document.getElementById("nav2").style = "background-color:#81DAF5";
-			document.getElementById("nav3").style = "background-color:#FFBF00";
-			document.getElementById("nav4").style = "background-color:#81DAF5";
-			document.getElementById("nav5").style = "background-color:#81DAF5";
+			document.getElementById("nav1").className = "deactive";
+			document.getElementById("nav2").className = "deactive";
+			document.getElementById("nav3").className = "active";
+			document.getElementById("nav4").className = "deactive";
+			document.getElementById("nav5").className = "deactive";
 
 
 		    current_view=3;
@@ -408,11 +413,11 @@
 			document.getElementById("cvs4").style.visibility = "visible";
 			document.getElementById("cvs5").style.visibility = "hidden";
 
-			document.getElementById("nav1").style = "background-color:#81DAF5";
-			document.getElementById("nav2").style = "background-color:#81DAF5";
-			document.getElementById("nav3").style = "background-color:#81DAF5";
-			document.getElementById("nav4").style = "background-color:#FFBF00";
-			document.getElementById("nav5").style = "background-color:#81DAF5";
+			document.getElementById("nav1").className = "deactive";
+			document.getElementById("nav2").className = "deactive";
+			document.getElementById("nav3").className = "deactive";
+			document.getElementById("nav4").className = "active";
+			document.getElementById("nav5").className = "deactive";
 
 		    current_view=4;
 		}
@@ -429,13 +434,13 @@
 			<!--End of constraint html part-->
 			document.getElementById("cvs5").style.visibility = "visible";
 
-			document.getElementById("nav1").style = "background-color:#81DAF5";
-			document.getElementById("nav2").style = "background-color:#81DAF5";
+			document.getElementById("nav1").className = "deactive";
+			document.getElementById("nav2").className = "deactive";
 			<!--Start of constraint html part-->
-			document.getElementById("nav3").style = "background-color:#81DAF5";
-			document.getElementById("nav4").style = "background-color:#81DAF5";
+			document.getElementById("nav3").className = "deactive";
+			document.getElementById("nav4").className = "deactive";
 			<!--End of constraint html part-->
-			document.getElementById("nav5").style = "background-color:#FFBF00";
+			document.getElementById("nav5").className = "active";
 
 		    current_view=5;
 		}
@@ -450,17 +455,15 @@
 			document.getElementById("cvs2").height = window.innerHeight-310;
             document.getElementById("cvs5").height = window.innerHeight-310;
 
-			document.getElementById("nav1").style = "background-color:#81DAF5";
-			document.getElementById("nav2").style = "background-color:#81DAF5";
-			document.getElementById("nav5").style = "background-color:#81DAF5";
+			document.getElementById("nav1").className = "deactive";
+			document.getElementById("nav2").className = "deactive";
+			document.getElementById("nav5").className = "deactive";
 
 			<!--Start of constraint html part-->
 			document.getElementById("cvs3").width = window.innerWidth*0.9;
 			document.getElementById("cvs4").width = window.innerWidth*0.9;
             document.getElementById("cvs3").height = window.innerHeight-310;
 			document.getElementById("cvs4").height = window.innerHeight-310;
-            document.getElementById("nav3").style = "background-color:#81DAF5";
-			document.getElementById("nav4").style = "background-color:#81DAF5";
 			<!--End of constraint html part-->
 		}
 

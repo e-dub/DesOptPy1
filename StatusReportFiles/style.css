@@ -6,7 +6,7 @@
         #coordinates {
 
             position: absolute;
-			top: 330px;
+			top: 280px;
 			left: 0;
 			right: 0;
 
@@ -22,21 +22,42 @@
 			display: inline-block;
 			margin: 0;
 			padding: 0;
+			border-top:3px solid rgba(207, 207, 255, 0.52);
 			/* For IE, the outcast */
 			zoom:1;
 			*display: inline;
 			list-style:none;
 		}
 
-		#nav li {
+		.deactive{
 			float:left;
 			margin:2px;
 			padding:4px;
-			border: 1px solid rgb(152,198,234);
-			background-color: rgb(152,198,234);
-			border-radius:3px;
-
+			border-bottom: 3px solid #FFFF;
 		}
+
+		.deactive:hover{
+			float:left;
+			margin:2px;
+			padding:4px;
+			border-bottom: 3px solid #0072BD;
+		}
+
+		.active {
+			float:left;
+			margin:2px;
+			padding:4px;
+			border-bottom: 3px solid #0072BD;
+		}
+
+        #btn_show {
+            border:none;
+        }
+
+        #btn_show:hover {
+            background: #0072BD;
+        }
+
 		#nav a {
 			display:block;
 			text-align:center;
@@ -46,7 +67,7 @@
 
 		#cvs {
 			position: absolute;
-			top: 300px;
+			top: 250px;
 			margin-left: auto;
 			margin-right: auto;
 			left: 0;
@@ -56,7 +77,7 @@
 
 		#cvs2 {
 			position: absolute;
-			top: 300px;
+			top: 250px;
 			margin-left: auto;
 			margin-right: auto;
 			left: 0;
@@ -66,7 +87,7 @@
 
 		#cvs3 {
 			position: absolute;
-			top: 300px;
+			top: 250px;
 			margin-left: auto;
 			margin-right: auto;
 			left: 0;
@@ -76,7 +97,7 @@
 
 		#cvs4 {
 			position: absolute;
-			top: 300px;
+			top: 250px;
 			margin-left: auto;
 			margin-right: auto;
 			left: 0;
@@ -86,7 +107,7 @@
 
         #cvs5 {
 			position: absolute;
-			top: 300px;
+			top: 250px;
 			margin-left: auto;
 			margin-right: auto;
 			left: 0;
@@ -98,7 +119,7 @@
 
 			margin:5px;
 			padding:0px;
-			border-bottom: 2px solid black;
+			border-bottom: 2px solid white;
 			background-color: white;
 
 		}
