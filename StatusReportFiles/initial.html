@@ -39,11 +39,39 @@
 </head>
 <body onresize="resizeGraphs()">
 <div id="banner">
-    <div style="float: left;margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" alt="Picture1" height="85"></div>
-    <div style="float: right;margin: 0px 60px 0px 00px;"><img src="../DesOptPy2.png" alt="Picture2" height="85"></div>
-    <center><h2>Design Optimization Status Report<br><font size="5">of</font><br>xxxxName<br>
-        <font size="5">Last Update: xxxxTime</font></h2></center>
+    <div style="float: left;margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" height="85"></div>
+    <div style="float: right;margin: 0px 60px 0px 00px;"><img src="../DesOptPy2.png" height="85"></div>
+    <center><h1>Design Optimization Status Report</h1></center>
+</div>
 
+<div>
+    <center>
+    <table class="overview">
+        <tr><td>Name:</td><td>xxxxName</td>         <td>Algorithm:</td><td>xxxxAlg</td></tr>
+        <tr><td>Last Update:</td><td>xxxxTime
+            <script type="text/javascript">
+                    var date1 = new Date(xxxxStartTime);
+                    var date2 = new Date(xxxxEndTime);
+
+                    var diff = date2.getTime() - date1.getTime();
+
+                    var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    diff -=  days * (1000 * 60 * 60 * 24);
+
+                    var hours = Math.floor(diff / (1000 * 60 * 60));
+                    diff -= hours * (1000 * 60 * 60);
+
+                    var mins = Math.floor(diff / (1000 * 60));
+                    diff -= mins * (1000 * 60);
+
+                    var seconds = Math.floor(diff / (1000));
+                    diff -= seconds * (1000);
+
+                    document.write(" Running for " + days + " days, " + hours + " hours, " + mins + " minutes, " + seconds + " seconds");
+                </script>
+        </td>  <td>Status:</td><td>xxxxStatus</td></tr>
+    </table>
+        </center>
 </div>
 
 <div id="nav_div">
@@ -68,21 +96,22 @@
 
     <canvas id="cvs5" width="1200" height="0600">[No canvas support]</canvas>
 
-    <div id="coordinates">
-        Iteration: <input size=2 type="text" id="x" style="border: medium none white;" />
-        Value: <input size=6 type="text" id="y" style="border: medium none white;" />
-        <button onclick="show_table()" id="btn_show" > Show data in table</button>
-    </div>
-
     <!--Start of constraint html part-->
 
     <canvas id="cvs3" width="1200" height="0600">[No canvas support]</canvas>
 
     <canvas id="cvs4" width="1200" height="0600">[No canvas support]</canvas>
 
+    <!--End of constraint html part-->
+
+    <div id="coordinates">
+        Iteration: <input size=2 type="text" id="x" style="border: medium none white;" />
+        Value: <input size=6 type="text" id="y" style="border: medium none white;" />
+        <button onclick="show_table()" id="btn_show" > Show data in table</button>
+    </div>
 
 </center>
-<!--End of constraint html part-->
+
 
 
 <script>

@@ -1,128 +1,142 @@
 
-        body { font-family: Verdana, 'Lucida Sans Unicode', sans-serif }
+body { font-family: Verdana, 'Lucida Sans Unicode', sans-serif }
 
-        /*   coordinates is the div which shows the x and y values */
+/*   coordinates is the div which shows the x and y values */
 
-        #coordinates {
+#coordinates {
 
-            position: absolute;
-			top: 280px;
-			left: 0;
-			right: 0;
+    position: absolute;
+    top: 1270px;
+    left: 0;
+    right: 0;
 
-        }
+}
 
 
-		#nav_div {
-			text-align: center;
+#nav_div {
+    text-align: center;
 
-		}
+}
 
-		#nav {
-			display: inline-block;
-			margin: 0;
-			padding: 0;
-			border-top:3px solid rgba(207, 207, 255, 0.52);
-			/* For IE, the outcast */
-			zoom:1;
-			*display: inline;
-			list-style:none;
-		}
+#nav {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    border-top:3px solid rgba(207, 207, 255, 0.52);
+    /* For IE, the outcast */
+    zoom:1;
+    *display: inline;
+    list-style:none;
+}
 
-		.deactive{
-			float:left;
-			margin:2px;
-			padding:4px;
-			border-bottom: 3px solid #FFFF;
-		}
+.deactive{
+    float:left;
+    margin:2px;
+    padding:4px;
+    border-bottom: 3px solid #FFFF;
+}
 
-		.deactive:hover{
-			float:left;
-			margin:2px;
-			padding:4px;
-			border-bottom: 3px solid #0072BD;
-		}
+.deactive:hover{
+    float:left;
+    margin:2px;
+    padding:4px;
+    border-bottom: 3px solid #0072BD;
+}
 
-		.active {
-			float:left;
-			margin:2px;
-			padding:4px;
-			border-bottom: 3px solid #0072BD;
-		}
+.active {
+    float:left;
+    margin:2px;
+    padding:4px;
+    border-bottom: 3px solid #0072BD;
+}
 
-        #btn_show {
-            border:none;
-        }
+#btn_show {
+    border:none;
+}
 
-        #btn_show:hover {
-            background: #0072BD;
-        }
+#btn_show:hover {
+    background: #0072BD;
+}
 
-		#nav a {
-			display:block;
-			text-align:center;
-			width:150px; /* fixed width */
-			text-decoration:none;
-		}
+#nav a {
+    display:block;
+    text-align:center;
+    width:150px; /* fixed width */
+    text-decoration:none;
+}
 
-		#cvs {
-			position: absolute;
-			top: 250px;
-			margin-left: auto;
-			margin-right: auto;
-			left: 0;
-			right: 0;
-			visibility: visible;
-		}
+#cvs {
+    position: absolute;
+    top: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    visibility: visible;
+}
 
-		#cvs2 {
-			position: absolute;
-			top: 250px;
-			margin-left: auto;
-			margin-right: auto;
-			left: 0;
-			right: 0;
-			visibility: hidden;
-		}
+#cvs2 {
+    position: absolute;
+    top: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+}
 
-		#cvs3 {
-			position: absolute;
-			top: 250px;
-			margin-left: auto;
-			margin-right: auto;
-			left: 0;
-			right: 0;
-			visibility: hidden;
-		}
+#cvs3 {
+    position: absolute;
+    top: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+}
 
-		#cvs4 {
-			position: absolute;
-			top: 250px;
-			margin-left: auto;
-			margin-right: auto;
-			left: 0;
-			right: 0;
-			visibility: hidden;
-		}
+#cvs4 {
+    position: absolute;
+    top: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+}
 
-        #cvs5 {
-			position: absolute;
-			top: 250px;
-			margin-left: auto;
-			margin-right: auto;
-			left: 0;
-			right: 0;
-			visibility: hidden;
-		}
+#cvs5 {
+    position: absolute;
+    top: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+}
 
-        #banner {
+#banner {
 
-			margin:5px;
-			padding:0px;
-			border-bottom: 2px solid white;
-			background-color: white;
+    margin:0px;
+    padding:0px;
+    border-bottom: 2px solid white;
+    background-color: white;
 
-		}
+}
+
+.overview {
+
+    margin-top: 5px;
+    margin-bottom: 15px;
+
+}
+
+.overview TD {
+
+font-size: 10pt;
+
+}
+
 
 
 table, th, td {

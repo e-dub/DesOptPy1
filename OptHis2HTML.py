@@ -20,7 +20,8 @@ To do and ideas
 see DesOpt.py
 '''
 import numpy as np
-from time import localtime, strftime
+from time import localtime, strftime, time
+import calendar
 from pyOpt import History
 from Normalize import denormalize
 import shutil
@@ -29,7 +30,13 @@ import sys
 import glob
 
 
-def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory=""):
+def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, StatusDirectory=""):
+
+    StartTime = str(starttime)[0:10] + "000"
+    EndTime = ""
+    if inform != "Running":
+        EndTime = str(time())[0:10] + "000"
+
 
 
     if StatusDirectory == "":           #Change the target directory for the status report files if the user wants to
@@ -285,6 +292,10 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
         hstrnew = hstrnew.replace('xxxxtableConstr', Constraint_table)
         hstrnew = hstrnew.replace('xxxxnumber_constraints', number_constraints)
         hstrnew = hstrnew.replace('xxxxNumLabels', xxxxNumLabels)
+        hstrnew = hstrnew.replace('xxxxAlg', Alg.name)
+        hstrnew = hstrnew.replace('xxxxStatus', inform)
+        hstrnew = hstrnew.replace('xxxxStartTime', StartTime)
+        hstrnew = hstrnew.replace('xxxxEndTime', EndTime)
     else:
         hstrnew = hstr.replace('xxxxName', OptName)
         hstrnew = hstrnew.replace('xxxxTime', time_now)
@@ -307,6 +318,10 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, StatusDirectory="")
         hstrnew = hstrnew.replace('xxxxtableObjFct', ObjFct_table)
         hstrnew = hstrnew.replace('xxxxtableDesVar', DesVar_table)
         hstrnew = hstrnew.replace('xxxxNumLabels', xxxxNumLabels)
+        hstrnew = hstrnew.replace('xxxxAlg', Alg.name)
+        hstrnew = hstrnew.replace('xxxxStatus', inform)
+        hstrnew = hstrnew.replace('xxxxStartTime', StartTime)
+        hstrnew = hstrnew.replace('xxxxEndTime', EndTime)
 
         try:  # remove the hmtl parts which are only needed for constrained problems
             for i in range(0, 10):

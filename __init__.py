@@ -105,9 +105,9 @@ __url__ = 'www.desoptpy.org'
 
 
 
-#-----------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------
 # Import necessary Python packages and toolboxes
-#-----------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------
 import os
 import shutil
 import sys
@@ -117,6 +117,7 @@ import OptHis2HTML
 import OptVideo
 import OptResultReport
 import numpy as np
+
 try:
     import cPickle as pickle
 except:
@@ -130,9 +131,11 @@ import multiprocessing
 import platform
 from Normalize import normalize, denormalize
 from OptPostProc import OptPostProc
+
 try:
     import PyGMO
     from PyGMO.problem import base
+
     IsPyGMO = True
 except:
     IsPyGMO = False
@@ -141,11 +144,11 @@ except:
 # Print details of DesOptPy
 #-----------------------------------------------------------------------------------------------------------------------
 def PrintDesOptPy():
-    print(__title__+" - "+__shorttitle__)
-    print("Version:                 "+__version__)
-    print("Internet:                "+__url__)
-    print("License:                 "+__license__)
-    print("Copyright:               "+__copyright__)
+    print(__title__ + " - " + __shorttitle__)
+    print("Version:                 " + __version__)
+    print("Internet:                " + __url__)
+    print("License:                 " + __license__)
+    print("Copyright:               " + __copyright__)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # PyGMO call (must be outside of main function)
@@ -153,7 +156,7 @@ def PrintDesOptPy():
 HistDat = []
 if IsPyGMO is True:
     class OptSysEqPyGMO(base):
-        def __init__(self, SysEq=None, xL=0.0, xU=2.0,  gc=[], OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
+        def __init__(self, SysEq=None, xL=0.0, xU=2.0, gc=[], OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
                      DesVarNorm="DesVarNorm", StatusReport=False, dim=1, nEval=0):
             super(OptSysEqPyGMO, self).__init__(dim)
             self.set_bounds(xL, xU)
@@ -181,7 +184,7 @@ if IsPyGMO is True:
             HistData.write(f, "obj")
             HistData.write(g, "con")
             if self.StatusReport == 1:
-                OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.xL, self.xU, self.DesVarNorm)
+                OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.xL, self.xU, self.DesVarNorm, inform(0),OptTime )
             if g is not []:
                 for ii in range(np.size(g)):
                     if g[ii] > 0.0:
@@ -195,7 +198,7 @@ if IsPyGMO is True:
             # fNew = [f,g]
             else:
                 fpen = f
-            return(fpen,)
+            return (fpen,)
 
 '''
 Constrained like this...does not work yet...
@@ -229,10 +232,9 @@ class OptSysEqPyGMO(base):
 def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", SensCalc="FD", DesVarNorm=True,
            deltax=1e-3, StatusReport=False, ResultReport=False, Video=False, DoE=False, SBDO=False,
            Debug=False, PrintOut=True, OptNameAdd="", AlgOptions=[], Alarm=True):
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Define optimization problem and optimization options
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    # Define optimization problem and optimization options
+    #-----------------------------------------------------------------------------------------------------------------------
     """
     :type OptNode: object
     """
@@ -251,7 +253,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     OptTime0 = time.time()
     OptNodes = "all"
     MainDir = os.getcwd()
-    if operatingSystem  != 'Windows':
+    if operatingSystem != 'Windows':
         DirSplit = "/"
         homeDir = "/home/"
     else:
@@ -264,10 +266,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     except:
         OptAlg = Alg
         pyOptAlg = False
-    if hasattr(SensEq , '__call__'):
+    if hasattr(SensEq, '__call__'):
         SensCalc = "OptSensEq"
         print "Function for sensitivity analysis has been provided, overriding SensCalc to use function"
-    else : pass
+    else:
+        pass
     StartTime = datetime.datetime.now()
     loctime = time.localtime()
     today = time.strftime("%B", time.localtime()) + ' ' + str(loctime[2]) + ', ' + str(loctime[0])
@@ -277,14 +280,22 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     global nEval
     nEval = 0
     LocalRun = True
-    ModelDir = os.getcwd()[:-(len(OptModel)+1)]
+    ModelDir = os.getcwd()[:-(len(OptModel) + 1)]
     ModelFolder = ModelDir.split(DirSplit)[-1]
-    DesOptDir = ModelDir[:-(len(ModelFolder)+1)]
+    DesOptDir = ModelDir[:-(len(ModelFolder) + 1)]
     ResultsDir = DesOptDir + os.sep + "Results"
     RunDir = DesOptDir + os.sep + "Run"
+    try:
+        inform
+    except NameError:
+        inform = "Running"
+
+
     if LocalRun is True and Debug is False:
-        try: os.mkdir(ResultsDir)
-        except: pass
+        try:
+            os.mkdir(ResultsDir)
+        except:
+            pass
         os.mkdir(ResultsDir + DirSplit + OptName)
         os.mkdir(ResultsDir + os.sep + OptName + os.sep + "ResultReport" + os.sep)
         shutil.copytree(os.getcwd(), RunDir + os.sep + OptName)
@@ -296,29 +307,32 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     sys.path.append(os.getcwd())
 
 
-#-----------------------------------------------------------------------------------------------------------------------
-#       Print start-up splash to output screen
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #       Print start-up splash to output screen
+    #-----------------------------------------------------------------------------------------------------------------------
     if PrintOut is True:
         print("--------------------------------------------------------------------------------")
         PrintDesOptPy()
         print("")
         print("Optimization model:      " + OptModel)
-        try: print("Optimization algorithm:  " + Alg)
-        except: pass
+        try:
+            print("Optimization algorithm:  " + Alg)
+        except:
+            pass
         print("Optimization start:      " + StartTime.strftime("%Y%m%d%H%M"))
         print("Optimization name:       " + OptName)
         print("--------------------------------------------------------------------------------")
 
 
 
-#-----------------------------------------------------------------------------------------------------------------------
-#       Optimization problem
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #       Optimization problem
+    #-----------------------------------------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------------------------------------------------
-#       Define functions: system equation, normalization, etc.
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #       Define functions: system equation, normalization, etc.
+    #-----------------------------------------------------------------------------------------------------------------------
+
     def OptSysEq(x):
         x = np.array(x)  # NSGA2 gives a list back, this makes a float! TODO Inquire why it does this!
         f, g = SysEq(x, gc)
@@ -326,13 +340,13 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         global nEval
         nEval += 1
         if StatusReport == True:
-            OptHis2HTML.OptHis2HTML(OptName, OptAlg,DesOptDir, xL,xU, DesVarNorm)
+            OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, xL, xU, DesVarNorm, inform, OptTime0)
         if xDis is not []:
             nD = len(xDis)
-            gDis = [[]]*2*nD
+            gDis = [[]] * 2 * nD
             for ii in range(nD):
-                gDis[ii+0] = np.sum(x[-1*xDis[ii]:])-1
-                gDis[ii+1] = 1-np.sum(x[-1*xDis[ii]:])
+                gDis[ii + 0] = np.sum(x[-1 * xDis[ii]:]) - 1
+                gDis[ii + 1] = 1 - np.sum(x[-1 * xDis[ii]:])
             gNew = np.concatenate((g, gDis), 0)
             g = copy.copy(gNew)
         # TODO add print out for optimization development!!
@@ -351,7 +365,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 
     def OptSensEq(x, f, g):
         dfdx, dgdx = SensEq(x, f, g, gc)
-        dfdx = dfdx.reshape(1,len(x))
+        dfdx = dfdx.reshape(1, len(x))
         fail = 0
         return dfdx, dgdx, fail
 
@@ -383,13 +397,14 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         # TODO not general for all normalizations! needs to be rewritten
         return dfdx, dgdx, fail
 
-#-----------------------------------------------------------------------------------------------------------------------
-#       Surrogate-based optimization (not fully functioning yet!!!!)
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #       Surrogate-based optimization (not fully functioning yet!!!!)
+    #-----------------------------------------------------------------------------------------------------------------------
     # TODO SBDO in a separate file???
     if SBDO is not False:
         if DoE > 0:
             import pyDOE
+
             try:
                 n_gc = len(gc)
             except:
@@ -469,9 +484,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         # sigma = np.sqrt(MSE)
         fail = 0
         return f, g, fail
+
     if xDis is not []:
         for ii in range(np.size(xDis, 0)):
-            xExpand0 = np.ones(xDis[ii]) * 1./xDis[ii]   # Start at uniform of all materials etc.
+            xExpand0 = np.ones(xDis[ii]) * 1. / xDis[ii]  # Start at uniform of all materials etc.
             xNew0 = np.concatenate((x0, xExpand0), 0)
             xExpandL = np.ones(xDis[ii]) * 0.0001
             xNewL = np.concatenate((xL, xExpandL), 0)
@@ -480,7 +496,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             x0 = copy.copy(xNew0)
             xL = copy.copy(xNewL)
             xU = copy.copy(xNewU)
-            gcNew = np.concatenate((gc, np.ones(2,)), 0)
+            gcNew = np.concatenate((gc, np.ones(2, )), 0)
             gc = copy.copy(gcNew)
     if DesVarNorm in ["None", None, False]:
         x0norm = x0
@@ -493,11 +509,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     nx = np.size(x0)
     ng = np.size(gc)
 
-#-----------------------------------------------------------------------------------------------------------------------
-#       pyOpt optimization
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #       pyOpt optimization
+    #-----------------------------------------------------------------------------------------------------------------------
     if pyOptAlg is True:
-        if SBDO is not False and DesVarNorm  in ["xLxU", True, "xLx0", "x0", "xU"]: #in ["None", None, False]:
+        if SBDO is not False and DesVarNorm in ["xLxU", True, "xLx0", "x0", "xU"]:  #in ["None", None, False]:
             OptProb = pyOpt.Optimization(OptModel, ApproxOptSysEqNorm, obj_set=None)
         elif SBDO is not False and DesVarNorm in ["None", None, False]:
             OptProb = pyOpt.Optimization(OptModel, ApproxOptSysEq, obj_set=None)
@@ -529,12 +545,12 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             print(OptProb)
         if Alg in ["MMA", "IPOPT", "GCMMA", "CONMIN", "SLSQP", "PSQP", "KSOPT", "ALGENCAN", "NLPQLP"]:
             if SensCalc == "OptSensEq":
-                if DesVarNorm  not in ["None", None, False]:
+                if DesVarNorm not in ["None", None, False]:
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEqNorm, store_hst=OptName)
                 else:
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEq, store_hst=OptName)
             elif SensCalc == "ParaFD":  # Michi Richter
-                if DesVarNorm  not in ["None", None, False]:
+                if DesVarNorm not in ["None", None, False]:
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEqParaFDNorm, store_hst=OptName)
                 else:
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEqParaFD, store_hst=OptName)
@@ -546,40 +562,45 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         else:
             [fOpt, xOpt, inform] = OptAlg(OptProb, store_hst=OptName)
         if PrintOut is True:
-            try: print(OptProb.solution(0))
-            except: pass
+            try:
+                print(OptProb.solution(0))
+            except:
+                pass
         if Alg not in ["PSQP", "SOLVOPT", "MIDACO", "SDPEN", "ralg"] and PrintOut is True:
             print(OptAlg.getInform(0))
 
-#-----------------------------------------------------------------------------------------------------------------------
-#       OpenOpt optimization -- not fully implemented in this framework and not yet working...
-#-----------------------------------------------------------------------------------------------------------------------
+        #-----------------------------------------------------------------------------------------------------------------------
+        #       OpenOpt optimization -- not fully implemented in this framework and not yet working...
+        #-----------------------------------------------------------------------------------------------------------------------
     elif Alg == "ralg":
         from openopt import NLP
+
         f, g = lambda x: OptSysEq(x)
         # g = lambda x: OptSysEq(x)[1][0]
         p = NLP(f, x0, c=g, lb=xL, ub=xU, iprint=50, maxIter=10000, maxFunEvals=1e7, name='NLP_1')
         r = p.solve(Alg, plot=0)
         print(OptAlg.getInform(1))
 
-#-----------------------------------------------------------------------------------------------------------------------
-#       MATLAB fmincon optimization -- not fully implemented in this framework and not yet working...
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #       MATLAB fmincon optimization -- not fully implemented in this framework and not yet working...
+    #-----------------------------------------------------------------------------------------------------------------------
     elif Alg == "fmincon":  # not fully implemented in this framework
         def ObjFn(x):
             f, g, fail = OptSysEqNorm(xNorm)
             return f, []
-        from mlabwrap import mlab
-        mlab._get(ObjFn)
-        mlab.fmincon(mlab._get("ObjFn"), x)      # g,h, dgdx = mlab.fmincon(x.T,cg,ch, nout=3)
 
-#-----------------------------------------------------------------------------------------------------------------------
-#       PyGMO optimization
-#-----------------------------------------------------------------------------------------------------------------------
+        from mlabwrap import mlab
+
+        mlab._get(ObjFn)
+        mlab.fmincon(mlab._get("ObjFn"), x)  # g,h, dgdx = mlab.fmincon(x.T,cg,ch, nout=3)
+
+    #-----------------------------------------------------------------------------------------------------------------------
+    #       PyGMO optimization
+    #-----------------------------------------------------------------------------------------------------------------------
     elif Alg[:5] == "PyGMO":
         DesVarNorm = "None"
         ngen = 500
-        nIndiv = max(nx*3, 7)
+        nIndiv = max(nx * 3, 7)
         #print nindiv
         dim = np.size(x0)
         # prob = OptSysEqPyGMO(dim=dim)
@@ -609,16 +630,17 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         xOpt = isl.population.champion.x
         # fOpt = isl.population.champion.f[0]
         nEval = isl.population.problem.fevals
-        nGen = int(nEval/nIndiv)  # currently being overwritten and therefore not being used
+        nGen = int(nEval / nIndiv)  # currently being overwritten and therefore not being used
         StatusReport = False  # turn off status report, so not remade (and destroyed) in following call!
         fOpt, gOpt, fail = OptSysEq(xOpt)  # verification of optimal solution as values above are based on penalty!
 
-#-----------------------------------------------------------------------------------------------------------------------
-#        SciPy optimization
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #        SciPy optimization
+    #-----------------------------------------------------------------------------------------------------------------------
     elif Alg[:5] == "scipy":
         import scipy.optimize as sciopt
-        bounds = [[]]*len(x0)
+
+        bounds = [[]] * len(x0)
         for ii in range(len(x0)):
             bounds[ii] = (xL[ii], xU[ii])
         print bounds
@@ -628,41 +650,45 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
                                           recombination=0.7, seed=None, callback=None, disp=False,
                                           polish=True, init='latinhypercube')
 
-#-----------------------------------------------------------------------------------------------------------------------
-#        Simple optimization algorithms to demonstrate use of custom algorithms
-#-----------------------------------------------------------------------------------------------------------------------
+        #-----------------------------------------------------------------------------------------------------------------------
+        #        Simple optimization algorithms to demonstrate use of custom algorithms
+        #-----------------------------------------------------------------------------------------------------------------------
     #TODO: add history to these
     elif Alg == "SteepestDescentSUMT":
         from CustomAlgs import SteepestDescentSUMT
+
         fOpt, xOpt, nIter, nEval = SteepestDescentSUMT(DefOptSysEq, x0, xL, xU)
     elif Alg == "NewtonSUMT":
         from CustomAlgs import NewtonSUMT
+
         fOpt, xOpt, nIter, nEval = NewtonSUMT(DefOptSysEq, x0, xL, xU)
 
-#-----------------------------------------------------------------------------------------------------------------------
-#
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #
+    #-----------------------------------------------------------------------------------------------------------------------
     else:
         print "algorithm spelled wrong or not supported"
         #exit()
 
-#-----------------------------------------------------------------------------------------------------------------------
-#       Optimization post-processing
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #       Optimization post-processing
+    #-----------------------------------------------------------------------------------------------------------------------
     if StatusReport == 1:
-            OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir , xL,xU, DesVarNorm)
+        OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, xL, xU, DesVarNorm, inform['text'], OptTime0)
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
-    hhmmss0 = time.strftime("%H", loctime0)+' : '+time.strftime("%M", loctime0)+' : '+time.strftime("%S", loctime0)
+    hhmmss0 = time.strftime("%H", loctime0) + ' : ' + time.strftime("%M", loctime0) + ' : ' + time.strftime("%S",
+                                                                                                            loctime0)
     loctime1 = time.localtime(OptTime1)
-    hhmmss1 = time.strftime("%H", loctime1)+' : '+time.strftime("%M", loctime1)+' : '+time.strftime("%S", loctime1)
+    hhmmss1 = time.strftime("%H", loctime1) + ' : ' + time.strftime("%M", loctime1) + ' : ' + time.strftime("%S",
+                                                                                                            loctime1)
     diff = OptTime1 - OptTime0
     h0, m0, s0 = (diff // 3600), int((diff / 60) - (diff // 3600) * 60), diff % 60
     OptTime = "%02d" % (h0) + " : " + "%02d" % (m0) + " : " + "%02d" % (s0)
 
-#-----------------------------------------------------------------------------------------------------------------------
-#       Read in results from history files
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #       Read in results from history files
+    #-----------------------------------------------------------------------------------------------------------------------
     OptHist = pyOpt.History(OptName, "r")
     fAll = OptHist.read([0, -1], ["obj"])[0]["obj"]
     xAll = OptHist.read([0, -1], ["x"])[0]["x"]
@@ -697,18 +723,18 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             gIter[ii] = gAll[iii]
     OptHist.close()
 
-#-----------------------------------------------------------------------------------------------------------------------
-#       Convert all data to numpy arrays
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #       Convert all data to numpy arrays
+    #-----------------------------------------------------------------------------------------------------------------------
     fIter = np.asarray(fIter)
     xIter = np.asarray(xIter)
     gIter = np.asarray(gIter)
     gGradIter = np.asarray(gGradIter)
     fGradIter = np.asarray(fGradIter)
 
-#-----------------------------------------------------------------------------------------------------------------------
-# Denormalization of design variables
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    # Denormalization of design variables
+    #-----------------------------------------------------------------------------------------------------------------------
     xOpt = np.resize(xOpt[0:np.size(xL)], np.size(xL))
     if DesVarNorm in ["None", None, False]:
         x0norm = []
@@ -733,9 +759,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     else:
         fIterNorm = []
 
-#-----------------------------------------------------------------------------------------------------------------------
-#  Active constraints for use in the calculation of the Lagrangian multipliers and optimality criterion
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #  Active constraints for use in the calculation of the Lagrangian multipliers and optimality criterion
+    #-----------------------------------------------------------------------------------------------------------------------
     epsActive = 1e-3
     xL_ActiveIndex = (xOpt - xL) / xU < epsActive
     xU_ActiveIndex = (xU - xOpt) / xU < epsActive
@@ -810,7 +836,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             gGradOptActive = gGradOpt[:, gOptActiveIndex == True]
             try:
                 cOptActive = gc[gOptActiveIndex == True]
-                cActiveType = ["Constraint"]*np.size(cOptActive)
+                cActiveType = ["Constraint"] * np.size(cOptActive)
             except:
                 cOptActive = []
                 cActiveType = []
@@ -821,11 +847,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             elif np.size(gGradOptActive) == 0:
                 g_xLU_GradOptActive = xGradActive
                 c_xLU_OptActive = xActive
-                c_xLU_ActiveType = ["Bound"]*np.size(xActive)
+                c_xLU_ActiveType = ["Bound"] * np.size(xActive)
             else:
                 g_xLU_GradOptActive = np.concatenate((gGradOptActive, xGradActive), axis=1)
                 c_xLU_OptActive = np.concatenate((cOptActive, xActive), axis=1)
-                xActiveType = ["Bound"]*np.size(xActive)
+                xActiveType = ["Bound"] * np.size(xActive)
                 c_xLU_ActiveType = np.concatenate((cActiveType, xActiveType), axis=1)
         else:
             g_xLU_GradOptActive = xGradActive
@@ -841,15 +867,15 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         c_xLU_OptActive = np.array([])
         c_xLU_ActiveType = np.array([])
 
-#-----------------------------------------------------------------------------------------------------------------------
-#   §      Post-processing of optimization solution
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #   §      Post-processing of optimization solution
+    #-----------------------------------------------------------------------------------------------------------------------
     lambda_c, SPg, OptRes, Opt1Order, KKTmax = OptPostProc(fGradOpt, gc, gOptActiveIndex, g_xLU_GradOptActive,
                                                            c_xLU_OptActive, c_xLU_ActiveType, DesVarNorm)
 
-#-----------------------------------------------------------------------------------------------------------------------
-#   §      Save optimizaiton solution to file
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #   §      Save optimizaiton solution to file
+    #-----------------------------------------------------------------------------------------------------------------------
     OptSolData = {}
     OptSolData['x0'] = x0
     OptSolData['xOpt'] = xOpt
@@ -897,9 +923,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     OptSolData['hhmmss1'] = hhmmss1
 
 
-#-----------------------------------------------------------------------------------------------------------------------
-#   §    Save in Python format
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #   §    Save in Python format
+    #-----------------------------------------------------------------------------------------------------------------------
     output = open(OptName + "_OptSol.pkl", 'wb')
     pickle.dump(OptSolData, output)
     output.close()
@@ -908,17 +934,17 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
              fGradOpt, gGradOpt, OptName, OptModel, OptTime, loctime, today, computerName, operatingSystem,
              architecture, nProcessors, userName, Alg, DesVarNorm, KKTmax)
 
-#-----------------------------------------------------------------------------------------------------------------------
-#   §5.2    Save in MATLAB format
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #   §5.2    Save in MATLAB format
+    #-----------------------------------------------------------------------------------------------------------------------
     #OptSolData['OptAlg'] = []
     spio.savemat(OptName + '_OptSol.mat', OptSolData, oned_as='row')
 
 
 
-#-----------------------------------------------------------------------------------------------------------------------
-#
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #
+    #-----------------------------------------------------------------------------------------------------------------------
     os.chdir(MainDir)
     if LocalRun is True and Debug is False:
         try:
@@ -930,9 +956,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             shutil.copytree(RunDir + os.sep + OptName,
                             ResultsDir + os.sep + OptName + os.sep + "RunFiles" + os.sep)
 
-#-----------------------------------------------------------------------------------------------------------------------
-#   §    Graphical post-processing
-#-----------------------------------------------------------------------------------------------------------------------
+        #-----------------------------------------------------------------------------------------------------------------------
+        #   §    Graphical post-processing
+        #-----------------------------------------------------------------------------------------------------------------------
     if ResultReport is True:
         print("Entering preprocessing mode")
         OptResultReport.OptResultReport(OptName, OptAlg, DesOptDir, diagrams=1, tables=1, lyx=1)
@@ -942,9 +968,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         OptVideo.OptVideo(OptName)
 
 
-#-----------------------------------------------------------------------------------------------------------------------
-#   § Print out
-#-----------------------------------------------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------
+    #   § Print out
+    #-----------------------------------------------------------------------------------------------------------------------
     if PrintOut is True:
         print("")
         print("--------------------------------------------------------------------------------")
