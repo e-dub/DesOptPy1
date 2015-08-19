@@ -154,7 +154,7 @@ HistDat = []
 if IsPyGMO is True:
     class OptSysEqPyGMO(base):
         def __init__(self, SysEq=None, xL=0.0, xU=2.0, gc=[], OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
-                     DesVarNorm="DesVarNorm", StatusReport=False, dim=1, nEval=0):
+                     DesVarNorm="DesVarNorm", StatusReport=False, dim=1, nEval=0, inform=[], OptTime0=[]):
             super(OptSysEqPyGMO, self).__init__(dim)
             self.set_bounds(xL, xU)
             self.__dim = dim
@@ -169,6 +169,8 @@ if IsPyGMO is True:
             self.DesVarNorm = DesVarNorm
             self.StatusReport = StatusReport
             self.AlgInst = pyOpt.Optimizer(self.Alg)
+            self.inform = inform
+            self.OptTime0 = OptTime0
 
         def _objfun_impl(self, x):
             self.nEval += 1
@@ -181,7 +183,10 @@ if IsPyGMO is True:
             HistData.write(f, "obj")
             HistData.write(g, "con")
             if self.StatusReport == 1:
-                OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.xL, self.xU, self.DesVarNorm, inform(0),OptTime )
+                try:
+                    OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.xL, self.xU, self.DesVarNorm, self.inform(0), self.OptTime0)
+                except:
+                    pass
             if g is not []:
                 for ii in range(np.size(g)):
                     if g[ii] > 0.0:
@@ -286,7 +291,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     try:
         inform
     except NameError:
-        inform = "Running"
+        inform = ["Running"]
 
 
     if LocalRun is True and Debug is False:
@@ -591,7 +596,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         dim = np.size(x0)
         # prob = OptSysEqPyGMO(dim=dim)
         prob = OptSysEqPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
-                             DesVarNorm=DesVarNorm, StatusReport=StatusReport)
+                             DesVarNorm=DesVarNorm, StatusReport=StatusReport, inform=inform, OptTime0=OptTime0)
         # prob = problem.death_penalty(prob_old, problem.death_penalty.method.KURI)
         if Alg[6:] in ["de", "bee_colony", "nsga_II", "pso", "pso_gen", "cmaes", "py_cmaes",
                        "spea2", "nspso", "pade", "sea", "vega", "sga", "sga_gray", "de_1220",
