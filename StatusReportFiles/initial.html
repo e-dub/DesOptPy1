@@ -39,16 +39,15 @@
 </head>
 <body onresize="resizeGraphs()">
 <div id="banner">
-    <div style="float: left;margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" height="85"></div>
-    <div style="float: right;margin: 0px 60px 0px 00px;"><img src="../DesOptPy2.png" height="85"></div>
-    <center><h1>Design Optimization Status Report</h1></center>
+    <div style="margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" width="200"></div>
 </div>
+<center><h2 id="caption">Design Optimization Status Report</h2></center>
 
 <div>
     <center>
     <table class="overview">
         <tr><td>Name:</td><td>xxxxName</td>         <td>Algorithm:</td><td>xxxxAlg</td></tr>
-        <tr><td>Last Update:</td><td>xxxxTime
+        <tr><td>Last Update:</td><td>xxxxTime</td><td>Running for:</td><td>
             <script type="text/javascript">
                     var date1 = new Date(xxxxStartTime);
                     var date2 = new Date(xxxxEndTime);
@@ -67,9 +66,10 @@
                     var seconds = Math.floor(diff / (1000));
                     diff -= seconds * (1000);
 
-                    document.write(" Running for " + days + " days, " + hours + " hours, " + mins + " minutes, " + seconds + " seconds");
+                    document.write(days + " days " + hours + " hours " + mins + " min " + seconds + " sec");
                 </script>
-        </td>  <td>Status:</td><td>xxxxStatus</td></tr>
+        </td></tr><tr>
+            <td>Status:</td><td>xxxxStatus</td><td></td><td></td></tr>
     </table>
         </center>
 </div>
@@ -77,8 +77,8 @@
 <div id="nav_div">
     <ul id="nav">
         <li id="nav1" onclick="showGraph1()">Objective and maximum constraint</li>
-        <li id="nav2" onclick="showGraph2()">Design variables</li>
-        <li id="nav5" onclick="showGraph5()">Design variables denormalized</li>
+        <li id="nav2" onclick="showGraph2()">Design variables normalized</li>
+        <li id="nav5" onclick="showGraph5()">Design variables</li>
         <!--Start of constraint html part-->
         <li id="nav3" onclick="showGraph3()">Constraints</li>
         <li id="nav4" onclick="showGraph4()">Violated constraints</li>
@@ -121,13 +121,16 @@
 
         window.onload = drawDiagrams();
 
+
         function drawDiagrams(){
 
             document.getElementById("nav1").className = "active";
             document.getElementById("nav2").className = "deactive";
+            document.getElementById("nav5").className = "deactive";
+            <!--Start of constraint html part-->
             document.getElementById("nav3").className = "deactive";
             document.getElementById("nav4").className = "deactive";
-            document.getElementById("nav5").className = "deactive";
+            <!--End of constraint html part-->
 
 			var cc=['#000000','#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#33ff33',
 					'#666666','#990000','#339900','#330099','#999933','#9933ff','#66cccc',
@@ -494,6 +497,8 @@
             document.getElementById("cvs3").height = window.innerHeight-310;
 			document.getElementById("cvs4").height = window.innerHeight-310;
 			<!--End of constraint html part-->
+
+			document.getElementById("coordinates").style.top = window.innerHeight - 50 + "px";
 		}
 
 		function show_table() {
@@ -530,6 +535,8 @@
 
 
 	    }
+
+
 
 
 

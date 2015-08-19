@@ -4,18 +4,15 @@ body { font-family: Verdana, 'Lucida Sans Unicode', sans-serif }
 /*   coordinates is the div which shows the x and y values */
 
 #coordinates {
-
-    position: absolute;
+    position: relative;
     top: 1270px;
     left: 0;
     right: 0;
-
 }
 
 
 #nav_div {
     text-align: center;
-
 }
 
 #nav {
@@ -117,12 +114,20 @@ body { font-family: Verdana, 'Lucida Sans Unicode', sans-serif }
 
 #banner {
 
-    margin:0px;
+    width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
     padding:0px;
     border-bottom: 2px solid white;
     background-color: white;
 
 }
+
+#caption {
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
 
 .overview {
 
@@ -133,7 +138,7 @@ body { font-family: Verdana, 'Lucida Sans Unicode', sans-serif }
 
 .overview TD {
 
-font-size: 10pt;
+font-size: 8pt;
 
 }
 
