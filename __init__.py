@@ -184,9 +184,9 @@ if IsPyGMO is True:
             HistData.write(g, "con")
             if self.StatusReport == 1:
                 try:
-                    OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.xL, self.xU, self.DesVarNorm, self.inform(0), self.OptTime0)
+                    OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.xL, self.xU, self.DesVarNorm, self.inform[0], self.OptTime0)
                 except:
-                    pass
+                    print("Error in OptSysEqPyGMO __init__  ")
             if g is not []:
                 for ii in range(np.size(g)):
                     if g[ii] > 0.0:
@@ -338,7 +338,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         global nEval
         nEval += 1
         if StatusReport == True:
-            OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, xL, xU, DesVarNorm, inform, OptTime0)
+            OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, xL, xU, DesVarNorm, inform[0], OptTime0)
         if xDis is not []:
             nD = len(xDis)
             gDis = [[]]*2*nD
@@ -660,7 +660,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #-----------------------------------------------------------------------------------------------------------------------
 #       Optimization post-processing
 #-----------------------------------------------------------------------------------------------------------------------
-    if StatusReport == 1:
+    if StatusReport == 1:   #TODO inform changes with algorithm!!
         OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, xL, xU, DesVarNorm, inform['text'], OptTime0)
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)

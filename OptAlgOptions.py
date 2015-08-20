@@ -254,7 +254,7 @@ def setDefaultOptions(Alg, OptName, OptAlg):
         OptAlg.setOption("epsopt", 1e-8)
         #OptAlg.setOption("IFILE",OptName+"_Outfile.out")
     elif Alg == "NSGA2":
-        OptAlg.setOption("PopSize", 200)
+        OptAlg.setOption("PopSize", 20)
         OptAlg.setOption("maxGen", 10)
         #OptAlg.setOption("pCross_real",0.6)
         #OptAlg.setOption("pMut_real",0.2)

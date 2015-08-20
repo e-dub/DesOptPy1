@@ -72,11 +72,32 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
     elif Alg.name == "NSGA-II":
         PopSize = Alg.options['PopSize'][1]
 
-        for i in range(0,fAll.__len__() / PopSize):  #TODO: Calculate the best individual in another (correct) way!
-            pos_of_best_ind.append(np.argmin(fAll[i * PopSize:i * PopSize + PopSize]) + PopSize * i)
-            fIter.append(fAll[pos_of_best_ind[i]])
-            xIter.append(xAll[pos_of_best_ind[i]])
-            gIter.append(gAll[pos_of_best_ind[i]])
+        for i in range(0,fAll.__len__() / PopSize):  # Iteration trough the Populations
+
+            best_fitness = -9999999
+            max_violation_of_all_g = np.empty(PopSize)
+            max_violation_of_all_g.fill(99999999)
+
+            for u in range(0,PopSize):                      # Iteration trough the Individuals of the actual population
+                if np.max(gAll[i*PopSize+u]) < max_violation_of_all_g[u]:
+                    max_violation_of_all_g[u] = np.max(gAll[i*PopSize+u])
+
+            pos_smallest_violation = np.argmin(max_violation_of_all_g)
+
+            if max_violation_of_all_g[pos_smallest_violation] > 0:   # only not feasible designs, so choose the less violated one as best
+                fIter.append(fAll[i*PopSize + pos_smallest_violation])
+                xIter.append(xAll[i*PopSize + pos_smallest_violation])
+                gIter.append(gAll[i*PopSize + pos_smallest_violation])
+            else:                                                   # find the best feasible one
+                for u in range(0,PopSize):                      # Iteration trough the Individuals of the actual population
+                    if np.max(fAll[i*PopSize+u]) > best_fitness:
+                        if np.max(gAll[i*PopSize+u]) <= 0:
+                            best_fitness = fAll[i*PopSize+u]
+                            pos_of_best_ind = i*PopSize +u
+
+                fIter.append(fAll[pos_of_best_ind])
+                xIter.append(xAll[pos_of_best_ind])
+                gIter.append(gAll[pos_of_best_ind])
 
         #print fAll.__len__() / PopSize
     else:
