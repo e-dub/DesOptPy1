@@ -23,7 +23,7 @@ import numpy as np
 from time import localtime, strftime, time
 import calendar
 from pyOpt import History
-from Normalize import denormalize
+from Normalize import normalize, denormalize
 import shutil
 import os
 import sys
@@ -135,9 +135,16 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
     niter = len(fIter) - 1
 
     if xIter.size != 0:
-        xIter_denormalized = np.zeros((niter + 1, len(xIter[0])))
-        for y in range(0, niter + 1):
-            xIter_denormalized[y, :] = denormalize(xIter[y, :], xL, xU, DesVarNorm)
+        if DesVarNorm == False:
+            xIter_denormalized = np.zeros((niter + 1, len(xIter[0])))
+            for y in range(0, niter + 1):
+                xIter_denormalized[y] = xIter[y]
+            for y in range(0, niter + 1):
+                [xIter[y, :],xLnorm, xUnorm] = normalize(xIter_denormalized[y, :], xL, xU, "xLxU")
+        else:
+            xIter_denormalized = np.zeros((niter + 1, len(xIter[0])))
+            for y in range(0, niter + 1):
+                xIter_denormalized[y, :] = denormalize(xIter[y, :], xL, xU, DesVarNorm)
 
     time_now = strftime("%Y-%b-%d %H:%M:%S", localtime())  # Aktualisierungszeit auslesen
     ymax = -200000
