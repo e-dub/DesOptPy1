@@ -74,7 +74,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
 
         for i in range(0,fAll.__len__() / PopSize):  # Iteration trough the Populations
 
-            best_fitness = -9999999
+            best_fitness = 9999999
             max_violation_of_all_g = np.empty(PopSize)
             max_violation_of_all_g.fill(99999999)
 
@@ -90,7 +90,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
                 gIter.append(gAll[i*PopSize + pos_smallest_violation])
             else:                                                   # find the best feasible one
                 for u in range(0,PopSize):                      # Iteration trough the Individuals of the actual population
-                    if np.max(fAll[i*PopSize+u]) > best_fitness:
+                    if np.max(fAll[i*PopSize+u]) < best_fitness:
                         if np.max(gAll[i*PopSize+u]) <= 0:
                             best_fitness = fAll[i*PopSize+u]
                             pos_of_best_ind = i*PopSize +u
@@ -280,7 +280,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
     hstr = html.read()
     html.close()
 
-    if len(fAll) > 50:
+    if len(fIter) > 50:
         xxxxNumLabels = str(30)
     else:
         xxxxNumLabels = str(niter)
@@ -314,7 +314,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
         hstrnew = hstrnew.replace('xxxxnumber_constraints', number_constraints)
         hstrnew = hstrnew.replace('xxxxNumLabels', xxxxNumLabels)
         hstrnew = hstrnew.replace('xxxxAlg', Alg.name)
-        hstrnew = hstrnew.replace('xxxxStatus', inform)
+        hstrnew = hstrnew.replace('xxxxStatus', str(inform))
         hstrnew = hstrnew.replace('xxxxStartTime', StartTime)
         hstrnew = hstrnew.replace('xxxxEndTime', EndTime)
     else:

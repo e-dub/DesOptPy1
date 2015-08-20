@@ -660,8 +660,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #-----------------------------------------------------------------------------------------------------------------------
 #       Optimization post-processing
 #-----------------------------------------------------------------------------------------------------------------------
-    if StatusReport == 1:   #TODO inform changes with algorithm!!
-        OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, xL, xU, DesVarNorm, inform['text'], OptTime0)
+    if StatusReport == 1:
+        OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, xL, xU, DesVarNorm, inform.values()[0], OptTime0)
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
     hhmmss0 = time.strftime("%H", loctime0)+' : '+time.strftime("%M", loctime0)+' : '+time.strftime("%S", loctime0)
