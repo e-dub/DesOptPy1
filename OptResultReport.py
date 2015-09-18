@@ -572,7 +572,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         # FileName = ["_ResultPresentationPy.lyx", "_ResultReportPy.lyx"]
         FileName = ["_ResultReportPy.lyx"]
         for ii in range(len(FileName)):
-            fRR = open(templatePath + FileName[ii], "r+")
+            fRR = open(templatePath + FileName[ii], "r")
             contentRR = fRR.readlines()
             # Replace Modelname and Date
             contentRR = [w.replace('XXXmodelname', OptModel) for w in contentRR]
