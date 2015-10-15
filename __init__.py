@@ -292,8 +292,6 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         inform
     except NameError:
         inform = ["Running"]
-
-
     if LocalRun is True and Debug is False:
         try: os.mkdir(ResultsDir)
         except: pass
@@ -575,6 +573,21 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         print(OptAlg.getInform(1))
 
 #-----------------------------------------------------------------------------------------------------------------------
+#       pyCMAES
+#-----------------------------------------------------------------------------------------------------------------------
+    elif Alg == "pycmaes":
+        print "CMA-ES == not fully implemented in this framework"
+        print "    no constraints"
+        import cma
+        def CMA_ES_ObjFn(x):
+            f, g, fail = OptSysEq(x)
+            return f
+        OptRes = cma.fmin(CMA_ES_ObjFn, x0, sigma0=1)
+        xOpt = OptRes[0]
+        fOpt = OptRes[1]
+        nEval = OptRes[4]
+        nIter = OptRes[5]
+#-----------------------------------------------------------------------------------------------------------------------
 #       MATLAB fmincon optimization -- not fully implemented in this framework and not yet working...
 #-----------------------------------------------------------------------------------------------------------------------
     elif Alg == "fmincon":  # not fully implemented in this framework
@@ -591,30 +604,49 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     elif Alg[:5] == "PyGMO":
         DesVarNorm = "None"
         ngen = 500
-        nIndiv = max(nx*3, 7)
+        nIndiv = max(nx*3, 8)
         #print nindiv
         dim = np.size(x0)
         # prob = OptSysEqPyGMO(dim=dim)
         prob = OptSysEqPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
                              DesVarNorm=DesVarNorm, StatusReport=StatusReport, inform=inform, OptTime0=OptTime0)
         # prob = problem.death_penalty(prob_old, problem.death_penalty.method.KURI)
-        if Alg[6:] in ["de", "bee_colony", "nsga_II", "pso", "pso_gen", "cmaes", "py_cmaes",
-                       "spea2", "nspso", "pade", "sea", "vega", "sga", "sga_gray", "de_1220",
-                       "mde_pbx", "jde"]:
-            algo = eval("PyGMO.algorithm." + Alg[6:] + "(gen=ngen)")
-        elif Alg[6:] in ["ihs", "monte_carlo", "sa_corana"]:
-            algo = eval("PyGMO.algorithm." + Alg[6:] + "(iter=ngen)")
-        elif Alg[6:] == "sms_emoa":
-            print "sms_emoa not working"
+        algo = eval("PyGMO.algorithm." + Alg[6:]+"()")
 
-        if Alg == "PyGMO_de":
-            algo = PyGMO.algorithm.de(gen=ngen, f=1, cr=1, variant=2,
-                                      ftol=1e-3, xtol=1e-3, screen_output=False)
-        else:
-            algo = PyGMO.algorithm.de(gen=ngen, f=1, cr=1, variant=2,
-                                      ftol=1e-3, xtol=1e-3, screen_output=False)
-        pop = PyGMO.population(prob, nIndiv, seed=13598)  # Seed fixed for random generation of first individuals
-        algo.evolve(pop)
+        #de (gen=100, f=0.8, cr=0.9, variant=2, ftol=1e-06, xtol=1e-06, screen_output=False)
+        #NSGAII (gen=100, cr=0.95, eta_c=10, m=0.01, eta_m=10)
+        #sga_gray.__init__(gen=1, cr=0.95, m=0.02, elitism=1, mutation=PyGMO.algorithm._algorithm._gray_mutation_type.UNIFORM, selection=PyGMO.algorithm._algorithm._gray_selection_type.ROULETTE, crossover=PyGMO.algorithm._algorithm._gray_crossover_type.SINGLE_POINT)
+        #nsga_II.__init__(gen=100, cr=0.95, eta_c=10, m=0.01, eta_m=10)
+        #emoa  (hv_algorithm=None, gen=100, sel_m=2, cr=0.95, eta_c=10, m=0.01, eta_m=10)
+        #pade  (gen=10, max_parallelism=1, decomposition=PyGMO.problem._problem._decomposition_method.BI, solver=None, T=8, weights=PyGMO.algorithm._algorithm._weight_generation.LOW_DISCREPANCY, z=[])
+        #nspso (gen=100, minW=0.4, maxW=1.0, C1=2.0, C2=2.0, CHI=1.0, v_coeff=0.5, leader_selection_range=5, diversity_mechanism=PyGMO.algorithm._algorithm._diversity_mechanism.CROWDING_DISTANCE)
+        #corana: (iter=10000, Ts=10, Tf=0.1, steps=1, bin_size=20, range=1)
+
+        #if Alg[6:] in ["de", "bee_colony", "nsga_II", "pso", "pso_gen", "cmaes", "py_cmaes",
+        #               "spea2", "nspso", "pade", "sea", "vega", "sga", "sga_gray", "de_1220",
+        #               "mde_pbx", "jde"]:
+        #    algo.gen = ngen
+        #elif Alg[6:] in ["ihs", "monte_carlo", "sa_corana"]:
+        #    algo.iter = ngen
+        #elif Alg[6:] == "sms_emoa":
+        #    print "sms_emoa not working"
+        #else:
+        #    sys.exit("improper PyGMO algorithm chosen")
+        #algo.f = 1
+        #algo.cr=1
+        #algo.ftol = 1e-3
+        #algo.xtol = 1e-3
+        #algo.variant = 2
+        #algo.screen_output = False
+        #if Alg == "PyGMO_de":
+        #    algo = PyGMO.algorithm.de(gen=ngen, f=1, cr=1, variant=2,
+        #                              ftol=1e-3, xtol=1e-3, screen_output=False)
+        #else:
+        #    algo = PyGMO.algorithm.de(gen=ngen, f=1, cr=1, variant=2,
+        #                              ftol=1e-3, xtol=1e-3, screen_output=False)
+        #pop = PyGMO.population(prob, nIndiv)
+        #pop = PyGMO.population(prob, nIndiv, seed=13598)  # Seed fixed for random generation of first individuals
+        #algo.evolve(pop)
         isl = PyGMO.island(algo, prob, nIndiv)
         isl.evolve(1)
         isl.join()
@@ -762,12 +794,17 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     try:
         xL_Active = xL[xL_ActiveIndex]
     except:
-        xL_Active = []
+        xL_Active = np.array([])
     try:
         xU_Active = xU[xU_ActiveIndex]
     except:
-        xU_Active = []
-    xActive = np.concatenate((xL_Active, xU_Active), axis=1)
+        xU_Active = np.array([])
+    if len(xL_Active)==0:
+        xActive = xU_Active
+    elif len(xU_Active)==0:
+        xActive = xL_Active
+    else:
+        xActive = np.concatenate((xL_Active, xU_Active), axis=1)
     if np.size(xL) == 1:
         if xL_ActiveIndex == False:
             xL_Active = np.array([])
@@ -780,9 +817,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     else:
         xL_Active = xL[xL_ActiveIndex]
         xU_Active = np.array(xU[xU_ActiveIndex])
-    if xL_Active == []:
+    if len(xL_Active)==0:
         xLU_Active = xU_Active
-    elif xU_Active == []:
+    elif len(xU_Active)==0:
         xLU_Active = xL_Active
     else:
         xLU_Active = np.concatenate((xL_Active, xU_Active), axis=1)
@@ -806,15 +843,15 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             gMaxIter[ii] = max(gIter[ii])
         gOptActiveIndex = gOpt > -epsActive
         gOptActive = gOpt[gOpt > -epsActive]
-    if xLU_Active == []:
+    if len(xLU_Active)==0:
         g_xLU_OptActive = gOptActive
-    elif gOptActive == []:
+    elif len(gOptActive)==0:
         g_xLU_OptActive = xLU_Active
     else:
         if np.size(xLU_Active) == 1 and np.size(gOptActive) == 1:
             g_xLU_OptActive = np.array([xLU_Active, gOptActive])
         else:
-            g_xLU_OptActive = np.concatenate((xLU_Active, gOptActive), axis=1)
+            g_xLU_OptActive = np.concatenate((xLU_Active, gOptActive))
     if np.size(fGradIter) > 0:
         #fGradOpt = fGradIter[nIter - 1]
         fGradOpt = fGradIter[-1]
@@ -838,9 +875,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
                 c_xLU_ActiveType = ["Bound"]*np.size(xActive)
             else:
                 g_xLU_GradOptActive = np.concatenate((gGradOptActive, xGradActive), axis=1)
-                c_xLU_OptActive = np.concatenate((cOptActive, xActive), axis=1)
+                c_xLU_OptActive = np.concatenate((cOptActive, xActive))
                 xActiveType = ["Bound"]*np.size(xActive)
-                c_xLU_ActiveType = np.concatenate((cActiveType, xActiveType), axis=1)
+                c_xLU_ActiveType = np.concatenate((cActiveType, xActiveType))
         else:
             g_xLU_GradOptActive = xGradActive
             gGradOpt = np.array([])
@@ -979,7 +1016,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         if Debug is False:
             print("See results directory: " + ResultsDir + os.sep + OptName + os.sep)
         else:
-            print("Local run, no results salved to results directory")
+            print("Local run, no results saved to results directory")
         print("--------------------------------------------------------------------------------")
         if operatingSystem == "Linux" and Alarm is True:
             t = 1
