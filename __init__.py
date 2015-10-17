@@ -540,7 +540,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         #    OptAlg = OptAlgOptions.setUserOptions(AlgOptions, Alg, OptName, OptAlg)
         if PrintOut is True:
             print(OptProb)
-        if Alg in ["MMA", "FFSQP", "FSQP", "GCMMA", "CONMIN", "SLSQP", "PSQP", "KSOPT", "ALGENCAN", "NLPQLP"]:
+        if Alg in ["MMA", "FFSQP", "FSQP", "GCMMA", "CONMIN", "SLSQP", "PSQP", "KSOPT", "ALGENCAN", "NLPQLP", "IPOPT"]:
             if SensCalc == "OptSensEq":
                 if DesVarNorm  not in ["None", None, False]:
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEqNorm, store_hst=OptName)
@@ -691,7 +691,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #
 #-----------------------------------------------------------------------------------------------------------------------
     else:
-        sys.exit("algorithm misspelled or not supported")
+        sys.exit("Error on line 694 of __init__.py: algorithm misspelled or not supported")
 
 #-----------------------------------------------------------------------------------------------------------------------
 #       Optimization post-processing
