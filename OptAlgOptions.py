@@ -10,6 +10,7 @@ Date:     March 4, 2015
 Description:
 ---------------------------------------------------------------------------------------------------
 '''
+import sys
 
 class setDefault():
     def __init__(self, Alg):
@@ -113,6 +114,222 @@ class setDefault():
             #self.MAXEVAL = 1e2
             #self.MAXTIME = 1e3
             #self.IFILE = True
+        #elif Alg[:5] == "PyGMO":
+        #    import PyGMO
+        #    self = eval("PyGMO.algorithm." + Alg[6:]+"()")
+        elif Alg == "PyGMO_de":
+            self.gen=100
+            self.f=0.8
+            self.cr=0.9
+            self.variant=2
+            self.ftol=1e-3
+            self.xtol=1e-3
+            self.screen_output=False
+        elif Alg == "PyGMO_jde":
+            self.gen=100
+            self.variant=2
+            self.variant_adptv=1
+            self.ftol=1e-3
+            self.xtol=1e-3
+            self.memory=False
+            self.screen_output=False
+        elif Alg == "PyGMO_mde_pbx":
+            self.gen=100
+            self.qperc=0.15
+            self.nexp=1.5
+            self.ftol=1e-06
+            self.xtol=1e-06
+            self.screen_output=False
+        elif Alg == "PyGMO_de_1220":
+            self.gen=100
+            self.variant_adptv=1
+            self.allowed_variants=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            self.memory=False
+            self.ftol=1e-06
+            self.xtol=1e-06
+            self.screen_output=False
+        elif Alg == "PyGMO_pso":
+            self.gen=1
+            self.omega=0.7298
+            self.eta1=2.05
+            self.eta2=2.05
+            self.vcoeff=0.5
+            self.variant=5
+            self.neighb_type=2
+            self.neighb_param=4
+        elif Alg == "PyGMO_pso_gen":
+             self.gen=1
+             self.omega=0.7298
+             self.eta1=2.05
+             self.eta2=2.05
+             self.vcoeff=0.5
+             self.variant=5
+             self.neighb_type=2
+             self.neighb_param=4
+        elif Alg == "PyGMO_sea":
+            self.gen=100
+            self.limit=20
+        elif Alg == "PyGMO_.sga":
+            self.gen=1
+            self.cr=0.95
+            self.m=0.02
+            self.elitism=1
+            self.mutation=PyGMO.algorithm._algorithm._sga_mutation_type.GAUSSIAN
+            self.width=0.1
+            self.selection=PyGMO.algorithm._algorithm._sga_selection_type.ROULETTE
+            self.crossover=PyGMO.algorithm._algorithm._sga_crossover_type.EXPONENTIAL
+        elif Alg == "PyGMO_vega":
+            self.gen=1
+            self.cr=0.95
+            self.m=0.02
+            self.elitism=1
+            self.mutation=PyGMO.algorithm._algorithm._vega_mutation_type.GAUSSIAN
+            self.width=0.1
+            self.crossover=PyGMO.algorithm._algorithm._vega_crossover_type.EXPONENTIAL
+        elif Alg == "PyGMO_sga_gray":
+            self.gen=1
+            self.cr=0.95
+            self.m=0.02
+            self.elitism=1
+            self.mutation=PyGMO.algorithm._algorithm._gray_mutation_type.UNIFORM
+            self.selection=PyGMO.algorithm._algorithm._gray_selection_type.ROULETTE
+            self.crossover=PyGMO.algorithm._algorithm._gray_crossover_type.SINGLE_POINT
+        elif Alg == "PyGMO_nsga_II":
+            self.gen=100
+            self.cr=0.95
+            self.eta_c=10
+            self.m=0.01
+            self.eta_m=10
+        elif Alg == "PyGMO_sms_emoa":
+            self.hv_algorithm=None
+            self.gen=100
+            self.sel_m=2
+            self.cr=0.95
+            self.eta_c=10
+            self.m=0.01
+            self.eta_m=10
+        elif Alg == "PyGMO_pade":
+            self.gen=10
+            self.decomposition='tchebycheff'
+            self.weights='grid'
+            self.solver=None
+            self.threads=8
+            self.T=8
+            self.z=[]
+        elif Alg == "PyGMO_nspso":
+            self.gen=100
+            self.minW=0.4
+            self.maxW=1.0
+            self.C1=2.0
+            self.C2=2.0
+            self.CHI=1.0
+            self.v_coeff=0.5
+            self.leader_selection_range=5
+            self.diversity_mechanism='crowding distance'
+        elif Alg == "PyGMO_spea2":
+            self.gen=100
+            self.cr=0.95
+            self.eta_c=10
+            self.m=0.01
+            self.eta_m=50
+            self.archive_size=0
+        elif Alg == "PyGMO_sa_corana":
+            self.iter=10000
+            self.Ts=10
+            self.Tf=0.1
+            self.steps=1
+            self.bin_size=20
+            self.range=1
+        elif Alg == "PyGMO_bee_colony":
+            self.gen=100
+            self.limit=20
+        elif Alg == "PyGMO_ms":
+            self.algorithm=None
+            self.iter=1
+        elif Alg == "PyGMO_mbh":
+            self.algorithm=None
+            self.stop=5
+            self.perturb=0.05
+            self.screen_output=False
+        elif Alg == "PyGMO_cstrs_co_evolution":
+            self.original_algo=None
+            self.original_algo_penalties=None
+            self.pop_penalties_size=30
+            self.gen=20
+            self.method=PyGMO.algorithm._algorithm._co_evo_method_type.SIMPLE
+            self.pen_lower_bound=0.0
+            self.pen_upper_bound=100000.0
+            self.f_tol=1e-15
+            self.x_tol=1e-15
+        elif Alg == "PyGMO_cstrs_immune_system":
+            self.algorithm=None
+            self.algorithm_immune=None
+            self.gen=1
+            self.select_method=PyGMO.algorithm._algorithm._immune_select_method_type.BEST_ANTIBODY
+            self.inject_method=PyGMO.algorithm._algorithm._immune_inject_method_type.CHAMPION
+            self.distance_method=PyGMO.algorithm._algorithm._immune_distance_method_type.EUCLIDEAN
+            self.phi=0.5
+            self.gamma=0.5
+            self.sigma=0.3333333333333333
+            self.f_tol=1e-15
+            self.x_tol=1e-15
+        elif Alg == "PyGMO_cstrs_core":
+            self.algorithm=None
+            self.repair_algorithm=None
+            self.gen=1
+            self.repair_frequency=10
+            self.repair_ratio=1.0
+            self.f_tol=1e-15
+            self.x_tol=1e-15
+        elif Alg == "PyGMO_cs":
+            self.max_eval=1
+            self.stop_range=0.01
+            self.start_range=0.1
+            self.reduction_coeff=0.5
+        elif Alg == "PyGMO_ihs":
+            self.iter=100
+            self.hmcr=0.85
+            self.par_min=0.35
+            self.par_max=0.99
+            self.bw_min=1e-05
+            self.bw_max=1
+        elif Alg == "PyGMO_monte_carlo":
+            self.iter=10000
+        elif Alg == "PyGMO_py_example":
+            self.iter=10
+        elif Alg == "PyGMO_py_cmaes":
+            self.gen=500
+            self.cc=-1
+            self.cs=-1
+            self.c1=-1
+            self.cmu=-1
+            self.sigma0=0.5
+            self.ftol=1e-06
+            self.xtol=1e-06
+            self.memory=False
+            self.screen_output=False
+        elif Alg == "PyGMO_cmaes":
+            self.gen=500
+            self.cc=-1
+            self.cs=-1
+            self.c1=-1
+            self.cmu=-1
+            self.sigma0=0.5
+            self.ftol=1e-06
+            self.xtol=1e-06
+            self.memory=False
+            self.screen_output=False
+        elif Alg == "PyGMO_scipy_fmin":
+            self.maxiter=1
+            self.xtol=0.0001
+            self.ftol=0.0001
+            self.maxfun=None
+            self.disp=False
+        else:
+            sys.exit("algorithm misspelled or not supported")
+        if Alg[:5] == "PyGMO":
+            self.nIndiv=8
+
 
     def setSimple(self, stopTol=[], maxIter=[], maxEval=[]):
         if stopTol != []:
@@ -176,110 +393,112 @@ class setDefault():
                 self.MAXEVAL = maxEval
 
 
-def setDefaultOptions(Alg, OptName, OptAlg):
-    if Alg == "MMA":
-        OptAlg.setOption("GEPS", 1.0e-3)
-        OptAlg.setOption("DABOBJ", 1.0e-3)
-        OptAlg.setOption("DELOBJ", 1.0e-3)
-        OptAlg.setOption("ITRM", 1)
-        OptAlg.setOption("MAXIT", 60)
-        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
-    elif Alg == "GCMMA":
-        OptAlg.setOption("GEPS", 1.0e-3)
-        OptAlg.setOption("DABOBJ", 1.0e-3)
-        OptAlg.setOption("DELOBJ", 1.0e-3)
-        OptAlg.setOption("ITRM", 1)
-        OptAlg.setOption("MAXIT", 60)
-        OptAlg.setOption("INNMAX", 5)
-        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
-    elif Alg == "NLPQLP":
-        OptAlg.setOption("ACC", 1.0e-6)      #Convergence Accurancy
-        OptAlg.setOption("ACCQP", 1.0e-6)    #QP Solver Convergence Accurancy
-        OptAlg.setOption("STPMIN", 1.0e-6)   #Minimum Step Length
-        OptAlg.setOption("MAXFUN", 10)       #Maximum Number of Function Calls During Line Search
-        OptAlg.setOption("MAXIT",50)        #Maximum Number of Outer Iterations
-        OptAlg.setOption("RHOB",0.)         #BFGS-Update Matrix Initialization Parameter
-        OptAlg.setOption("MODE",0)          #NLPQL Mode (0 - Normal Execution, 1 to 18 - See Manual)
-        OptAlg.setOption("LQL",True)        #QP Solver (True - Quasi-Newton, False - Cholesky)
-        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
-    elif Alg == "IPOPT":
-        OptAlg.setOption("tol", 1.0e-3)
-        OptAlg.setOption("print_level", 5)
-        OptAlg.setOption("print_user_options", "yes")
-        OptAlg.setOption('linear_system_scaling', "none")
-        OptAlg.setOption("max_iter", 60)
-        OptAlg.setOption("output_file", OptName+"_Outfile.out")
-    elif Alg == "SLSQP":
-        OptAlg.setOption("ACC", 1.0e-3)
-        OptAlg.setOption("MAXIT", 100)
-        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
-    elif Alg == "PSQP":
-        OptAlg.setOption("XMAX", 1000.)
-        OptAlg.setOption("TOLX", 1.0e-3)
-        OptAlg.setOption("TOLC", 1.0e-3)
-        OptAlg.setOption("TOLG", 1.0e-3)
-        OptAlg.setOption("RPF", 1.0e-3)
-        OptAlg.setOption("MIT", 50)
-        OptAlg.setOption("MFV", 3000)
-        OptAlg.setOption("MET", 2)
-        OptAlg.setOption("MEC", 2)
-        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
-    elif Alg == "COBYLA":
-        OptAlg.setOption("RHOBEG", 0.5)
-        OptAlg.setOption("RHOEND", 1e-6)
-        OptAlg.setOption("MAXFUN", 15000)
-        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
-    elif Alg == "CONMIN":
-        OptAlg.setOption("ITMAX", 500)
-        OptAlg.setOption("DELFUN", 1e-3)
-        OptAlg.setOption("DABFUN", 1e-3)
-        OptAlg.setOption("ITRM", 2)
-        OptAlg.setOption("NFEASCT", 20)
-        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
-    elif Alg == "KSOPT":
-        OptAlg.setOption("RDFUN", 1e-3)
-        OptAlg.setOption("RHOMIN", 5.)
-        OptAlg.setOption("RHOMAX", 100.)
-        OptAlg.setOption("ITMAX", 30)
-        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
-    elif Alg == "SOLVOPT":
-        OptAlg.setOption("xtol", 1e-3)
-        OptAlg.setOption("ftol", 1e-3)
-        OptAlg.setOption("gtol", 1e-3)
-        OptAlg.setOption("maxit", 30)
-        OptAlg.setOption("spcdil", 25.)
-        #OptAlg.setOption("IFILE",OptName+"_Outfile.out")
-    elif Alg == "ALGENCAN":
-        OptAlg.setOption("epsfeas", 1e-3)
-        OptAlg.setOption("epsopt", 1e-8)
-        #OptAlg.setOption("IFILE",OptName+"_Outfile.out")
-    elif Alg == "NSGA2":
-        OptAlg.setOption("PopSize", 20)
-        OptAlg.setOption("maxGen", 10)
-        #OptAlg.setOption("pCross_real",0.6)
-        #OptAlg.setOption("pMut_real",0.2)
-        #OptAlg.setOption("eta_c", 10.)
-        #OptAlg.setOption("eta_m",20.)
-        #OptAlg.setOption("pCross_bin",0.)
-        #OptAlg.setOption("pMut_bin",0.)
-        #OptAlg.setOption("seed",0.)
-    elif Alg == "MIDACO":
-        OptAlg.setOption("ACC", 1e-3)
-        OptAlg.setOption("ISEED", 1)
-        #OptAlg.setOption("QSTART",0)
-        OptAlg.setOption("AUTOSTOP", 0)
-        #OptAlg.setOption("ORACLE",0)
-        OptAlg.setOption("ANTS", 0)
-        OptAlg.setOption("KERNEL", 0)
-        OptAlg.setOption("CHARACTER", 0)
-        #OptAlg.setOption("MAXEVAL", 1e2)
-        #OptAlg.setOption("MAXTIME", 1e3)
-        #OptAlg.setOption("IFILE",OptName+"_Outfile.out")
-    return OptAlg
+#def setDefaultOptions(Alg, OptName, OptAlg):
+#    if Alg == "MMA":
+#        OptAlg.setOption("GEPS", 1.0e-3)
+#        OptAlg.setOption("DABOBJ", 1.0e-3)
+#        OptAlg.setOption("DELOBJ", 1.0e-3)
+#        OptAlg.setOption("ITRM", 1)
+#        OptAlg.setOption("MAXIT", 60)
+#        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
+#    elif Alg == "GCMMA":
+#        OptAlg.setOption("GEPS", 1.0e-3)
+#        OptAlg.setOption("DABOBJ", 1.0e-3)
+#        OptAlg.setOption("DELOBJ", 1.0e-3)
+#        OptAlg.setOption("ITRM", 1)
+#        OptAlg.setOption("MAXIT", 60)
+#        OptAlg.setOption("INNMAX", 5)
+#        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
+#    elif Alg == "NLPQLP":
+#        OptAlg.setOption("ACC", 1.0e-6)      #Convergence Accurancy
+#        OptAlg.setOption("ACCQP", 1.0e-6)    #QP Solver Convergence Accurancy
+#        OptAlg.setOption("STPMIN", 1.0e-6)   #Minimum Step Length
+#        OptAlg.setOption("MAXFUN", 10)       #Maximum Number of Function Calls During Line Search
+#        OptAlg.setOption("MAXIT",50)        #Maximum Number of Outer Iterations
+#        OptAlg.setOption("RHOB",0.)         #BFGS-Update Matrix Initialization Parameter
+#        OptAlg.setOption("MODE",0)          #NLPQL Mode (0 - Normal Execution, 1 to 18 - See Manual)
+#        OptAlg.setOption("LQL",True)        #QP Solver (True - Quasi-Newton, False - Cholesky)
+#        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
+#    elif Alg == "IPOPT":
+#        OptAlg.setOption("tol", 1.0e-3)
+#        OptAlg.setOption("print_level", 5)
+#        OptAlg.setOption("print_user_options", "yes")
+#        OptAlg.setOption('linear_system_scaling', "none")
+#        OptAlg.setOption("max_iter", 60)
+#        OptAlg.setOption("output_file", OptName+"_Outfile.out")
+#    elif Alg == "SLSQP":
+#        OptAlg.setOption("ACC", 1.0e-3)
+#        OptAlg.setOption("MAXIT", 100)
+#        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
+#    elif Alg == "PSQP":
+#        OptAlg.setOption("XMAX", 1000.)
+#        OptAlg.setOption("TOLX", 1.0e-3)
+#        OptAlg.setOption("TOLC", 1.0e-3)
+#        OptAlg.setOption("TOLG", 1.0e-3)
+#        OptAlg.setOption("RPF", 1.0e-3)
+#        OptAlg.setOption("MIT", 50)
+#        OptAlg.setOption("MFV", 3000)
+#        OptAlg.setOption("MET", 2)
+#        OptAlg.setOption("MEC", 2)
+#        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
+#    elif Alg == "COBYLA":
+#        OptAlg.setOption("RHOBEG", 0.5)
+#        OptAlg.setOption("RHOEND", 1e-6)
+#        OptAlg.setOption("MAXFUN", 15000)
+#        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
+#    elif Alg == "CONMIN":
+#        OptAlg.setOption("ITMAX", 500)
+#        OptAlg.setOption("DELFUN", 1e-3)
+#        OptAlg.setOption("DABFUN", 1e-3)
+#        OptAlg.setOption("ITRM", 2)
+#        OptAlg.setOption("NFEASCT", 20)
+#        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
+#    elif Alg == "KSOPT":
+#        OptAlg.setOption("RDFUN", 1e-3)
+#        OptAlg.setOption("RHOMIN", 5.)
+#        OptAlg.setOption("RHOMAX", 100.)
+#        OptAlg.setOption("ITMAX", 30)
+#        OptAlg.setOption("IFILE", OptName+"_Outfile.out")
+#    elif Alg == "SOLVOPT":
+#        OptAlg.setOption("xtol", 1e-3)
+#        OptAlg.setOption("ftol", 1e-3)
+#        OptAlg.setOption("gtol", 1e-3)
+#        OptAlg.setOption("maxit", 30)
+#        OptAlg.setOption("spcdil", 25.)
+#        #OptAlg.setOption("IFILE",OptName+"_Outfile.out")
+#    elif Alg == "ALGENCAN":
+#        OptAlg.setOption("epsfeas", 1e-3)
+#        OptAlg.setOption("epsopt", 1e-8)
+#        #OptAlg.setOption("IFILE",OptName+"_Outfile.out")
+#    elif Alg == "NSGA2":
+#        OptAlg.setOption("PopSize", 20)
+#        OptAlg.setOption("maxGen", 10)
+#        #OptAlg.setOption("pCross_real",0.6)
+#        #OptAlg.setOption("pMut_real",0.2)
+#        #OptAlg.setOption("eta_c", 10.)
+#        #OptAlg.setOption("eta_m",20.)
+#        #OptAlg.setOption("pCross_bin",0.)
+#        #OptAlg.setOption("pMut_bin",0.)
+#        #OptAlg.setOption("seed",0.)
+#    elif Alg == "MIDACO":
+#        OptAlg.setOption("ACC", 1e-3)
+#        OptAlg.setOption("ISEED", 1)
+#        #OptAlg.setOption("QSTART",0)
+#        OptAlg.setOption("AUTOSTOP", 0)
+#        #OptAlg.setOption("ORACLE",0)
+#        OptAlg.setOption("ANTS", 0)
+#        OptAlg.setOption("KERNEL", 0)
+#        OptAlg.setOption("CHARACTER", 0)
+#        #OptAlg.setOption("MAXEVAL", 1e2)
+#        #OptAlg.setOption("MAXTIME", 1e3)
+#        #OptAlg.setOption("IFILE",OptName+"_Outfile.out")
+#    return OptAlg
 
 
 def setUserOptions(UserOpt, Alg, OptName, OptAlg):
-    if UserOpt.IFILE is True:
+    if Alg[:5] == "PyGMO":
+        import PyGMO
+    elif UserOpt.IFILE is True:
         OptAlg.setOption("IFILE", OptName+"_Outfile.out")
     if Alg == "MMA":
         OptAlg.setOption("GEPS", UserOpt.GEPS)
@@ -367,4 +586,34 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
         OptAlg.setOption("CHARACTER",)
         #OptAlg.setOption("MAXEVAL", 1e2)
         #OptAlg.setOption("MAXTIME", 1e3)
+    elif Alg == "PyGMO_de":
+        OptAlg= PyGMO.algorithm.de(gen=UserOpt.gen, f=UserOpt.f, cr=UserOpt.cr,
+                                   variant=UserOpt.variant, ftol=UserOpt.ftol, xtol=UserOpt.xtol,
+                                   screen_output=UserOpt.screen_output)
+    elif Alg == "PyGMO_jde":
+        OptAlg= PyGMO.algorithm.jde(gen=UserOpt.gen, variant=UserOpt.variant, variant_adptv=UserOpt.variant_adptv,
+                                    ftol=UserOpt.ftol, xtol=UserOpt.xtol, memory=UserOpt.memory,
+                                    screen_output=UserOpt.screen_output)
+    elif Alg == "PyGMO_de_1220":
+        OptAlg= PyGMO.algorithm.de_1220(gen=UserOpt.gen, variant_adptv=UserOpt.variant_adptv,
+                                   allowed_variants=UserOpt.allowed_variants,
+                                   ftol=UserOpt.ftol, xtol=UserOpt.xtol,
+                                   screen_output=UserOpt.screen_output)
+    elif Alg == "PyGMO_sa_corana":
+        OptAlg= PyGMO.algorithm.sa_corana(iter=UserOpt.iter, Ts=UserOpt.Ts, Tf=UserOpt.Tf, steps=UserOpt.steps,
+                                          bin_size=UserOpt.bin_size, range=UserOpt.range)
+    elif Alg == "PyGMO_py_cmaes":
+         OptAlg= PyGMO.algorithm.py_cmaes(gen=UserOpt.gen, cc=UserOpt.cc, cs=UserOpt.cs, c1=UserOpt.c1,
+                                          cmu=UserOpt.cmu, sigma0=UserOpt.simga0, ftol=UserOpt.ftol, xtol=UserOpt.xtol,
+                                          memory=UserOpt.memory, screen_output=UserOpt.screen_output)
+    elif Alg == "PyGMO_cmaes":
+         OptAlg= PyGMO.algorithm.cmaes(gen=UserOpt.gen, cc=UserOpt.cc, cs=UserOpt.cs, c1=UserOpt.c1,
+                                          cmu=UserOpt.cmu, sigma0=UserOpt.simga0, ftol=UserOpt.ftol, xtol=UserOpt.xtol,
+                                          memory=UserOpt.memory, screen_output=UserOpt.screen_output)
+    elif Alg == "PyGMO_bee_colony":
+        OptAlg= PyGMO.algorithm.bee_colony(gen=UserOpt.gen, limit=UserOpt.limit)
+    elif Alg == "PyGMO_monte_carlo":
+            OptAlg= PyGMO.algorithm.monte_carlo(iter=UserOpt.iter)
+    elif Alg == "PyGMO_py_example":
+            OptAlg= PyGMO.algorithm.py_example(iter=UserOpt.iter)
     return OptAlg

@@ -532,9 +532,12 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             for ii in range(ng):
                 OptProb.addCon('h' + str(ii + 1), 'i')
         if AlgOptions == []:
-            OptAlg = OptAlgOptions.setDefaultOptions(Alg, OptName, OptAlg)
-        else:
-            OptAlg = OptAlgOptions.setUserOptions(AlgOptions, Alg, OptName, OptAlg)
+            AlgOptions = OptAlgOptions.setDefault(Alg)
+        OptAlg = OptAlgOptions.setUserOptions(AlgOptions, Alg, OptName, OptAlg)
+        #if AlgOptions == []:
+        #    OptAlg = OptAlgOptions.setDefaultOptions(Alg, OptName, OptAlg)
+        #else:
+        #    OptAlg = OptAlgOptions.setUserOptions(AlgOptions, Alg, OptName, OptAlg)
         if PrintOut is True:
             print(OptProb)
         if Alg in ["MMA", "FFSQP", "FSQP", "GCMMA", "CONMIN", "SLSQP", "PSQP", "KSOPT", "ALGENCAN", "NLPQLP"]:
@@ -603,15 +606,16 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #-----------------------------------------------------------------------------------------------------------------------
     elif Alg[:5] == "PyGMO":
         DesVarNorm = "None"
-        ngen = 500
-        nIndiv = max(nx*3, 8)
         #print nindiv
         dim = np.size(x0)
         # prob = OptSysEqPyGMO(dim=dim)
         prob = OptSysEqPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
                              DesVarNorm=DesVarNorm, StatusReport=StatusReport, inform=inform, OptTime0=OptTime0)
         # prob = problem.death_penalty(prob_old, problem.death_penalty.method.KURI)
-        algo = eval("PyGMO.algorithm." + Alg[6:]+"()")
+        if AlgOptions == []:
+            AlgOptions = OptAlgOptions.setDefault(Alg)
+        OptAlg = OptAlgOptions.setUserOptions(AlgOptions, Alg, OptName, OptAlg)
+        #algo = eval("PyGMO.algorithm." + Alg[6:]+"()")
 
         #de (gen=100, f=0.8, cr=0.9, variant=2, ftol=1e-06, xtol=1e-06, screen_output=False)
         #NSGAII (gen=100, cr=0.95, eta_c=10, m=0.01, eta_m=10)
@@ -647,13 +651,13 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         #pop = PyGMO.population(prob, nIndiv)
         #pop = PyGMO.population(prob, nIndiv, seed=13598)  # Seed fixed for random generation of first individuals
         #algo.evolve(pop)
-        isl = PyGMO.island(algo, prob, nIndiv)
+        isl = PyGMO.island(OptAlg, prob, AlgOptions.nIndiv)
         isl.evolve(1)
         isl.join()
         xOpt = isl.population.champion.x
         # fOpt = isl.population.champion.f[0]
         nEval = isl.population.problem.fevals
-        nGen = int(nEval/nIndiv)  # currently being overwritten and therefore not being used
+        nGen = int(nEval/AlgOptions.nIndiv)  # currently being overwritten and therefore not being used
         StatusReport = False  # turn off status report, so not remade (and destroyed) in following call!
         fOpt, gOpt, fail = OptSysEq(xOpt)  # verification of optimal solution as values above are based on penalty!
 
@@ -687,7 +691,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #
 #-----------------------------------------------------------------------------------------------------------------------
     else:
-        print "algorithm spelled wrong or not supported"
+        sys.exit("algorithm misspelled or not supported")
 
 #-----------------------------------------------------------------------------------------------------------------------
 #       Optimization post-processing
