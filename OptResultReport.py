@@ -203,8 +203,10 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         InkscapeCall = "inkscape"
         LyxCall = "lyx"
     elif operatingSystem == 'Windows':
-        InkscapeCall = "C:\\inkscape\\inkscape.exe"
-        LyxCall = "c:\\lyx\\lyx.exe"
+        #InkscapeCall = "C:\\inkscape\\inkscape.exe"
+        InkscapeCall = "inkscape"
+        #LyxCall = "c:\\lyx\\lyx.exe"
+        LyxCall = "lyx.exe"
     # ---------------------------------------------------------------------------------------------------
     #         Write and save plots
     # ---------------------------------------------------------------------------------------------------
