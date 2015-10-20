@@ -337,7 +337,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         nEval += 1
         if StatusReport == True:
             OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, xL, xU, DesVarNorm, inform[0], OptTime0)
-        if xDis is not []:
+        if len(xDis) > 0:
             nD = len(xDis)
             gDis = [[]]*2*nD
             for ii in range(nD):
