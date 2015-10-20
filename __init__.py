@@ -808,7 +808,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     elif len(xU_Active)==0:
         xActive = xL_Active
     else:
-        xActive = np.concatenate((xL_Active, xU_Active), axis=1)
+        xActive = np.concatenate((xL_Active, xU_Active))
     if np.size(xL) == 1:
         if xL_ActiveIndex == False:
             xL_Active = np.array([])
@@ -826,7 +826,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     elif len(xU_Active)==0:
         xLU_Active = xL_Active
     else:
-        xLU_Active = np.concatenate((xL_Active, xU_Active), axis=1)
+        xLU_Active = np.concatenate((xL_Active, xU_Active))
     #TODO needs to be investigated for PyGMO!
     # are there nonlinear constraints active, in case equality constraints are added later, this must also be added
     if np.size(gc) > 0 and Alg[:5] != "PyGMO":
