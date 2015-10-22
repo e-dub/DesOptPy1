@@ -97,6 +97,7 @@ class setDefault():
         elif Alg == "NSGA2":
             self.PopSize = 200
             self.maxGen = 10
+            #self.IFILE = True
             #self.pCross_real = 0.6
             #self.pMut_real = 0.2
             #self.eta_c = 10.
@@ -614,6 +615,8 @@ class setDefault():
 def setUserOptions(UserOpt, Alg, OptName, OptAlg):
     if Alg[:5] == "PyGMO":
         import PyGMO
+    elif Alg == "NSGA2":
+        pass
     elif UserOpt.IFILE is True:     # needs to be changed as all non-pygmo algorithms land here! only for pyOpt!
         OptAlg.setOption("IFILE", OptName+"_Outfile.out")
     if Alg == "MMA":
@@ -720,11 +723,11 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
                                    screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_pso":
         OptAlg = PyGMO.algorithm.pso(gen=UserOpt.gen, omega=UserOpt.omega, eta1=UserOpt.eta1, eta2=UserOpt.eta2,
-                                     vcoeff=UserOpt.vcoeff, variant=UserOpt.variant, neighb_type=UserOpt.neighb_type, 
+                                     vcoeff=UserOpt.vcoeff, variant=UserOpt.variant, neighb_type=UserOpt.neighb_type,
                                      neighb_param=UserOpt.neighb_param)
     elif Alg == "PyGMO_pso_gen":
         OptAlg = PyGMO.algorithm.pso_gen(gen=UserOpt.gen, omega=UserOpt.omega, eta1=UserOpt.eta1, eta2=UserOpt.eta2,
-                                         vcoeff=UserOpt.vcoeff, variant=UserOpt.variant, neighb_type=UserOpt.neighb_type, 
+                                         vcoeff=UserOpt.vcoeff, variant=UserOpt.variant, neighb_type=UserOpt.neighb_type,
                                          neighb_param=UserOpt.neighb_param)
     elif Alg == "PyGMO_sea":
         OptAlg = PyGMO.algorithm.sea(gen=UserOpt.gen, limit=UserOpt.limit)
@@ -777,7 +780,7 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
                                             repair_frequency=UserOpt.repair_frequency, repair_ratio=UserOpt.repair_ratio, f_tol=UserOpt.f_tol,
                                             x_tol=UserOpt.x_tol)
     elif Alg == "PyGMO_cs":
-        OptAlg= PyGMO.algorithm.cs(max_eval=UserOpt.max_eval, stop_range=UserOpt.stop_range, start_range=UserOpt.start_range, 
+        OptAlg= PyGMO.algorithm.cs(max_eval=UserOpt.max_eval, stop_range=UserOpt.stop_range, start_range=UserOpt.start_range,
                                    reduction_coeff=UserOpt.reduction_coeff)
     elif Alg == "PyGMO_ihs":
         OptAlg= PyGMO.algorithm.ihs(iter=UserOpt.iter, hmcr=UserOpt.hmcr, par_min=UserOpt.par_min, par_max=UserOpt.par_max, bw_min=UserOpt.bw_min, bw_max=UserOpt.bw_max)
@@ -844,7 +847,7 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
                                        screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_ipopt":
         OptAlg = PyGMO.algorithm.ipopt(max_iter=UserOpt.max_iter, constr_viol_tol=UserOpt.contr_viol_tol, dual_inf_tol=UserOpt.dual_inf_tol,
-                                       compl_inf_tol=UserOpt.compl_inf_tol, nlp_scaling_method=UserOpt.nlp_scaling_method, 
+                                       compl_inf_tol=UserOpt.compl_inf_tol, nlp_scaling_method=UserOpt.nlp_scaling_method,
                                        obj_scaling_factor=UserOpt.obj_scaling_factor, mu_init=UserOpt.mu_init, screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_cstrs_self_adaptive":
         OptAlg = PyGMO.algorithm.cstrs_self_adaptive(algorithm=UserOpt.algorithm, max_iter=UserOpt.max_iter, f_tol=UserOpt.f_tol, x_tol=UserOpt.x_tol)
