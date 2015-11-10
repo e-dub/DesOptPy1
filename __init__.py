@@ -2,8 +2,8 @@
 """
 ------------------------------------------------------------------------------------------------------------------------
 Title:          __init__.py
-Date:           July 18, 2015
-Revision:       1.0
+Date:           Nobember 10, 2015
+Revision:       1.01
 Units:          Unitless
 Author:         E. J. Wehrle
 Contributors:   S. Rudolph, F. Wachter, M. Richter
@@ -17,34 +17,41 @@ DesOptPy -- DESign OPTimization for PYthon -- is an optimization toolbox for Pyt
 ------------------------------------------------------------------------------------------------------------------------
 Change log
 ------------------------------------------------------------------------------------------------------------------------
-2.0 alpha -- April 6, 2015 -- Preparation for release as open source
-    Main file renamed from DesOpt.py to __init__.pyCMA
-    Position of file (and rest of package) changed to /usr/local/lib/python2.7/dist-packages/DesOptPy/ from ~/DesOpt/.DesOptPy
-1.3 -- April 3, 2015
-    Algorithm options added to call, only for pyOpt algorithms
-    Discrete variables added analogous to APSIS (Schatz & Wehrle & Baier 2014), though without the
+1.01    November 10, 2015
+        Reworked status reports
+
+1.0     October 18, 2015 -- Initial public release
+
+α2.0    April 6, 2015 -- Preparation for release as open source
+        Main file renamed from DesOpt.py to __init__.pyCMA
+        Position of file (and rest of package) changed to /usr/local/lib/python2.7/dist-packages/DesOptPy/ from ~/DesOpt/.DesOptPy
+
+α1.3    April 3, 2015
+        Algorithm options added to call, only for pyOpt algorithms
+        Discrete variables added analogous to APSIS (Schatz & Wehrle & Baier 2014), though without the
         reduction of design variables by 1, example in AxialBar
 
-1.2 -- February 15, 2015
-    PyGMO solver
-    New setup of optimization problem to ease integration of new algorithms
-    Presentation in alpha version---not finished
-    Removed algorithm support for pyCMA as two interfaces to CMA-ES in PyGMO
+α1.2    February 15, 2015
+        PyGMO solver
+        New setup of optimization problem to ease integration of new algorithms
+        Presentation in alpha version---not finished
+        Removed algorithm support for pyCMA as two interfaces to CMA-ES in PyGMO
 
-1.1:
-    Seconds in OptName
-    gc in SysEq and SensEq
+α1.1:
+        Seconds in OptName
+        gc in SysEq and SensEq
 
-1.0:
-    Changed configuration so that SysEq.py imports and calls DesOpt!
-    LLB -> FGCM
+α1.0:
+        Changed configuration so that SysEq.py imports and calls DesOpt!
+        LLB -> FGCM
 
-0.5:
-    SBDO functions with Latin hypercube and Gaussian process (i. e. Kriging) but not well (E. J. Wehrle)
-    Parallelized finite differencing capabilities on LLB clusters Flettner and Dornier (M. Richter)
-    Fixed negative times (M. Richter)
-    Now using CPickle instead of pickle for speed-up (M. Richter)
-    Implementation of three type of design variable normalization (E. J. Wehrle)
+α0.5:
+        SBDO functions with Latin hypercube and Gaussian process (i. e. Kriging) but not well (E. J. Wehrle)
+        Parallelized finite differencing capabilities on LLB clusters Flettner and Dornier (M. Richter)
+        Fixed negative times (M. Richter)
+        Now using CPickle instead of pickle for speed-up (M. Richter)
+        Implementation of three type of design variable normalization (E. J. Wehrle)
+
 
 ------------------------------------------------------------------------------------------------------------------------
 To do and ideas
@@ -94,7 +101,7 @@ TODO Examples
 
 __title__ = "DESign OPTimization in PYthon"
 __shorttitle__ = "DesOptPy"
-__version__ = "1.0 - Initial public release"
+__version__ = "1.01"
 __all__ = ['DesOpt']
 __author__ = "E. J. Wehrle"
 __copyright__ = "Copyright 2015, E. J. Wehrle"
