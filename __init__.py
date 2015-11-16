@@ -17,6 +17,9 @@ DesOptPy -- DESign OPTimization for PYthon -- is an optimization toolbox for Pyt
 ------------------------------------------------------------------------------------------------------------------------
 Change log
 ------------------------------------------------------------------------------------------------------------------------
+1.02    November 16, 2015
+        Again improved status reports
+
 1.01    November 10, 2015
         Reworked status reports
 
