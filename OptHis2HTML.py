@@ -375,6 +375,8 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
             shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep)
         for file in glob.glob(template_directory + "*.css"):
             shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep)
+        for file in glob.glob(template_directory + "*.ico"):
+            shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep)
     return 0
 
 

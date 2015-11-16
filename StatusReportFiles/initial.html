@@ -20,6 +20,8 @@
 <!DOCTYPE html >
 <html>
 <head>
+
+    <link rel="icon" href="../DesOptPy_icon.ico" type="image/x-icon">
     <link rel="stylesheet" href="demos.css" type="text/css" media="screen"/>
     <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
 
@@ -475,6 +477,7 @@
 			document.getElementById("nav5").className = "active";
 
 		    current_view=5;
+		    function resizeGraphs();
 		}
 
 		function resizeGraphs(){
@@ -499,6 +502,7 @@
 			<!--End of constraint html part-->
 
 			document.getElementById("coordinates").style.top = window.innerHeight - 50 + "px";
+
 		}
 
 		function show_table() {
