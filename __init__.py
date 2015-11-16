@@ -104,7 +104,7 @@ TODO Examples
 
 __title__ = "DESign OPTimization in PYthon"
 __shorttitle__ = "DesOptPy"
-__version__ = "1.01"
+__version__ = "1.02"
 __all__ = ['DesOpt']
 __author__ = "E. J. Wehrle"
 __copyright__ = "Copyright 2015, E. J. Wehrle"
