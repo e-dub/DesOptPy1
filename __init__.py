@@ -2,11 +2,11 @@
 """
 ------------------------------------------------------------------------------------------------------------------------
 Title:          __init__.py
-Date:           Nobember 10, 2015
-Revision:       1.01
+Version:        1.1
 Units:          Unitless
 Author:         E. J. Wehrle
 Contributors:   S. Rudolph, F. Wachter, M. Richter
+Date:           Novemeber 16, 2015
 ------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -17,6 +17,12 @@ DesOptPy -- DESign OPTimization for PYthon -- is an optimization toolbox for Pyt
 ------------------------------------------------------------------------------------------------------------------------
 Change log
 ------------------------------------------------------------------------------------------------------------------------
+1.1     November 18, 2015
+        General clean-up
+        Support for multiobjective optimization with pyOpt's NSGAII
+        DesOpt returns fOpt, xOpt, Results.  Results replaces SP and includes "everything"
+        More approximation options!
+
 1.02    November 16, 2015
         Again improved status reports
 
@@ -55,12 +61,11 @@ Change log
         Now using CPickle instead of pickle for speed-up (M. Richter)
         Implementation of three type of design variable normalization (E. J. Wehrle)
 
-
 ------------------------------------------------------------------------------------------------------------------------
 To do and ideas
 ------------------------------------------------------------------------------------------------------------------------
-Need to do immediately
-TDOO: Nightly automatic benchmark run to make sure everything working?
+TODO: Constraint handling in PyGMO
+TOOO: Nightly automatic benchmark run to make sure everything working?
 TODO  max line length = 79? (PEP8)
 TODO every iteration to output window (file)
     to output text file as well as status report.
@@ -73,21 +78,21 @@ TODO Discrete optimization with python-zibopt?
 TODO Multiobjective
     http://www.midaco-solver.com/index.php/more/multi-objective
     http://openopt.org/interalg
+    single objective for pareto front fhat = k*f1 + (k-1)*f2, where k = 0...1
 TODO Lagrangian multiplier for one-dimensional optimization, line 423
 TODO gGradIter is forced into
 TODO sens_mode='pgc'
-TODO pyTables? for outputs, readable in Excel
-TODO range to xrange (xrange is faster)
+TODO Output data formats
+        pyTables?
+        readable in Excel?
 TODO excel report with "from xlwt import Workbook"
+TODO range to xrange (xrange is faster)?
 TODO SBDO
-    Adaptive surrogating!
-   DoE methods:
-x       LHS, S...
+   Adaptive surrogating!
+   DoE methods
    Approximation methods
-x       Kriging
        Polynomial
        Radial basis: scipy.interpolate.Rbf
-   Change optimization name: $Model_SBDO_$Alg_
 TODO Examples
    SIMP with ground structure
    Multimaterial design (SIMP)
@@ -100,20 +105,18 @@ TODO Examples
    Discrete problems
    gGradIter in dgdxIter
    fGradIter in dfdxIter etc
+---------------------------------------------------------------------------------------------------
 """
 
 __title__ = "DESign OPTimization in PYthon"
 __shorttitle__ = "DesOptPy"
-__version__ = "1.01"
+__version__ = "1.1"
 __all__ = ['DesOpt']
 __author__ = "E. J. Wehrle"
 __copyright__ = "Copyright 2015, E. J. Wehrle"
 __email__ = "wehrle(a)tum.de"
 __license__ = "GNU Lesser General Public License"
-__url__ = 'www.desoptpy.org'
-
-
-
+__url__ = 'www.DesOptPy.org'
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Import necessary Python packages and toolboxes
@@ -121,6 +124,7 @@ __url__ = 'www.desoptpy.org'
 import os
 import shutil
 import sys
+import inspect
 import pyOpt
 import OptAlgOptions
 import OptHis2HTML
@@ -146,6 +150,7 @@ try:
     IsPyGMO = True
 except:
     IsPyGMO = False
+from termcolor import colored
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Print details of DesOptPy
@@ -156,14 +161,67 @@ def PrintDesOptPy():
     print("Internet:                "+__url__)
     print("License:                 "+__license__)
     print("Copyright:               "+__copyright__)
+    print("")
 
 #-----------------------------------------------------------------------------------------------------------------------
 # PyGMO call (must be outside of main function)
 #-----------------------------------------------------------------------------------------------------------------------
 HistDat = []
 if IsPyGMO is True:
+    class OptSysEqConPyGMO(base):
+        def __init__(self, SysEq=None, xL=0.0, xU=1.0, gc=[], OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
+                     DesVarNorm="DesVarNorm", StatusReport=False, dim=1, nEval=0, inform=[], OptTime0=[]):
+            #                                  (nx,       nxdis, nf,      ng,      ng, tolerance on con violation)
+            super(OptSysEqConPyGMO, self).__init__(dim, 0, 1, 2, 0, 1e-4)
+            self.set_bounds(xL, xU)
+            self.__dim = dim
+            self.gc = gc
+            self.SysEq = SysEq
+            self.nEval = nEval
+            self.OptName = OptName
+            self.Alg = Alg
+            self.xL = xL
+            self.xU = xU
+            self.DesOptDir = DesOptDir
+            self.DesVarNorm = DesVarNorm
+            self.StatusReport = StatusReport
+            self.AlgInst = pyOpt.Optimizer(self.Alg)
+            self.inform = inform
+            self.OptTime0 = OptTime0
+            self.f = np.zeros(1)
+            self.f = np.zeros(np.shape(gc))
+        def _objfun_impl(self, x):
+            f = self.f
+
+            return(f,)
+        def _compute_constraints_impl(self, x):
+            self.nEval += 1
+            f, g = self.SysEq(np.array(x), self.gc)
+            #print f
+            #print g
+            self.g = g
+            self.f = f
+            global HistData
+            if self.nEval == 1:
+                HistData = pyOpt.History(self.OptName, 'w', optimizer=self.AlgInst, opt_prob=self.OptName)
+            HistData.write(x, "x")
+            HistData.write(f, "obj")
+            HistData.write(g, "con")
+            if self.StatusReport == 1:
+                try:
+                    OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.xL, self.xU, self.DesVarNorm, self.inform[0], self.OptTime0)
+                except:
+                    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__")
+            #g = self.g
+            #gList = g.tolist()
+            return g
+
+
+
+
+
     class OptSysEqPyGMO(base):
-        def __init__(self, SysEq=None, xL=0.0, xU=2.0, gc=[], OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
+        def __init__(self, SysEq=None, xL=0.0, xU=1.0, gc=[], OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
                      DesVarNorm="DesVarNorm", StatusReport=False, dim=1, nEval=0, inform=[], OptTime0=[]):
             super(OptSysEqPyGMO, self).__init__(dim)
             self.set_bounds(xL, xU)
@@ -196,7 +254,7 @@ if IsPyGMO is True:
                 try:
                     OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.xL, self.xU, self.DesVarNorm, self.inform[0], self.OptTime0)
                 except:
-                    print("Error in OptSysEqPyGMO __init__  ")
+                    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__")
             if g is not []:
                 for ii in range(np.size(g)):
                     if g[ii] > 0.0:
@@ -241,9 +299,9 @@ class OptSysEqPyGMO(base):
 #-----------------------------------------------------------------------------------------------------------------------
 #
 #-----------------------------------------------------------------------------------------------------------------------
-def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", SensCalc="FD", DesVarNorm=True,
-           deltax=1e-3, StatusReport=False, ResultReport=False, Video=False, DoE=False, SBDO=False,
-           Debug=False, PrintOut=True, OptNameAdd="", AlgOptions=[], Alarm=True):
+def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", SensCalc="FD", DesVarNorm=True, nf=1,
+           deltax=1e-3, StatusReport=False, ResultReport=False, Video=False, nDoE=0, DoE="LHS+Corners", SBDO=False,
+           Approx=[], Debug=False, PrintOut=True, OptNameAdd="", AlgOptions=[], Alarm=True):
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Define optimization problem and optimization options
@@ -254,10 +312,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     if Debug is True:
         StatusReport = False
         if StatusReport is True:
-            print "Debug is set to True; overriding StatusReport"
+            print colored("Debug is set to True; overriding StatusReport setting it to False", "red")
+            StatusReport = False
         if ResultReport is True:
-            print "Debug is set to True; overriding ResultReport"
-        ResultReport = False
+            print colored("Debug is set to True; overriding ResultReport setting it to False", "red")
+            ResultReport = False
     computerName = platform.uname()[1]
     operatingSystem = platform.uname()[0]
     architecture = platform.uname()[4]
@@ -281,14 +340,14 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         pyOptAlg = False
     if hasattr(SensEq, '__call__'):
         SensCalc = "OptSensEq"
-        print "Function for sensitivity analysis has been provided, overriding SensCalc to use function"
+        print colored("Function for sensitivity analysis has been provided, overriding SensCalc to use function", "red")
     else:
         pass
     StartTime = datetime.datetime.now()
     loctime = time.localtime()
     today = time.strftime("%B", time.localtime()) + ' ' + str(loctime[2]) + ', ' + str(loctime[0])
     if SBDO is True:
-        OptNameAdd = OptNameAdd + "_SBDO"
+        OptNameAdd += "_SBDO"
     OptName = OptModel + OptNameAdd + "_" + Alg + "_" + StartTime.strftime("%Y%m%d%H%M%S")
     global nEval
     nEval = 0
@@ -319,10 +378,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #-----------------------------------------------------------------------------------------------------------------------
 #       Print start-up splash to output screen
 #-----------------------------------------------------------------------------------------------------------------------
-    if PrintOut is True:
+    if PrintOut:
         print("--------------------------------------------------------------------------------")
         PrintDesOptPy()
-        print("")
         print("Optimization model:      " + OptModel)
         try: print("Optimization algorithm:  " + Alg)
         except: pass
@@ -406,22 +464,22 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #-----------------------------------------------------------------------------------------------------------------------
 #       Surrogate-based optimization (not fully functioning yet!!!!)
 #-----------------------------------------------------------------------------------------------------------------------
-    # TODO SBDO in a separate file???
     if SBDO is not False:
-        if DoE > 0:
+        if nDoE > 0:
             import pyDOE
             try:
                 n_gc = len(gc)
             except:
                 n_gc = 1
-            SampleCorners = True
-            if SampleCorners is True:
+            if DoE == "LHS+Corners":
                 xTemp = np.ones(np.size(xL)) * 2
                 xSampFF = pyDOE.fullfact(np.array(xTemp, dtype=int))  # Kriging needs boundaries too!!
-                xSampLH = pyDOE.lhs(np.size(xL), DoE)
+                xSampLH = pyDOE.lhs(np.size(xL), nDoE)
                 xDoE_Norm = np.concatenate((xSampFF, xSampLH), axis=0)
+            elif DoE == "LHS":
+                xDoE_Norm = pyDOE.lhs(np.size(xL), nDoE)
             else:
-                xDoE_Norm = pyDOE.lhs(np.size(xL), DoE)
+                sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": DoE misspelled or not supported")
             xDoE = np.zeros(np.shape(xDoE_Norm))
             fDoE = np.zeros([np.size(xDoE_Norm, 0), 1])
             gDoE = np.zeros([np.size(xDoE_Norm, 0), n_gc])
@@ -430,21 +488,36 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
                 fDoEii, gDoEii, fail = OptSysEqNorm(xDoE_Norm[ii])
                 fDoE[ii] = fDoEii
                 gDoE[ii, :] = gDoEii
-            n_theta = np.size(x0) + 1
-            ApproxObj = "QuadReg"
-            ApproxObj = "GaussianProcess"
-            if ApproxObj == "GaussianProcess":
-                from sklearn.gaussian_process import GaussianProcess
+            #n_theta = np.size(x0) + 1
 
+            # Approximation
+            if Approx == []:
+                ApproxType=[[]]*(1+ng)
+                for ii in range(len(ApproxType)):
+                    ApproxType[ii] = "GaussianProcess"
+            elif np.size(Approx)==1:
+                ApproxType=[[]]*(1+ng)
+                for ii in range(len(ApproxType)):
+                    ApproxType[ii] = Approx
+            else:
+                ApproxType = Approx
+            if "GaussianProcess" in ApproxType:
+                from sklearn.gaussian_process import GaussianProcess
+            if "Reg" in ApproxType:
+                #from PolyReg import *
+                import PolyReg
+            # Approximation of objective
+            if ApproxType[0] == "GaussianProcess":
                 approx_f = GaussianProcess(regr='quadratic', corr='squared_exponential',
                                            normalize=True, theta0=0.1, thetaL=1e-4, thetaU=1e+1,
                                            optimizer='fmin_cobyla')
-            elif ApproxObj == "QuadReg":
-                #                from PolyReg import *
+            elif ApproxType[0] == "QuadReg":
                 approx_f = PolyReg()
+            else:
+                sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Approximation type misspelled or not supported")
             approx_f.fit(xDoE, fDoE)
-            from sklearn.gaussian_process import GaussianProcess
 
+            # Approximation of constraints
             gDoEr = np.zeros(np.size(xDoE_Norm, 0))
             approx_g = [[]] * n_gc
             gpRegr = ["quadratic"] * n_gc
@@ -453,8 +526,13 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
                 for iii in range(np.size(xDoE_Norm, 0)):
                     gDoEii = gDoE[iii]
                     gDoEr[iii] = gDoEii[ii]
-                approx_g[ii] = GaussianProcess(regr=gpRegr[ii], corr=gpCorr[ii], theta0=0.01,
-                                               thetaL=0.0001, thetaU=10., optimizer='fmin_cobyla')
+                if ApproxType[ii+1] == "GaussianProcess":
+                    approx_g[ii] = GaussianProcess(regr=gpRegr[ii], corr=gpCorr[ii], theta0=0.01,
+                                                   thetaL=0.0001, thetaU=10., optimizer='fmin_cobyla')
+                elif ApproxType[0] == "QuadReg":
+                    approx_g[ii]  = PolyReg()
+                else:
+                    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Approximation type misspelled or not supported")
                 approx_g[ii].fit(xDoE, gDoEr)
             DoE_Data = {}
             DoE_Data['xDoE_Norm'] = xDoE_Norm
@@ -528,14 +606,18 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         elif np.size(x0) > 1:
             for ii in range(np.size(x0)):
                 OptProb.addVar('x' + str(ii + 1), 'c', value=x0norm[ii], lower=xLnorm[ii], upper=xUnorm[ii])
-        OptProb.addObj('f')
+        if nf == 1:
+            OptProb.addObj('f')
+        elif nf > 1:
+            for ii in range(nf):
+                OptProb.addObj('f' + str(ii + 1))
         if np.size(gc) == 1:
             OptProb.addCon('g', 'i')
-            ng = 1
+            #ng = 1
         elif np.size(gc) > 1:
             for ii in range(len(gc)):
                 OptProb.addCon('g' + str(ii + 1), 'i')
-            ng = ii + 1
+            #ng = ii + 1
         if np.size(hc) == 1:
             OptProb.addCon('h', 'i')
         elif np.size(hc) > 1:
@@ -619,57 +701,66 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         #print nindiv
         dim = np.size(x0)
         # prob = OptSysEqPyGMO(dim=dim)
-        prob = OptSysEqPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
-                             DesVarNorm=DesVarNorm, StatusReport=StatusReport, inform=inform, OptTime0=OptTime0)
-        # prob = problem.death_penalty(prob_old, problem.death_penalty.method.KURI)
         if AlgOptions == []:
             AlgOptions = OptAlgOptions.setDefault(Alg)
         OptAlg = OptAlgOptions.setUserOptions(AlgOptions, Alg, OptName, OptAlg)
-        #algo = eval("PyGMO.algorithm." + Alg[6:]+"()")
-
-        #de (gen=100, f=0.8, cr=0.9, variant=2, ftol=1e-06, xtol=1e-06, screen_output=False)
-        #NSGAII (gen=100, cr=0.95, eta_c=10, m=0.01, eta_m=10)
-        #sga_gray.__init__(gen=1, cr=0.95, m=0.02, elitism=1, mutation=PyGMO.algorithm._algorithm._gray_mutation_type.UNIFORM, selection=PyGMO.algorithm._algorithm._gray_selection_type.ROULETTE, crossover=PyGMO.algorithm._algorithm._gray_crossover_type.SINGLE_POINT)
-        #nsga_II.__init__(gen=100, cr=0.95, eta_c=10, m=0.01, eta_m=10)
-        #emoa  (hv_algorithm=None, gen=100, sel_m=2, cr=0.95, eta_c=10, m=0.01, eta_m=10)
-        #pade  (gen=10, max_parallelism=1, decomposition=PyGMO.problem._problem._decomposition_method.BI, solver=None, T=8, weights=PyGMO.algorithm._algorithm._weight_generation.LOW_DISCREPANCY, z=[])
-        #nspso (gen=100, minW=0.4, maxW=1.0, C1=2.0, C2=2.0, CHI=1.0, v_coeff=0.5, leader_selection_range=5, diversity_mechanism=PyGMO.algorithm._algorithm._diversity_mechanism.CROWDING_DISTANCE)
-        #corana: (iter=10000, Ts=10, Tf=0.1, steps=1, bin_size=20, range=1)
-
-        #if Alg[6:] in ["de", "bee_colony", "nsga_II", "pso", "pso_gen", "cmaes", "py_cmaes",
-        #               "spea2", "nspso", "pade", "sea", "vega", "sga", "sga_gray", "de_1220",
-        #               "mde_pbx", "jde"]:
-        #    algo.gen = ngen
-        #elif Alg[6:] in ["ihs", "monte_carlo", "sa_corana"]:
-        #    algo.iter = ngen
-        #elif Alg[6:] == "sms_emoa":
-        #    print "sms_emoa not working"
-        #else:
-        #    sys.exit("improper PyGMO algorithm chosen")
-        #algo.f = 1
-        #algo.cr=1
-        #algo.ftol = 1e-3
-        #algo.xtol = 1e-3
-        #algo.variant = 2
-        #algo.screen_output = False
-        #if Alg == "PyGMO_de":
-        #    algo = PyGMO.algorithm.de(gen=ngen, f=1, cr=1, variant=2,
-        #                              ftol=1e-3, xtol=1e-3, screen_output=False)
-        #else:
-        #    algo = PyGMO.algorithm.de(gen=ngen, f=1, cr=1, variant=2,
-        #                              ftol=1e-3, xtol=1e-3, screen_output=False)
-        #pop = PyGMO.population(prob, nIndiv)
-        #pop = PyGMO.population(prob, nIndiv, seed=13598)  # Seed fixed for random generation of first individuals
-        #algo.evolve(pop)
-        isl = PyGMO.island(OptAlg, prob, AlgOptions.nIndiv)
-        isl.evolve(1)
-        isl.join()
-        xOpt = isl.population.champion.x
-        # fOpt = isl.population.champion.f[0]
-        nEval = isl.population.problem.fevals
-        nGen = int(nEval/AlgOptions.nIndiv)  # currently being overwritten and therefore not being used
-        StatusReport = False  # turn off status report, so not remade (and destroyed) in following call!
-        fOpt, gOpt, fail = OptSysEq(xOpt)  # verification of optimal solution as values above are based on penalty!
+        if ng == 0:
+            prob = OptSysEqPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
+                                 DesVarNorm=DesVarNorm, StatusReport=StatusReport, inform=inform, OptTime0=OptTime0)
+            # prob = problem.death_penalty(prob_old, problem.death_penalty.method.KURI)
+            #algo = eval("PyGMO.algorithm." + Alg[6:]+"()")
+            #de (gen=100, f=0.8, cr=0.9, variant=2, ftol=1e-06, xtol=1e-06, screen_output=False)
+            #NSGAII (gen=100, cr=0.95, eta_c=10, m=0.01, eta_m=10)
+            #sga_gray.__init__(gen=1, cr=0.95, m=0.02, elitism=1, mutation=PyGMO.algorithm._algorithm._gray_mutation_type.UNIFORM, selection=PyGMO.algorithm._algorithm._gray_selection_type.ROULETTE, crossover=PyGMO.algorithm._algorithm._gray_crossover_type.SINGLE_POINT)
+            #nsga_II.__init__(gen=100, cr=0.95, eta_c=10, m=0.01, eta_m=10)
+            #emoa  (hv_algorithm=None, gen=100, sel_m=2, cr=0.95, eta_c=10, m=0.01, eta_m=10)
+            #pade  (gen=10, max_parallelism=1, decomposition=PyGMO.problem._problem._decomposition_method.BI, solver=None, T=8, weights=PyGMO.algorithm._algorithm._weight_generation.LOW_DISCREPANCY, z=[])
+            #nspso (gen=100, minW=0.4, maxW=1.0, C1=2.0, C2=2.0, CHI=1.0, v_coeff=0.5, leader_selection_range=5, diversity_mechanism=PyGMO.algorithm._algorithm._diversity_mechanism.CROWDING_DISTANCE)
+            #corana: (iter=10000, Ts=10, Tf=0.1, steps=1, bin_size=20, range=1)
+            #if Alg[6:] in ["de", "bee_colony", "nsga_II", "pso", "pso_gen", "cmaes", "py_cmaes",
+            #               "spea2", "nspso", "pade", "sea", "vega", "sga", "sga_gray", "de_1220",
+            #               "mde_pbx", "jde"]:
+            #    algo.gen = ngen
+            #elif Alg[6:] in ["ihs", "monte_carlo", "sa_corana"]:
+            #    algo.iter = ngen
+            #elif Alg[6:] == "sms_emoa":
+            #    print "sms_emoa not working"
+            #else:
+            #    sys.exit("improper PyGMO algorithm chosen")
+            #algo.f = 1
+            #algo.cr=1
+            #algo.ftol = 1e-3
+            #algo.xtol = 1e-3
+            #algo.variant = 2
+            #algo.screen_output = False
+            #if Alg == "PyGMO_de":
+            #    algo = PyGMO.algorithm.de(gen=ngen, f=1, cr=1, variant=2,
+            #                              ftol=1e-3, xtol=1e-3, screen_output=False)
+            #else:
+            #    algo = PyGMO.algorithm.de(gen=ngen, f=1, cr=1, variant=2,
+            #                              ftol=1e-3, xtol=1e-3, screen_output=False)
+            #pop = PyGMO.population(prob, nIndiv)
+            #pop = PyGMO.population(prob, nIndiv, seed=13598)  # Seed fixed for random generation of first individuals
+            #algo.evolve(pop)
+            isl = PyGMO.island(OptAlg, prob, AlgOptions.nIndiv)
+            isl.evolve(1)
+            isl.join()
+            xOpt = isl.population.champion.x
+            # fOpt = isl.population.champion.f[0]
+            nEval = isl.population.problem.fevals
+            nGen = int(nEval/AlgOptions.nIndiv)  # currently being overwritten and therefore not being used
+            StatusReport = False  # turn off status report, so not remade (and destroyed) in following call!
+            fOpt, gOpt, fail = OptSysEq(xOpt)  # verification of optimal solution as values above are based on penalty!
+        else:
+            prob = OptSysEqConPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
+                                 DesVarNorm=DesVarNorm, StatusReport=StatusReport, inform=inform, OptTime0=OptTime0)
+            algo_self_adaptive = PyGMO.algorithm.cstrs_self_adaptive(OptAlg, AlgOptions.gen)
+            pop = PyGMO.population(prob, AlgOptions.nIndiv)
+            pop = algo_self_adaptive.evolve(pop)
+            xOpt = pop.champion.x
+            fOpt = pop.champion.f
+            nEval = pop.problem.fevals
+            nGen = int(nEval/AlgOptions.nIndiv)
 
 #-----------------------------------------------------------------------------------------------------------------------
 #        SciPy optimization
@@ -701,7 +792,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #
 #-----------------------------------------------------------------------------------------------------------------------
     else:
-        sys.exit("Error on line 694 of __init__.py: algorithm misspelled or not supported")
+        sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": algorithm misspelled or not supported")
 
 #-----------------------------------------------------------------------------------------------------------------------
 #       Optimization post-processing
@@ -784,9 +875,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             x0norm = []
             xIterNorm = []
             xOptNorm = []
-    nIter = np.size(fIter)
+    nIter = np.size(fIter,0)
     if np.size(fIter) > 0:
-        if fIter[0] != 0:
+        if len(fIter[0]) > 0:
             fIterNorm = fIter / fIter[0]  # fIterNorm=(fIter-fIter[nEval-1])/(fIter[0]-fIter[nEval-1])
         else:
             fIterNorm = fIter
@@ -957,6 +1048,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     OptSolData['xU'] = xU
     OptSolData['ng'] = ng
     OptSolData['nx'] = nx
+    OptSolData['nf'] = nf
     OptSolData['Opt1Order'] = Opt1Order
     OptSolData['hhmmss0'] = hhmmss0
     OptSolData['hhmmss1'] = hhmmss1
@@ -1036,7 +1128,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             t = 1
             freq = 350
             os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (t, freq))
-    return xOpt, fOpt, SPg
+    return xOpt, fOpt, OptSolData
 
 #-----------------------------------------------------------------------------------------------------------------------
 #
