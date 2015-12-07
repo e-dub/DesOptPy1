@@ -129,8 +129,10 @@
 
             g1 = new Dygraph("cvs", "objFct_maxCon.csv",
                 {
-                labels: [ 'Iteration', 'objective fct', 'maximum constraint' ],
-                series : {'maximum constraint': { axis: 'y2' }},
+                series : {'Constraint': { axis: 'y2' }},
+                xlabel: 'Iterations',
+                ylabel: 'Objective function',
+                y2label: 'Maximum constraint'
                 });
 
             window.intervalId = setInterval(function() {
@@ -139,7 +141,11 @@
 
 <!-- Graph 2, normalized design variables -->
 
-            g2 = new Dygraph("cvs2", "desVarsNorm.csv");
+              g2 = new Dygraph("cvs2", "desVarsNorm.csv",
+          {
+            xlabel: 'Iterations',
+            ylabel: 'Design variables normalized',
+          });
 
             window.intervalId = setInterval(function() {
                 g2.updateOptions( { 'file': "desVarsNorm.csv" } );
@@ -147,7 +153,11 @@
 
 <!-- Graph 3, denormalized design variables-->
 
-            g3 = new Dygraph("cvs5", "desVars.csv");
+              g3 = new Dygraph("cvs5", "desVars.csv",
+            {
+              xlabel: 'Iterations',
+              ylabel: 'Design Variables'
+            });
 
             window.intervalId = setInterval(function() {
                 g3.updateOptions( { 'file': "desVars.csv" } );
@@ -156,7 +166,12 @@
 <!--Start of constraint html part-->
 <!-- Graph 4, constraints------------------------------------ -->
 
-            g4 = new Dygraph("cvs3", "constraints.csv");
+             g4 = new Dygraph("cvs3", "constraints.csv",
+            {
+              xlabel: 'Iterations',
+              ylabel: 'Constraints',
+              drawAxesAtZero: 'True'
+            });
 
             window.intervalId = setInterval(function() {
                 g4.updateOptions( { 'file': "constraints.csv" } );
@@ -164,7 +179,12 @@
 
 <!-- Graph 5, violated constraints                                  -->
 
-            g5 = new Dygraph("cvs4", "constraints.csv");
+             g5 = new Dygraph("cvs4", "constraints.csv",
+            {
+              xlabel: 'Iterations',
+              ylabel: 'Violated constraints',
+              valueRange: [0, null]
+            });
 
             window.intervalId = setInterval(function() {
                 g5.updateOptions( { 'file': "constraints.csv" } );
