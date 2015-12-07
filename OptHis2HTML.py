@@ -27,10 +27,30 @@ from Normalize import normalize, denormalize
 import shutil
 import os
 import sys
+import csv
 import glob
+import webbrowser
 
 
 def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, StatusDirectory=""):
+
+    with open('objFct_maxCon.csv', 'wb') as csvfile:
+            datawriter = csv.writer(csvfile, dialect='excel')
+    csvfile.close()
+
+    with open('desVarsNorm.csv', 'wb') as csvfile:
+            datawriter = csv.writer(csvfile, dialect='excel')
+    csvfile.close()
+
+    with open('desVars.csv', 'wb') as csvfile:
+            datawriter = csv.writer(csvfile, dialect='excel')
+    csvfile.close()
+
+    with open('constraints.csv', 'wb') as csvfile:
+            datawriter = csv.writer(csvfile, dialect='excel')
+    csvfile.close()
+
+
 
     StartTime = str(starttime)[0:10] + "000"
     EndTime = ""
@@ -172,6 +192,12 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
             value2 = value2 + '[' + str(x) + ',' + str(
                 float(np.max(gIter[x]))) + '],'  # Daten für Nebenb-diagramm aufbereiten
 
+        with open('objFct_maxCon.csv', 'ab') as csvfile:
+            datawriter = csv.writer(csvfile, dialect='excel')
+            datawriter.writerow([x, str(float(fIter[x])), float(np.max(gIter[x]))])
+        csvfile.close()
+
+
     for x in range(0, niter + 1):  # Maximale y-Achsen Werte bestimmen
         if (np.max(fIter[x]) > objFctmax):
             objFctmax = np.max(fIter[x])
@@ -200,26 +226,34 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
     datasetsg = ""
 
     if xIter.size != 0:
-        for x in range(0, len(xIter[0])):  # Datasets von Designvariables erstellen
-            datasets += 'var ' + 'data' + str(x) + '=['
-            for y in range(0, niter + 1):
-                datasets += '[' + str(y) + ',' + str(xIter[y][x]) + '],'
-            datasets += '];\n\t\t\t'
+        for x in range(0, niter +1):  # Datasets von Designvariables erstellen
+            datasets = str(xIter[x][:].tolist()).strip('[]')
+
+            with open('desVarsNorm.csv', 'ab') as csvfile:
+                datawriter = csv.writer(csvfile, dialect='excel', quotechar=' ')
+                datawriter.writerow([x, datasets] )
+            csvfile.close()
+            datasets = ""
 
     if xIter.size != 0:
-        for x in range(0, len(xIter[0])):  # Datasets von denormalisierten Designvariables erstellen
+        for x in range(0, niter +1):  # Datasets von denormalisierten Designvariables erstellen
+            datasets_denorm = str(xIter_denormalized[x][:].tolist()).strip('[]')
+            with open('desVars.csv', 'ab') as csvfile:
+                datawriter = csv.writer(csvfile, dialect='excel', quotechar=' ')
+                datawriter.writerow([x, datasets_denorm] )
+            csvfile.close()
+            datasets = ""
 
-            datasets_denorm += 'var ' + 'data' + str(x) + '=['
-            for y in range(0, niter + 1):
-                datasets_denorm += '[' + str(y) + ',' + str(xIter_denormalized[y][x]) + '],'
-            datasets_denorm += '];\n\t\t\t'
 
     if gIter.size != 0:
-        for x in range(0, len(gIter[0])):  # Datasets von Con-fkt erstellen
-            datasetsg += 'var ' + 'data' + str(x) + '=['
-            for y in range(0, niter + 1):
-                datasetsg += '[' + str(y) + ',' + str(gIter[y][x]) + '],'
-            datasetsg += '];\n\t\t\t'
+        for x in range(0, niter +1):  # Datasets von Con-fkt erstellen
+            datasetsg = str(gIter[x][:].tolist()).strip('[]')
+
+            with open('constraints.csv', 'ab') as csvfile:
+                datawriter = csv.writer(csvfile, dialect='excel', quotechar=' ')
+                datawriter.writerow([x, datasetsg] )
+            csvfile.close()
+
         for u in range(0, len(gIter)):
             arr_gmin[u] = np.max(gIter[u])
 
@@ -296,30 +330,11 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
     if gIter.size != 0 or gIter.size > 100:
         hstrnew = hstr.replace('xxxxName', OptName)
         hstrnew = hstrnew.replace('xxxxTime', time_now)
-        hstrnew = hstrnew.replace('xxxxValue1', value)
-        hstrnew = hstrnew.replace('xxxxValue2', value2)
-        hstrnew = hstrnew.replace('xxxxallDesVar_denorm', allDesVar)
-        hstrnew = hstrnew.replace('xxxxdatasetf_denorm', datasets_denorm)
-        hstrnew = hstrnew.replace('xxxxXmax', str(ymax_denorm))
-        hstrnew = hstrnew.replace('xxxxXmin', str(ymin_denorm))
-        hstrnew = hstrnew.replace('xxxxnIter', str(niter))
-        hstrnew = hstrnew.replace('xxxxymax', str(ymax))
-        hstrnew = hstrnew.replace('xxxxymin', str(ymin))
-        hstrnew = hstrnew.replace('xxxxObjFctmin', str(objFctmin))
-        hstrnew = hstrnew.replace('xxxxObjFctmax', str(objFctmax))
-        hstrnew = hstrnew.replace('xxxxdatasetf', datasets)
-        hstrnew = hstrnew.replace('xxxxallDesVar', allDesVar)
-        hstrnew = hstrnew.replace('xxxxgmax', str(gmax))
-        hstrnew = hstrnew.replace('xxxxgmin', str(gmin))
-        hstrnew = hstrnew.replace('xxxxdatasetg', datasetsg)
-        hstrnew = hstrnew.replace('xxxxallConVar', allConVar)
-        hstrnew = hstrnew.replace('xxxxallConVar', allConVar)
         hstrnew = hstrnew.replace('xxxxtableObjFct', ObjFct_table)
         hstrnew = hstrnew.replace('xxxxtableDesVar', DesVar_table)
         hstrnew = hstrnew.replace('xxxxnumber_des_var', number_des_vars*2)
         hstrnew = hstrnew.replace('xxxxtableConstr', Constraint_table)
         hstrnew = hstrnew.replace('xxxxnumber_constraints', number_constraints)
-        hstrnew = hstrnew.replace('xxxxNumLabels', xxxxNumLabels)
         hstrnew = hstrnew.replace('xxxxAlg', Alg.name)
         hstrnew = hstrnew.replace('xxxxStatus', str(inform))
         hstrnew = hstrnew.replace('xxxxStartTime', StartTime)
@@ -327,25 +342,8 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
     else:
         hstrnew = hstr.replace('xxxxName', OptName)
         hstrnew = hstrnew.replace('xxxxTime', time_now)
-        hstrnew = hstrnew.replace('xxxxValue1', value)
-        hstrnew = hstrnew.replace('xxxxValue2', value2)
-        hstrnew = hstrnew.replace('xxxxallDesVar_denorm', allDesVar)
-        hstrnew = hstrnew.replace('xxxxdatasetf_denorm', datasets_denorm)
-        hstrnew = hstrnew.replace('xxxxXmax', str(ymax_denorm))
-        hstrnew = hstrnew.replace('xxxxXmin', str(ymin_denorm))
-        hstrnew = hstrnew.replace('xxxxnIter', str(niter))
-        hstrnew = hstrnew.replace('xxxxymax', str(ymax))
-        hstrnew = hstrnew.replace('xxxxymin', str(ymin))
-        hstrnew = hstrnew.replace('xxxxObjFctmin', str(objFctmin))
-        hstrnew = hstrnew.replace('xxxxObjFctmax', str(objFctmax))
-        hstrnew = hstrnew.replace('xxxxdatasetf', datasets)
-        hstrnew = hstrnew.replace('xxxxallDesVar', allDesVar)
-        hstrnew = hstrnew.replace('xxxxgmax', str(gmax))
-        hstrnew = hstrnew.replace('xxxxgmin', str(gmin))
-        hstrnew = hstrnew.replace('xxxxdatasetg', datasetsg)
         hstrnew = hstrnew.replace('xxxxtableObjFct', ObjFct_table)
         hstrnew = hstrnew.replace('xxxxtableDesVar', DesVar_table)
-        hstrnew = hstrnew.replace('xxxxNumLabels', xxxxNumLabels)
         hstrnew = hstrnew.replace('xxxxAlg', Alg.name)
         hstrnew = hstrnew.replace('xxxxStatus', inform)
         hstrnew = hstrnew.replace('xxxxStartTime', StartTime)
@@ -368,7 +366,19 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
     shutil.copy("initial1.html",
                 StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep + OptName + "_Status.html")
 
-    if not os.path.exists(StatusDirectory + os.sep + "Results" + os.sep + "RGraph.scatter.js"):
+    shutil.copy("objFct_maxCon.csv",
+                StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep + "objFct_maxCon.csv")
+
+    shutil.copy("desVars.csv",
+                StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep + "desVars.csv")
+
+    shutil.copy("desVarsNorm.csv",
+                StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep + "desVarsNorm.csv")
+
+    shutil.copy("constraints.csv",
+                StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep + "constraints.csv")
+
+    if not os.path.exists(StatusDirectory + os.sep + "Results" + os.sep + "dygraph-combined.js"):
         for file in glob.glob(template_directory + "*.png"):
             shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep)
         for file in glob.glob(template_directory + "*.js"):
@@ -377,7 +387,12 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
             shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep)
         for file in glob.glob(template_directory + "*.ico"):
             shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep)
+
+    #if len(fAll)==0:
+    #    webbrowser.get('firefox').open_new_tab(StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep + OptName + "_Status.html")
+
     return 0
+
 
 
 def picture(number):

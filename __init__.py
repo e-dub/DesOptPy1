@@ -1033,5 +1033,6 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #-----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
     PrintDesOptPy()
+    multiprocessing.freeze_support()
     print("Start DesOptPy from file containing system equations!")
     print("See documentation for further help.")

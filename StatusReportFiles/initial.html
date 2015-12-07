@@ -22,20 +22,10 @@
 <head>
 
     <link rel="icon" href="../DesOptPy_icon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="demos.css" type="text/css" media="screen"/>
     <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
-
-    <script src="../jquery.min.js"></script>
-    <script src="../RGraph.common.core.js"></script>
-    <script src="../RGraph.scatter.js"></script>
-    <script src="../RGraph.common.dynamic.js"></script>
-    <script src="../RGraph.common.resizing.js"></script>
-    <script src="../RGraph.common.key.js"></script>
-    <script src="../RGraph.common.tooltips.js"></script>
+    <script src="../dygraph-combined.js"></script>
 
     <title>Statusmonitoring</title>
-
-    <meta http-equiv="refresh" content="300">
 
 
 </head>
@@ -92,23 +82,21 @@
 
 <center>
 
-    <canvas id="cvs" width="1200" height="0600">[No canvas support]</canvas>
+    <div id="cvs" style="height: 600px; width: 1200px;">[No canvas support]</div>
 
-    <canvas id="cvs2" width="1200" height="0600">[No canvas support]</canvas>
+    <div id="cvs2" style="height: 600px; width: 1200px;">[No canvas support]</div>
 
-    <canvas id="cvs5" width="1200" height="0600">[No canvas support]</canvas>
+    <div id="cvs5" style="height: 600px; width: 1200px;">[No canvas support]</div>
 
     <!--Start of constraint html part-->
 
-    <canvas id="cvs3" width="1200" height="0600">[No canvas support]</canvas>
+    <div id="cvs3" style="height: 600px; width: 1200px;">[No canvas support]</div>
 
-    <canvas id="cvs4" width="1200" height="0600">[No canvas support]</canvas>
+    <div id="cvs4" style="height: 600px; width: 1200px;">[No canvas support]</div>
 
     <!--End of constraint html part-->
 
     <div id="coordinates">
-        Iteration: <input size=2 type="text" id="x" style="border: medium none white;" />
-        Value: <input size=6 type="text" id="y" style="border: medium none white;" />
         <button onclick="show_table()" id="btn_show" > Show data in table</button>
     </div>
 
@@ -134,242 +122,55 @@
             document.getElementById("nav4").className = "deactive";
             <!--End of constraint html part-->
 
-			var cc=['#000000','#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#33ff33',
-					'#666666','#990000','#339900','#330099','#999933','#9933ff','#66cccc',
-					'#000000','#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#33ff33',
-					'#666666','#990000','#339900','#330099','#999933','#9933ff','#66cccc',
-					'#000000','#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#33ff33',
-					'#666666','#990000','#339900','#330099','#999933','#9933ff','#66cccc',
-					'#000000','#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#33ff33',
-					'#666666','#990000','#339900','#330099','#999933','#9933ff','#66cccc',
-					'#000000','#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#33ff33',
-					'#666666','#990000','#339900','#330099','#999933','#9933ff','#66cccc',]
-
-            var data1 = [xxxxValue1];
-			var data2 = [xxxxValue2];
-            var niter = xxxxnIter;
 
 
-			var scatter2 = new RGraph.Scatter('cvs', data2)
-                .Set('line', true)
-				.Set('gutter.left',80)
-				.Set('gutter.right',80)
-				.Set('gutter.bottom',30)
-				.Set('xmin',0)
-                .Set('xmax',niter)
-                .Set('ymin',-1)
-				.Set('ticksize',7)
-				.Set('tickmarks','circle')
-				.Set('background.grid.vlines', false)
-				.Set('chart.defaultcolor',['green'])
-                .Set('labels.above.decimals',2)
-				.Set('chart.yaxispos', 'right')
-				.Set('line.colors',['green'])
-				.Set('title.yaxis',"Value of maxmimum constraint")
-				.Set('title.yaxis.position',"right")
-				.Set('key', ['Maximum constraint'])
-				.Set('chart.key.colors', ['green'])
-				.Set('chart.key.position', 'gutter')
-				.Set('chart.key.position.x', 650)
-				.Set('key', ['Maximum constraint'])
-				.Set('chart.key.colors', ['green'])
-				.Set('chart.key.position', 'gutter')
-				.Set('chart.key.position.x', 650)
-				.Set('chart.resizable',true)
-				.Set('chart.scale.decimals',2)
-				.Set('chart.title.yaxis.pos',0.8)
-                .Draw();
-
-            var scatter1 = new RGraph.Scatter('cvs', data1)
-                .Set('line', true)
-				.Set('gutter.left',80)
-				.Set('gutter.right',80)
-				.Set('gutter.bottom',30)
-				.Set('xmin',0)
-                .Set('xmax',niter)
-                .Set('ymin',Math.floor(xxxxObjFctmin))
-                .Set('ymax',Math.ceil(xxxxObjFctmax))
-				.Set('ticksize',7)
-                .Set('tickmarks','diamond')
-                .Set('background.grid.autofit.numvlines',niter)
-				.Set('chart.defaultcolor',['blue'])
-                .Set('labels.above.decimals',2)
-				.Set('chart.line.colors',['blue'])
-				.Set('title.yaxis',"Value of objective function")
-				.Set('key', ['Objective'])
-				.Set('chart.key.colors', ['blue'])
-				.Set('chart.key.position', 'gutter')
-				.Set('chart.key.position.x', 450)
-				.Set('chart.resizable',true)
-				.Set('chart.scale.decimals',2)
-				.Set('chart.xscale',true)
-				.Set('chart.xscale.numlabels',xxxxNumLabels)
-				.Set('chart.title.xaxis','Iteration')
-				.Set('chart.title.yaxis.pos',0.2)
-                .Draw();
+<!-- Graph 1, Objective function and biggest constraint -->
 
 
-            scatter1.canvas.onmousemove = function (e)
-				{
-					var obj = e.target.__object__;
-					var x   = obj.getXValue(e);
-					var y   = obj.getYValue(e);
+            g1 = new Dygraph("cvs", "objFct_maxCon.csv",
+                {
+                labels: [ 'Iteration', 'objective fct', 'maximum constraint' ],
+                series : {'maximum constraint': { axis: 'y2' }},
+                });
 
-					document.getElementById("x").value = x.toFixed(0);
-					document.getElementById("y").value = y.toFixed(4);
+            window.intervalId = setInterval(function() {
+                g1.updateOptions( { 'file': "objFct_maxCon.csv" } );
+            }, 500);
 
-				}
+<!-- Graph 2, normalized design variables -->
 
-			var ymax = xxxxymax;
-			var ymin = xxxxymin;
-			xxxxdatasetf
+            g2 = new Dygraph("cvs2", "desVarsNorm.csv");
 
+            window.intervalId = setInterval(function() {
+                g2.updateOptions( { 'file': "desVarsNorm.csv" } );
+            }, 500);
 
+<!-- Graph 3, denormalized design variables-->
 
-            var scatterxall = new RGraph.Scatter('cvs2'xxxxallDesVar)
-                .Set('line', true)
-				.Set('gutter.left',80)
-				.Set('gutter.right',80)
-				.Set('gutter.bottom',30)
-				.Set('noyaxis',true)
-				.Set('ymin',-0.00001)
-				.Set('ymax',Math.ceil(ymax))
-                .Set('xmax',niter)
-                .Set('background.grid.autofit.numvlines',niter)
-				.Set('line.colors',cc)
-				.Set('chart.resizable',true)
-				.Set('chart.scale.decimals',3)
-				.Set('chart.xscale',true)
-				.Set('chart.xscale.numlabels',xxxxNumLabels)
-				.Set('chart.title.xaxis','Iteration')
-				.Set('title.yaxis',"Value of design variables")
-				.Set('chart.title.yaxis.pos',0.2)
-                .Draw();
+            g3 = new Dygraph("cvs5", "desVars.csv");
 
-            scatterxall.canvas.onmousemove = function (e)
-				{
-					var obj = e.target.__object__;
-					var x   = obj.getXValue(e);
-					var y   = obj.getYValue(e);
+            window.intervalId = setInterval(function() {
+                g3.updateOptions( { 'file': "desVars.csv" } );
+            }, 500);
 
-					document.getElementById("x").value = x.toFixed(0);
-					document.getElementById("y").value = y.toFixed(4);
+<!--Start of constraint html part-->
+<!-- Graph 4, constraints------------------------------------ -->
 
-				}
+            g4 = new Dygraph("cvs3", "constraints.csv");
 
-            var ymax = xxxxXmax;
-			var ymin = xxxxXmin;
-			xxxxdatasetf_denorm
+            window.intervalId = setInterval(function() {
+                g4.updateOptions( { 'file': "constraints.csv" } );
+            }, 500);
 
-             var scatterxall_denorm = new RGraph.Scatter('cvs5'xxxxallDesVar_denorm)
-                .Set('line', true)
-				.Set('gutter.left',80)
-				.Set('gutter.right',80)
-				.Set('gutter.bottom',30)
-				.Set('noyaxis',true)
-				.Set('background.grid.autofit.numvlines',niter)
-				.Set('ymin',Math.floor(ymin))
-				.Set('ymax',Math.ceil(ymax))
-                .Set('xmax',niter)
-				.Set('line.colors',cc)
-				.Set('chart.resizable',true)
-				.Set('chart.scale.decimals',3)
-				.Set('chart.xscale',true)
-				.Set('chart.xscale.numlabels',xxxxNumLabels)
-				.Set('chart.title.xaxis','Iteration')
-				.Set('title.yaxis',"Value of design variables")
-				.Set('chart.title.yaxis.pos',0.2)
-                .Draw();
+<!-- Graph 5, violated constraints                                  -->
 
+            g5 = new Dygraph("cvs4", "constraints.csv");
 
+            window.intervalId = setInterval(function() {
+                g5.updateOptions( { 'file': "constraints.csv" } );
+            }, 500);
 
-             scatterxall_denorm.canvas.onmousemove = function (e)
-				{
-					var obj = e.target.__object__;
-					var x   = obj.getXValue(e);
-					var y   = obj.getYValue(e);
-
-					document.getElementById("x").value = x.toFixed(0);
-					document.getElementById("y").value = y.toFixed(4);
-
-				}
-
-            <!--Start of constraint html part-->
-
-
-			var gmax = xxxxgmax;
-			var gmin = xxxxgmin;
-			xxxxdatasetg
-
-            var scattergall = new RGraph.Scatter('cvs3'xxxxallConVar)
-                .Set('line', true)
-				.Set('gutter.left',80)
-				.Set('gutter.right',80)
-				.Set('gutter.bottom',30)
-				.Set('noyaxis',true)
-				.Set('background.grid.autofit.numvlines',niter)
-				.Set('ymin',Math.floor(gmin))
-				.Set('ymax',Math.ceil(gmax))
-                .Set('xmax',niter)
-				.Set('line.colors',cc)
-				.Set('labels.above',false)
-				.Set('ticksize',5)
-				.Set('chart.resizable',true)
-				.Set('chart.scale.decimals',3)
-				.Set('chart.xscale',true)
-				.Set('chart.xscale.numlabels',xxxxNumLabels)
-				.Set('chart.title.xaxis','Iteration')
-				.Set('title.yaxis',"Value of constraints")
-				.Set('chart.title.yaxis.pos',0.2)
-				.Set('background.hbars', [[0,Math.ceil(gmax),'rgba(255,0,0,0.1)'],[0,Math.floor(gmin),'rgba(0,255,0,0.1)']])
-                .Draw();
-
-                scattergall.canvas.onmousemove = function (e)
-                   {
-                       var obj = e.target.__object__;
-                       var x   = obj.getXValue(e);
-                       var y   = obj.getYValue(e);
-
-                       document.getElementById("x").value = x.toFixed(0);
-                       document.getElementById("y").value = y.toFixed(4);
-
-                   }
-
-			var scattergallpos = new RGraph.Scatter('cvs4'xxxxallConVar)
-                .Set('line', true)
-				.Set('gutter.left',80)
-				.Set('gutter.right',80)
-				.Set('gutter.bottom',30)
-				.Set('noyaxis',true)
-				.Set('background.grid.autofit.numvlines',niter)
-				.Set('ymin',0)
-				.Set('ymax',Math.ceil(gmax))
-                .Set('xmax',niter)
-				.Set('line.colors',cc)
-				.Set('labels.above',false)
-				.Set('chart.resizable',true)
-				.Set('chart.scale.decimals',3)
-				.Set('chart.xscale',true)
-				.Set('chart.xscale.numlabels',xxxxNumLabels)
-				.Set('chart.title.xaxis','Iteration')
-				.Set('title.yaxis',"Value of vioated constraints")
-				.Set('chart.title.yaxis.pos',0.2)
-                .Draw();
-
-            scattergallpos.canvas.onmousemove = function (e)
-                   {
-                       var obj = e.target.__object__;
-                       var x   = obj.getXValue(e);
-                       var y   = obj.getYValue(e);
-
-                       document.getElementById("x").value = x.toFixed(0);
-                       document.getElementById("y").value = y.toFixed(4);
-
-                   }
-
-             <!--End of constraint html part-->
-
-
+<!--End of constraint html part-->
         }
 
 
@@ -477,29 +278,31 @@
 			document.getElementById("nav5").className = "active";
 
 		    current_view=5;
-		    function resizeGraphs();
+		    resizeGraphs();
 		}
 
 		function resizeGraphs(){
 
-			document.getElementById("cvs").width = window.innerWidth*0.9;
-			document.getElementById("cvs2").width = window.innerWidth*0.9;
-			document.getElementById("cvs5").width = window.innerWidth*0.9;
 
-			document.getElementById("cvs").height = window.innerHeight-310;
-			document.getElementById("cvs2").height = window.innerHeight-310;
-            document.getElementById("cvs5").height = window.innerHeight-310;
+			document.getElementById("cvs").style.width = window.innerWidth*0.9+"px";
+			document.getElementById("cvs2").style.width = window.innerWidth*0.9+"px";
+			document.getElementById("cvs5").style.width = window.innerWidth*0.9+"px";
+
+			document.getElementById("cvs").style.height = window.innerHeight-310+"px";
+			document.getElementById("cvs2").style.height = window.innerHeight-310+"px";
+            document.getElementById("cvs5").style.height = window.innerHeight-310+"px";
 
 			document.getElementById("nav1").className = "deactive";
 			document.getElementById("nav2").className = "deactive";
 			document.getElementById("nav5").className = "deactive";
 
 			<!--Start of constraint html part-->
-			document.getElementById("cvs3").width = window.innerWidth*0.9;
-			document.getElementById("cvs4").width = window.innerWidth*0.9;
-            document.getElementById("cvs3").height = window.innerHeight-310;
-			document.getElementById("cvs4").height = window.innerHeight-310;
+			document.getElementById("cvs3").style.width = window.innerWidth*0.9+"px";
+			document.getElementById("cvs4").style.width = window.innerWidth*0.9+"px";
+            document.getElementById("cvs3").style.height = window.innerHeight-310+"px";
+			document.getElementById("cvs4").style.height = window.innerHeight-310+"px";
 			<!--End of constraint html part-->
+
 
 			document.getElementById("coordinates").style.top = window.innerHeight - 50 + "px";
 
