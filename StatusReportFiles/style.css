@@ -10,7 +10,7 @@ body {
 
 #coordinates {
     position: absolute;
-    top: 1270px;
+    top: 1320px;
     left: 0;
     right: 0;
 }
@@ -69,7 +69,7 @@ body {
 
 #cvs {
     position: absolute;
-    top: 250px;
+    top: 300px;
     margin-left: auto;
     margin-right: auto;
     left: 0;
@@ -79,7 +79,7 @@ body {
 
 #cvs2 {
     position: absolute;
-    top: 250px;
+    top: 300px;
     margin-left: auto;
     margin-right: auto;
     left: 0;
@@ -89,7 +89,7 @@ body {
 
 #cvs3 {
     position: absolute;
-    top: 250px;
+    top: 300pxpx;
     margin-left: auto;
     margin-right: auto;
     left: 0;
@@ -99,7 +99,7 @@ body {
 
 #cvs4 {
     position: absolute;
-    top: 250px;
+    top: 300px;
     margin-left: auto;
     margin-right: auto;
     left: 0;
@@ -109,12 +109,18 @@ body {
 
 #cvs5 {
     position: absolute;
-    top: 250px;
+    top: 300px;
     margin-left: auto;
     margin-right: auto;
     left: 0;
     right: 0;
     visibility: hidden;
+}
+
+#legend {
+    position: absolute;
+    top: 300px;
+    right: 20px;
 }
 
 #banner {
@@ -152,7 +158,9 @@ font-size: 8pt;
 table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
-     padding: 5px;
+     padding: 4px;
+     border-left-style: hidden;
+    border-right-style: hidden;
 
 }
 
