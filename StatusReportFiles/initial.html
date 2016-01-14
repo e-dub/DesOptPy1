@@ -25,21 +25,25 @@
     <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
     <script src="../dygraph-combined.js"></script>
 
-    <title>Statusmonitoring</title>
+    <title>StatusMonitoring</title>
 
 
 </head>
 <body onresize="resizeGraphs()">
 <div id="banner">
-    <div style="margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" width="200"></div>
+    <center>
+        <div style="margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" width="200"></div>
+    </center>
 </div>
 <center><h2 id="caption">Design Optimization Status Report</h2></center>
 
 <div>
     <center>
     <table class="overview">
-        <tr><td>Name:</td><td>xxxxName</td>         <td>Algorithm:</td><td>xxxxAlg</td></tr>
-        <tr><td>Last Update:</td><td>xxxxTime</td><td>Running for:</td><td>
+        <tr><td>Name:</td><td>xxxxName</td></tr>
+        <tr><td>Algorithm:</td><td>xxxxAlg</td></tr>
+        <tr><td>Last Update:</td><td>xxxxTime</td></tr>
+        <tr><td>Running for:</td><td>
             <script type="text/javascript">
                     var date1 = new Date(xxxxStartTime);
                     var date2 = new Date(xxxxEndTime);
@@ -61,7 +65,7 @@
                     document.write(days + " days " + hours + " hours " + mins + " min " + seconds + " sec");
                 </script>
         </td></tr><tr>
-            <td>Status:</td><td>xxxxStatus</td><td></td><td></td></tr>
+            <tr><td>Status:</td><td>xxxxStatus</td></tr>
     </table>
         </center>
 </div>
@@ -100,6 +104,10 @@
         <button onclick="show_table()" id="btn_show" > Show data in table</button>
     </div>
 
+    <div id="legend">
+
+    </div>
+
 </center>
 
 
@@ -113,6 +121,8 @@
 
 
         function drawDiagrams(){
+
+            resizeGraphs()
 
             document.getElementById("nav1").className = "active";
             document.getElementById("nav2").className = "deactive";
@@ -132,7 +142,14 @@
                 series : {'Constraint': { axis: 'y2' }},
                 xlabel: 'Iterations',
                 ylabel: 'Objective function',
-                y2label: 'Maximum constraint'
+                y2label: 'Maximum constraint',
+                independentTicks: true,
+                drawAxesAtZero: true,
+                legend: 'always',
+                labelsDiv: 'legend',
+                labelsSeparateLines: true,
+                rollPeriod: 1,
+                showRoller: true,
                 });
 
             window.intervalId = setInterval(function() {
@@ -145,6 +162,9 @@
           {
             xlabel: 'Iterations',
             ylabel: 'Design variables normalized',
+            legend: 'always',
+            labelsDiv: 'legend',
+            labelsSeparateLines: true,
           });
 
             window.intervalId = setInterval(function() {
@@ -156,7 +176,10 @@
               g3 = new Dygraph("cvs5", "desVars.csv",
             {
               xlabel: 'Iterations',
-              ylabel: 'Design Variables'
+              ylabel: 'Design Variables',
+              legend: 'always',
+              labelsDiv: 'legend',
+              labelsSeparateLines: true,
             });
 
             window.intervalId = setInterval(function() {
@@ -170,7 +193,10 @@
             {
               xlabel: 'Iterations',
               ylabel: 'Constraints',
-              drawAxesAtZero: 'True'
+              drawAxesAtZero: 'True',
+              legend: 'always',
+              labelsDiv: 'legend',
+              labelsSeparateLines: true,
             });
 
             window.intervalId = setInterval(function() {
@@ -183,7 +209,10 @@
             {
               xlabel: 'Iterations',
               ylabel: 'Violated constraints',
-              valueRange: [0, null]
+              valueRange: [0, null],
+              legend: 'always',
+              labelsDiv: 'legend',
+              labelsSeparateLines: true,
             });
 
             window.intervalId = setInterval(function() {
@@ -301,26 +330,37 @@
 		    resizeGraphs();
 		}
 
-		function resizeGraphs(){
+			function resizeGraphs(){
 
 
-			document.getElementById("cvs").style.width = window.innerWidth*0.9+"px";
-			document.getElementById("cvs2").style.width = window.innerWidth*0.9+"px";
-			document.getElementById("cvs5").style.width = window.innerWidth*0.9+"px";
+			document.getElementById("cvs").style.width = window.innerWidth*0.95-230+"px";
+			document.getElementById("cvs2").style.width = window.innerWidth*0.95-230+"px";
+			document.getElementById("cvs5").style.width = window.innerWidth*0.95-230+"px";
 
-			document.getElementById("cvs").style.height = window.innerHeight-310+"px";
-			document.getElementById("cvs2").style.height = window.innerHeight-310+"px";
-            document.getElementById("cvs5").style.height = window.innerHeight-310+"px";
+			document.getElementById("cvs").style.marginRight = "250px";
+			document.getElementById("cvs2").style.marginRight = "250px";
+			document.getElementById("cvs5").style.marginRight = "250px";
+
+            document.getElementById("legend").style.width = "230px";
+            document.getElementById("legend").style.height = window.innerHeight-360+"px";
+
+			document.getElementById("cvs").style.height = window.innerHeight-360+"px";
+			document.getElementById("cvs2").style.height = window.innerHeight-360+"px";
+            document.getElementById("cvs5").style.height = window.innerHeight-360+"px";
 
 			document.getElementById("nav1").className = "deactive";
 			document.getElementById("nav2").className = "deactive";
 			document.getElementById("nav5").className = "deactive";
 
 			<!--Start of constraint html part-->
-			document.getElementById("cvs3").style.width = window.innerWidth*0.9+"px";
-			document.getElementById("cvs4").style.width = window.innerWidth*0.9+"px";
-            document.getElementById("cvs3").style.height = window.innerHeight-310+"px";
-			document.getElementById("cvs4").style.height = window.innerHeight-310+"px";
+			document.getElementById("cvs3").style.width = window.innerWidth*0.95-230+"px";
+			document.getElementById("cvs4").style.width = window.innerWidth*0.95-230+"px";
+            document.getElementById("cvs3").style.height = window.innerHeight-360+"px";
+			document.getElementById("cvs4").style.height = window.innerHeight-360+"px";
+
+			document.getElementById("cvs3").style.marginRight = "250px";
+			document.getElementById("cvs4").style.marginRight = "250px";
+
 			<!--End of constraint html part-->
 
 
