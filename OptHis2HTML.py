@@ -40,8 +40,10 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
 
     StartTime = str(starttime)[0:10] + "000"
     EndTime = ""
+    RefRate = '1000'
     if inform != "Running":
         EndTime = str(time())[0:10] + "000"
+        RefRate = '1000000'
 
     if StatusDirectory == "":  # Change the target directory for the status report files if the user wants to
         StatusDirectory = DesOptDir
@@ -317,6 +319,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
         hstrnew = hstrnew.replace('xxxxnumber_constraints', number_constraints)
         hstrnew = hstrnew.replace('xxxxAlg', Alg.name)
         hstrnew = hstrnew.replace('xxxxStatus', str(inform))
+        hstrnew = hstrnew.replace('xxxxRefRate', RefRate)
         hstrnew = hstrnew.replace('xxxxStartTime', StartTime)
         hstrnew = hstrnew.replace('xxxxEndTime', EndTime)
     else:
@@ -326,6 +329,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
         hstrnew = hstrnew.replace('xxxxtableDesVar', DesVar_table)
         hstrnew = hstrnew.replace('xxxxAlg', Alg.name)
         hstrnew = hstrnew.replace('xxxxStatus', inform)
+        hstrnew = hstrnew.replace('xxxxRefRate', RefRate)
         hstrnew = hstrnew.replace('xxxxStartTime', StartTime)
         hstrnew = hstrnew.replace('xxxxEndTime', EndTime)
 

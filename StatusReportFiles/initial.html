@@ -1,77 +1,80 @@
 <!--
 
-    Autor: Florian Wachter
-    E-Mail: florian.wachter@tum.de
-    Date: 22.06.2015
+Autor: Florian Wachter
+E-Mail: florian.wachter@tum.de
+Date: 22.06.2015
 
 
-    This is the template for the status report file. The Graphs are done with RGraph
-    The Style Sheet is located in the style.css file.
-    Parts surrounded with "Start of constraint html part" and "End of ..." are deleted if the
-    optimization problem is unconstrained.
+This is the template for the status report file. The Graphs are done with dyGraph
+The Style Sheet is located in the style.css file.
+Parts surrounded with "Start of constraint html part" and "End of ..." are deleted if the
+optimization problem is unconstrained.
 
-    This document is divided into 3 parts.
-        * Definition of the html layout and its context.
-        * Javascript code with generates the diagrams and handles buttons etc.
-        * Templates for the tables which are shown when the user presses the "Show data in table" button
+This document is divided into 3 parts.
+* Definition of the html layout and its context.
+* Javascript code with generates the diagrams and handles buttons etc.
+* Templates for the tables which are shown when the user presses the "Show data in table" button
 
 -->
 
 <!DOCTYPE html >
 <html>
+<!-- Head defines some properties which are not displayed on the website itself-->
 <head>
-
-    <link rel="icon" href="../DesOptPy_icon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
-    <script src="../dygraph-combined.js"></script>
-
-    <title>StatusMonitoring</title>
-
-
+  <!-- The browser icon and the stylesheet are linked and the dygraph package is loaded-->
+  <link rel="icon" href="../DesOptPy_icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
+  <script src="../dygraph-combined.js"></script>
+  <!-- Title that is shown in the broswer tab-->
+  <title>StatusMonitoring</title>
 </head>
+<!-- If the browser window is resizes the diagrams have to change their size too-->
 <body onresize="resizeGraphs()">
-<div id="banner">
+  <!-- banner div contains the DesOptPy picture and is on top of the website-->
+  <div id="banner">
     <center>
-        <div style="margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" width="200"></div>
+      <div style="margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" width="200"></div>
     </center>
-</div>
-<center><h2 id="caption">Design Optimization Status Report</h2></center>
-
-<div>
+  </div>
+  <center><h2 id="caption">Design Optimization Status Report</h2></center>
+  <div>
     <center>
-    <table class="overview">
+      <!-- Table with the most crucial informations about the optimization-->
+      <table class="overview">
         <tr><td>Name:</td><td>xxxxName</td></tr>
         <tr><td>Algorithm:</td><td>xxxxAlg</td></tr>
         <tr><td>Last Update:</td><td>xxxxTime</td></tr>
         <tr><td>Running for:</td><td>
-            <script type="text/javascript">
-                    var date1 = new Date(xxxxStartTime);
-                    var date2 = new Date(xxxxEndTime);
+          <!-- The following script calculates the time the optimization is already running-->
+          <script type="text/javascript">
+          var date1 = new Date(xxxxStartTime);
+          var date2 = new Date(xxxxEndTime);
 
-                    var diff = date2.getTime() - date1.getTime();
+          var diff = date2.getTime() - date1.getTime();
 
-                    var days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    diff -=  days * (1000 * 60 * 60 * 24);
+          var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          diff -=  days * (1000 * 60 * 60 * 24);
 
-                    var hours = Math.floor(diff / (1000 * 60 * 60));
-                    diff -= hours * (1000 * 60 * 60);
+          var hours = Math.floor(diff / (1000 * 60 * 60));
+          diff -= hours * (1000 * 60 * 60);
 
-                    var mins = Math.floor(diff / (1000 * 60));
-                    diff -= mins * (1000 * 60);
+          var mins = Math.floor(diff / (1000 * 60));
+          diff -= mins * (1000 * 60);
 
-                    var seconds = Math.floor(diff / (1000));
-                    diff -= seconds * (1000);
+          var seconds = Math.floor(diff / (1000));
+          diff -= seconds * (1000);
 
-                    document.write(days + " days " + hours + " hours " + mins + " min " + seconds + " sec");
-                </script>
+          document.write(days + " days " + hours + " hours " + mins + " min " + seconds + " sec");
+          </script>
         </td></tr><tr>
-            <tr><td>Status:</td><td>xxxxStatus</td></tr>
-    </table>
-        </center>
-</div>
-
-<div id="nav_div">
-    <ul id="nav">
+          <!-- Status can be 'running', 'finished', 'error' etc. -->
+          <tr><td>Status:</td><td>xxxxStatus</td></tr>
+        </table>
+      </center>
+    </div>
+    <!-- Navigation Bar for diagram selection -->
+    <div id="nav_div">
+      <ul id="nav">
         <li id="nav1" onclick="showGraph1()">Objective and maximum constraint</li>
         <li id="nav2" onclick="showGraph2()">Design variables normalized</li>
         <li id="nav5" onclick="showGraph5()">Design variables</li>
@@ -79,423 +82,445 @@
         <li id="nav3" onclick="showGraph3()">Constraints</li>
         <li id="nav4" onclick="showGraph4()">Violated constraints</li>
         <!--End of constraint html part-->
-    </ul>
-</div>
+      </ul>
+    </div>
 
-<br>
+    <br>
 
-<center>
+    <center>
+      <!-- Diagrams themself -->
+      <div id="cvs" style="height: 600px; width: 1200px;">[No canvas support or no data yet!]</div>
+      <div id="cvs2" style="height: 600px; width: 1200px;">[No canvas support or no data yet!]</div>
+      <div id="cvs5" style="height: 600px; width: 1200px;">[No canvas support or no data yet!]</div>
+      <!--Start of constraint html part-->
+      <div id="cvs3" style="height: 600px; width: 1200px;">[No canvas support or no data yet!]</div>
+      <div id="cvs4" style="height: 600px; width: 1200px;">[No canvas support or no data yet!]</div>
+      <!--End of constraint html part-->
+      <!-- Show Zero checkbox toggles wether the 0 should be shown on the y axis or not -->
+      <!-- btn_show opens a new website and displays the data in a table -->
+      <div id="coordinates">
+        <input id="showZero" onclick="drawDiagrams()"type=checkbox>Show Zero</input><br>
+        <button onclick="show_table()" id="btn_show" > Show data in table</button>
+      </div>
+      <!-- The legend div contains the diagram legends right to the diagrams-->
+      <div id="legend">
+      </div>
+    </center>
 
-    <div id="cvs" style="height: 600px; width: 1200px;">[No canvas support]</div>
+    <script>
+    //-- The x-axis labels must nob be 1.3, 1.4 etc. only integers -->
+    function onlyIntegers(d){
+      if(d%1!=0){
+        d='';
+      }
+      return (d);
+    }
+    //-- The current view (=current diagram) is the first-->
+    var current_view=1;
+    //-- Show zero is unchecked at the beginning -->
+    var incZero = false;
+    //-- When the website finiseh loading call initializePage to draw the diagrams -->
+    window.onload = initializePage();
 
-    <div id="cvs2" style="height: 600px; width: 1200px;">[No canvas support]</div>
+    function initializePage(){
+      //-- change the size of the diagrams such that they fit the space -->
+      resizeGraphs()
+      //-- only one digrams is shown at once, only the one that belongs to the class "active" -->
+      document.getElementById("nav1").className = "active";
+      document.getElementById("nav2").className = "deactive";
+      document.getElementById("nav5").className = "deactive";
+      <!--Start of constraint html part-->
+      document.getElementById("nav3").className = "deactive";
+      document.getElementById("nav4").className = "deactive";
+      <!--End of constraint html part-->
+      //-- finally draw the diagrams -->
+      drawDiagrams();
+    }
 
-    <div id="cvs5" style="height: 600px; width: 1200px;">[No canvas support]</div>
+    //-- initialize the diagram parameters and draw them -->
+    function drawDiagrams(){
+      //-- check if the show zero chechbox is checked  -->
+      if(document.getElementById("showZero").checked ==true){
+        incZero = true;
+      }
+      else{
+        incZero = false;
+      }
+
+      <!-- Graph 1, Objective function and biggest constraint -->
+      g1 = new Dygraph("cvs", "objFct_maxCon.csv",
+      {
+        series : {'Constraint': { axis: 'y2' }},
+        xlabel: 'Iterations',
+        ylabel: 'Objective function',
+        y2label: 'Maximum constraint',
+        independentTicks: true,
+        drawAxesAtZero: true,
+        legend: 'always',
+        labelsDiv: 'legend',
+        labelsSeparateLines: true,
+        colors: ['blue', 'green'],
+        includeZero: incZero,
+        axes:{
+          x: {
+            axisLabelFormatter: function(d){
+              return onlyIntegers(d);
+            }
+          }
+        }
+      });
+      //-- The automatic refresh intervall is 1000ms while the optimization is running -->
+      //-- When the optimization finished the refresh rate is 100s -->
+      window.intervalId = setInterval(function() {
+        g1.updateOptions( { 'file': "objFct_maxCon.csv" } );
+      }, xxxxRefRate);
+
+      <!-- Graph 2, normalized design variables -->
+      g2 = new Dygraph("cvs2", "desVarsNorm.csv",
+      {
+        xlabel: 'Iterations',
+        ylabel: 'Design variables normalized',
+        legend: 'always',
+        labelsDiv: 'legend',
+        labelsSeparateLines: true,
+        includeZero: incZero,
+        axes:{
+          x: {
+            axisLabelFormatter: function(d){
+              return onlyIntegers(d);
+            }
+          }
+        }
+      });
+
+      window.intervalId = setInterval(function() {
+        g2.updateOptions( { 'file': "desVarsNorm.csv" } );
+      }, xxxxRefRate);
+
+      <!-- Graph 3, denormalized design variables-->
+      g3 = new Dygraph("cvs5", "desVars.csv",
+      {
+        xlabel: 'Iterations',
+        ylabel: 'Design Variables',
+        legend: 'always',
+        labelsDiv: 'legend',
+        labelsSeparateLines: true,
+        includeZero: incZero,
+        axes:{
+          x: {
+            axisLabelFormatter: function(d){
+              return onlyIntegers(d);
+            }
+          }
+        }
+      });
+
+      window.intervalId = setInterval(function() {
+        g3.updateOptions( { 'file': "desVars.csv" } );
+      }, xxxxRefRate);
+
+      <!--Start of constraint html part-->
+      <!-- Graph 4, constraints------------------------------------ -->
+      g4 = new Dygraph("cvs3", "constraints.csv",
+      {
+        xlabel: 'Iterations',
+        ylabel: 'Constraints',
+        drawAxesAtZero: 'True',
+        legend: 'always',
+        labelsDiv: 'legend',
+        labelsSeparateLines: true,
+        includeZero: incZero,
+        axes:{
+          x: {
+            axisLabelFormatter: function(d){
+              return onlyIntegers(d);
+            }
+          }
+        }
+      });
+
+      window.intervalId = setInterval(function() {
+        g4.updateOptions( { 'file': "constraints.csv" } );
+      }, xxxxRefRate);
+
+      <!-- Graph 5, violated constraints                                  -->
+      g5 = new Dygraph("cvs4", "constraints.csv",
+      {
+        xlabel: 'Iterations',
+        ylabel: 'Violated constraints',
+        valueRange: [0, null],
+        legend: 'always',
+        labelsDiv: 'legend',
+        labelsSeparateLines: true,
+        includeZero: incZero,
+        axes:{
+          x: {
+            axisLabelFormatter: function(d){
+              return onlyIntegers(d);
+            }
+          }
+        }
+      });
+
+      window.intervalId = setInterval(function() {
+        g5.updateOptions( { 'file': "constraints.csv" } );
+      }, xxxxRefRate);
+
+      <!--End of constraint html part-->
+    }
+
+
+    //-- showGraph1 deactivates every graph but the first -->
+    function showGraph1(){
+      document.getElementById("cvs").style.visibility = "visible";
+      document.getElementById("cvs2").style.visibility = "hidden";
+      <!--Start of constraint html part-->
+      document.getElementById("cvs3").style.visibility = "hidden";
+      document.getElementById("cvs4").style.visibility = "hidden";
+      <!--End of constraint html part-->
+      document.getElementById("cvs5").style.visibility = "hidden";
+
+      document.getElementById("nav1").className = "active";
+      document.getElementById("nav2").className = "deactive";
+      <!--Start of constraint html part-->
+      document.getElementById("nav3").className = "deactive";
+      document.getElementById("nav4").className = "deactive";
+      <!--End of constraint html part-->
+      document.getElementById("nav5").className = "deactive";
+
+      current_view=1;
+
+    }
+
+    function showGraph2(){
+      document.getElementById("cvs").style.visibility = "hidden";
+      document.getElementById("cvs2").style.visibility = "visible";
+      <!--Start of constraint html part-->
+      document.getElementById("cvs3").style.visibility = "hidden";
+      document.getElementById("cvs4").style.visibility = "hidden";
+      <!--End of constraint html part-->
+      document.getElementById("cvs5").style.visibility = "hidden";
+
+      document.getElementById("nav1").className = "deactive";
+      document.getElementById("nav2").className = "active";
+      <!--Start of constraint html part-->
+      document.getElementById("nav3").className = "deactive";
+      document.getElementById("nav4").className = "deactive";
+      <!--End of constraint html part-->
+      document.getElementById("nav5").className = "deactive";
+
+      current_view=2;
+    }
 
     <!--Start of constraint html part-->
 
-    <div id="cvs3" style="height: 600px; width: 1200px;">[No canvas support]</div>
+    function showGraph3(){
+      document.getElementById("cvs").style.visibility = "hidden";
+      document.getElementById("cvs2").style.visibility = "hidden";
+      document.getElementById("cvs3").style.visibility = "visible";
+      document.getElementById("cvs4").style.visibility = "hidden";
+      document.getElementById("cvs5").style.visibility = "hidden";
 
-    <div id="cvs4" style="height: 600px; width: 1200px;">[No canvas support]</div>
+      document.getElementById("nav1").className = "deactive";
+      document.getElementById("nav2").className = "deactive";
+      document.getElementById("nav3").className = "active";
+      document.getElementById("nav4").className = "deactive";
+      document.getElementById("nav5").className = "deactive";
+
+      current_view=3;
+    }
+
+
+
+    function showGraph4(){
+      document.getElementById("cvs").style.visibility = "hidden";
+      document.getElementById("cvs2").style.visibility = "hidden";
+      document.getElementById("cvs3").style.visibility = "hidden";
+      document.getElementById("cvs4").style.visibility = "visible";
+      document.getElementById("cvs5").style.visibility = "hidden";
+
+      document.getElementById("nav1").className = "deactive";
+      document.getElementById("nav2").className = "deactive";
+      document.getElementById("nav3").className = "deactive";
+      document.getElementById("nav4").className = "active";
+      document.getElementById("nav5").className = "deactive";
+
+      current_view=4;
+    }
 
     <!--End of constraint html part-->
 
-    <div id="coordinates">
-        <button onclick="show_table()" id="btn_show" > Show data in table</button>
-    </div>
-
-    <div id="legend">
-
-    </div>
-
-</center>
-
-
-
-<script>
-
-
-        var current_view=1;
-
-        window.onload = drawDiagrams();
-
-
-        function drawDiagrams(){
-
-            resizeGraphs()
-
-            document.getElementById("nav1").className = "active";
-            document.getElementById("nav2").className = "deactive";
-            document.getElementById("nav5").className = "deactive";
-            <!--Start of constraint html part-->
-            document.getElementById("nav3").className = "deactive";
-            document.getElementById("nav4").className = "deactive";
-            <!--End of constraint html part-->
-
-
-
-<!-- Graph 1, Objective function and biggest constraint -->
-
-
-            g1 = new Dygraph("cvs", "objFct_maxCon.csv",
-                {
-                series : {'Constraint': { axis: 'y2' }},
-                xlabel: 'Iterations',
-                ylabel: 'Objective function',
-                y2label: 'Maximum constraint',
-                independentTicks: true,
-                drawAxesAtZero: true,
-                legend: 'always',
-                labelsDiv: 'legend',
-                labelsSeparateLines: true,
-                rollPeriod: 1,
-                showRoller: true,
-                });
-
-            window.intervalId = setInterval(function() {
-                g1.updateOptions( { 'file': "objFct_maxCon.csv" } );
-            }, 500);
-
-<!-- Graph 2, normalized design variables -->
-
-              g2 = new Dygraph("cvs2", "desVarsNorm.csv",
-          {
-            xlabel: 'Iterations',
-            ylabel: 'Design variables normalized',
-            legend: 'always',
-            labelsDiv: 'legend',
-            labelsSeparateLines: true,
-          });
-
-            window.intervalId = setInterval(function() {
-                g2.updateOptions( { 'file': "desVarsNorm.csv" } );
-            }, 500);
-
-<!-- Graph 3, denormalized design variables-->
-
-              g3 = new Dygraph("cvs5", "desVars.csv",
-            {
-              xlabel: 'Iterations',
-              ylabel: 'Design Variables',
-              legend: 'always',
-              labelsDiv: 'legend',
-              labelsSeparateLines: true,
-            });
-
-            window.intervalId = setInterval(function() {
-                g3.updateOptions( { 'file': "desVars.csv" } );
-            }, 500);
-
-<!--Start of constraint html part-->
-<!-- Graph 4, constraints------------------------------------ -->
-
-             g4 = new Dygraph("cvs3", "constraints.csv",
-            {
-              xlabel: 'Iterations',
-              ylabel: 'Constraints',
-              drawAxesAtZero: 'True',
-              legend: 'always',
-              labelsDiv: 'legend',
-              labelsSeparateLines: true,
-            });
-
-            window.intervalId = setInterval(function() {
-                g4.updateOptions( { 'file': "constraints.csv" } );
-            }, 500);
-
-<!-- Graph 5, violated constraints                                  -->
-
-             g5 = new Dygraph("cvs4", "constraints.csv",
-            {
-              xlabel: 'Iterations',
-              ylabel: 'Violated constraints',
-              valueRange: [0, null],
-              legend: 'always',
-              labelsDiv: 'legend',
-              labelsSeparateLines: true,
-            });
-
-            window.intervalId = setInterval(function() {
-                g5.updateOptions( { 'file': "constraints.csv" } );
-            }, 500);
-
-<!--End of constraint html part-->
-        }
-
-
-
-		function showGraph1(){
-
-			document.getElementById("cvs").style.visibility = "visible";
-			document.getElementById("cvs2").style.visibility = "hidden";
-			<!--Start of constraint html part-->
-			document.getElementById("cvs3").style.visibility = "hidden";
-			document.getElementById("cvs4").style.visibility = "hidden";
-			<!--End of constraint html part-->
-			document.getElementById("cvs5").style.visibility = "hidden";
-
-			document.getElementById("nav1").className = "active";
-			document.getElementById("nav2").className = "deactive";
-			<!--Start of constraint html part-->
-			document.getElementById("nav3").className = "deactive";
-			document.getElementById("nav4").className = "deactive";
-			<!--End of constraint html part-->
-			document.getElementById("nav5").className = "deactive";
-
-			current_view=1;
-
-		}
-
-		function showGraph2(){
-
-			document.getElementById("cvs").style.visibility = "hidden";
-			document.getElementById("cvs2").style.visibility = "visible";
-			<!--Start of constraint html part-->
-			document.getElementById("cvs3").style.visibility = "hidden";
-			document.getElementById("cvs4").style.visibility = "hidden";
-			<!--End of constraint html part-->
-			document.getElementById("cvs5").style.visibility = "hidden";
-
-			document.getElementById("nav1").className = "deactive";
-			document.getElementById("nav2").className = "active";
-			<!--Start of constraint html part-->
-			document.getElementById("nav3").className = "deactive";
-			document.getElementById("nav4").className = "deactive";
-			<!--End of constraint html part-->
-			document.getElementById("nav5").className = "deactive";
-
-		    current_view=2;
-		}
-
-        <!--Start of constraint html part-->
-
-		function showGraph3(){
-
-			document.getElementById("cvs").style.visibility = "hidden";
-			document.getElementById("cvs2").style.visibility = "hidden";
-			document.getElementById("cvs3").style.visibility = "visible";
-			document.getElementById("cvs4").style.visibility = "hidden";
-			document.getElementById("cvs5").style.visibility = "hidden";
-
-			document.getElementById("nav1").className = "deactive";
-			document.getElementById("nav2").className = "deactive";
-			document.getElementById("nav3").className = "active";
-			document.getElementById("nav4").className = "deactive";
-			document.getElementById("nav5").className = "deactive";
-
-
-		    current_view=3;
-		}
-
-
-
-		function showGraph4(){
-
-			document.getElementById("cvs").style.visibility = "hidden";
-			document.getElementById("cvs2").style.visibility = "hidden";
-			document.getElementById("cvs3").style.visibility = "hidden";
-			document.getElementById("cvs4").style.visibility = "visible";
-			document.getElementById("cvs5").style.visibility = "hidden";
-
-			document.getElementById("nav1").className = "deactive";
-			document.getElementById("nav2").className = "deactive";
-			document.getElementById("nav3").className = "deactive";
-			document.getElementById("nav4").className = "active";
-			document.getElementById("nav5").className = "deactive";
-
-		    current_view=4;
-		}
-
-        <!--End of constraint html part-->
-
-		function showGraph5(){
-
-			document.getElementById("cvs").style.visibility = "hidden";
-			document.getElementById("cvs2").style.visibility = "hidden";
-			<!--Start of constraint html part-->
-			document.getElementById("cvs3").style.visibility = "hidden";
-			document.getElementById("cvs4").style.visibility = "hidden";
-			<!--End of constraint html part-->
-			document.getElementById("cvs5").style.visibility = "visible";
-
-			document.getElementById("nav1").className = "deactive";
-			document.getElementById("nav2").className = "deactive";
-			<!--Start of constraint html part-->
-			document.getElementById("nav3").className = "deactive";
-			document.getElementById("nav4").className = "deactive";
-			<!--End of constraint html part-->
-			document.getElementById("nav5").className = "active";
-
-		    current_view=5;
-		    resizeGraphs();
-		}
-
-			function resizeGraphs(){
-
-
-			document.getElementById("cvs").style.width = window.innerWidth*0.95-230+"px";
-			document.getElementById("cvs2").style.width = window.innerWidth*0.95-230+"px";
-			document.getElementById("cvs5").style.width = window.innerWidth*0.95-230+"px";
-
-			document.getElementById("cvs").style.marginRight = "250px";
-			document.getElementById("cvs2").style.marginRight = "250px";
-			document.getElementById("cvs5").style.marginRight = "250px";
-
-            document.getElementById("legend").style.width = "230px";
-            document.getElementById("legend").style.height = window.innerHeight-360+"px";
-
-			document.getElementById("cvs").style.height = window.innerHeight-360+"px";
-			document.getElementById("cvs2").style.height = window.innerHeight-360+"px";
-            document.getElementById("cvs5").style.height = window.innerHeight-360+"px";
-
-			document.getElementById("nav1").className = "deactive";
-			document.getElementById("nav2").className = "deactive";
-			document.getElementById("nav5").className = "deactive";
-
-			<!--Start of constraint html part-->
-			document.getElementById("cvs3").style.width = window.innerWidth*0.95-230+"px";
-			document.getElementById("cvs4").style.width = window.innerWidth*0.95-230+"px";
-            document.getElementById("cvs3").style.height = window.innerHeight-360+"px";
-			document.getElementById("cvs4").style.height = window.innerHeight-360+"px";
-
-			document.getElementById("cvs3").style.marginRight = "250px";
-			document.getElementById("cvs4").style.marginRight = "250px";
-
-			<!--End of constraint html part-->
-
-
-			document.getElementById("coordinates").style.top = window.innerHeight - 50 + "px";
-
-		}
-
-		function show_table() {
-
-		    var myWindow = window.open();
-
-		    switch(current_view) {
-		    		case 1:
-		    		    myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
-		    			myWindow.document.write(tableObjFct.innerHTML);
-		    			myWindow.document.close();
-		    		break;
-		    		case 2:
-		    		    myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
-		    			myWindow.document.write(tableDesVar.innerHTML);
-		    			myWindow.document.close();
-		    		break;
-		    		case 3:
-		    		    myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
-		    			myWindow.document.write(tableConstr.innerHTML);
-		    			myWindow.document.close();
-		    		break;
-		    		case 4:
-		    		    myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
-		    			myWindow.document.write(tableConstr.innerHTML);
-		    			myWindow.document.close();
-		    		break;
-		    		case 5:
-		    		    myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
-		    			myWindow.document.write(tableDesVar.innerHTML);
-		    			myWindow.document.close();
-		    		break;
-		    	}
-
-
-	    }
-
-
-
-
-
-</script>
-
-<!-- Templates for the tables -->
-
-<div id="tableObjFct" height=1px; width=1px; style="visibility: hidden">
-    <head>
+    function showGraph5(){
+      document.getElementById("cvs").style.visibility = "hidden";
+      document.getElementById("cvs2").style.visibility = "hidden";
+      <!--Start of constraint html part-->
+      document.getElementById("cvs3").style.visibility = "hidden";
+      document.getElementById("cvs4").style.visibility = "hidden";
+      <!--End of constraint html part-->
+      document.getElementById("cvs5").style.visibility = "visible";
+
+      document.getElementById("nav1").className = "deactive";
+      document.getElementById("nav2").className = "deactive";
+      <!--Start of constraint html part-->
+      document.getElementById("nav3").className = "deactive";
+      document.getElementById("nav4").className = "deactive";
+      <!--End of constraint html part-->
+      document.getElementById("nav5").className = "active";
+
+      current_view=5;
+    }
+
+    //-- change the margins and locations of everything such that the website  -->
+    //-- space is nicely used -->
+    function resizeGraphs(){
+      document.getElementById("cvs").style.width = window.innerWidth*0.95-230+"px";
+      document.getElementById("cvs2").style.width = window.innerWidth*0.95-230+"px";
+      document.getElementById("cvs5").style.width = window.innerWidth*0.95-230+"px";
+
+      document.getElementById("cvs").style.marginRight = "250px";
+      document.getElementById("cvs2").style.marginRight = "250px";
+      document.getElementById("cvs5").style.marginRight = "250px";
+
+      document.getElementById("legend").style.width = "230px";
+      document.getElementById("legend").style.height = window.innerHeight-350+"px";
+
+      document.getElementById("cvs").style.height = window.innerHeight-360+"px";
+      document.getElementById("cvs2").style.height = window.innerHeight-360+"px";
+      document.getElementById("cvs5").style.height = window.innerHeight-360+"px";
+
+      document.getElementById("nav1").className = "deactive";
+      document.getElementById("nav2").className = "deactive";
+      document.getElementById("nav5").className = "deactive";
+
+      <!--Start of constraint html part-->
+      document.getElementById("cvs3").style.width = window.innerWidth*0.95-230+"px";
+      document.getElementById("cvs4").style.width = window.innerWidth*0.95-230+"px";
+      document.getElementById("cvs3").style.height = window.innerHeight-360+"px";
+      document.getElementById("cvs4").style.height = window.innerHeight-360+"px";
+
+      document.getElementById("cvs3").style.marginRight = "250px";
+      document.getElementById("cvs4").style.marginRight = "250px";
+
+      <!--End of constraint html part-->
+    }
+
+    //-- Show the current diagram data as a table in a new website tab -->
+    function show_table() {
+      //-- open new webpage -->
+      var myWindow = window.open();
+      //-- Which diagram is currently shown and thus which table to generate -->
+      switch(current_view) {
+        case 1:
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write(tableObjFct.innerHTML);
+        myWindow.document.close();
+        break;
+        case 2:
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write(tableDesVar.innerHTML);
+        myWindow.document.close();
+        break;
+        case 3:
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write(tableConstr.innerHTML);
+        myWindow.document.close();
+        break;
+        case 4:
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write(tableConstr.innerHTML);
+        myWindow.document.close();
+        break;
+        case 5:
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write(tableDesVar.innerHTML);
+        myWindow.document.close();
+        break;
+      }
+    }
+    </script>
+
+    <!-- Templates for the tables -->
+    <div id="tableObjFct" height=1px; width=1px; style="visibility: hidden">
+      <head>
         <link rel="stylesheet" href="../filtergrid.css" type="text/css" media="screen">
-    </head>
+      </head>
 
-    <table id="table1">
+      <table id="table1">
         <tr>
-            <th>Iteration</th>
-            <th>Objective Function</th>
-            <th>Constraint Value</th>
+          <th>Iteration</th>
+          <th>Objective Function</th>
+          <th>Constraint Value</th>
         </tr>
         xxxxtableObjFct
-    </table>
-    <script language="javascript" type="text/javascript">
-    var table1_Props = {
-		filters_row_index: 1,
+      </table>
+      <script language="javascript" type="text/javascript">
+      var table1_Props = {
+        filters_row_index: 1,
         alternate_rows: true,
-		col_width: ["60px","130px","130px"],//prevents column width variations
+        col_width: ["60px","130px","130px"],//prevents column width variations
         rows_counter: true,
         rows_counter_text: "Total rows: ",
         btn_reset: true,
         mark_active_columns: true,
         selectable: true,
-	};
-	var tf3 = setFilterGrid( "table1",table1_Props );
-</script>
-</div>
+      };
+      var tf3 = setFilterGrid( "table1",table1_Props );
+      </script>
+    </div>
 
-<div id="tableDesVar" height=1px; width=1px; style="visibility: hidden">
-    <head>
+    <div id="tableDesVar" height=1px; width=1px; style="visibility: hidden">
+      <head>
         <link rel="stylesheet" href="../filtergrid.css" type="text/css" media="screen">
-    </head>
+      </head>
 
-    <table id="table1">
+      <table id="table1">
         <tr>
-            <th>Iteration</th>
-            <th colspan="xxxxnumber_des_var">Design Variables</th>
+          <th>Iteration</th>
+          <th colspan="xxxxnumber_des_var">Design Variables</th>
         </tr>
         xxxxtableDesVar
-    </table>
-    <script language="javascript" type="text/javascript">
-    var table1_Props = {
-		filters_row_index: 1,
+      </table>
+      <script language="javascript" type="text/javascript">
+      var table1_Props = {
+        filters_row_index: 1,
         alternate_rows: true,
-		col_width: ["120px","170px",null,null,null],//prevents column width variations
+        col_width: ["120px","170px",null,null,null],//prevents column width variations
         rows_counter: true,
         rows_counter_text: "Total rows: ",
         btn_reset: true,
         mark_active_columns: true,
         selectable: true,
-	};
-	var tf3 = setFilterGrid( "table1",table1_Props );
-</script>
-</div>
+      };
+      var tf3 = setFilterGrid( "table1",table1_Props );
+      </script>
+    </div>
 
-<div id="tableConstr" height=1px; width=1px; style="visibility: hidden">
-    <head>
+    <div id="tableConstr" height=1px; width=1px; style="visibility: hidden">
+      <head>
         <link rel="stylesheet" href="../filtergrid.css" type="text/css" media="screen">
-    </head>
+      </head>
 
-    <table id="table1">
+      <table id="table1">
         <tr>
-            <th>Iteration</th>
-            <th colspan="xxxxnumber_constraints">Constraints</th>
+          <th>Iteration</th>
+          <th colspan="xxxxnumber_constraints">Constraints</th>
         </tr>
         xxxxtableConstr
-    </table>
-    <script language="javascript" type="text/javascript">
-    var table1_Props = {
-		filters_row_index: 1,
+      </table>
+      <script language="javascript" type="text/javascript">
+      var table1_Props = {
+        filters_row_index: 1,
         alternate_rows: true,
-		col_width: ["120px","170px",null,null,null],//prevents column width variations
+        col_width: ["120px","170px",null,null,null],//prevents column width variations
         rows_counter: true,
         rows_counter_text: "Total rows: ",
         btn_reset: true,
         mark_active_columns: true,
         selectable: true,
-	};
-	var tf3 = setFilterGrid( "table1",table1_Props );
-</script>
-</div>
-
-
-<!-- Templates for the tables end here -->
-
-</body>
-</html>
-<!-- neuer kommentar -->
+      };
+      var tf3 = setFilterGrid( "table1",table1_Props );
+      </script>
+    </div>
+    <!-- Templates for the tables end here -->
+  </body>
+  </html>
