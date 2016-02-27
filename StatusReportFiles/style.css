@@ -33,6 +33,8 @@ body {
 .deactive{
     float:left;
     margin:2px;
+    margin-left: 5px;
+    margin-right: 5px;
     padding:4px;
     border-bottom: 3px solid #FFFF;
 }
@@ -40,6 +42,8 @@ body {
 .deactive:hover{
     float:left;
     margin:2px;
+    margin-left: 5px;
+    margin-right: 5px;
     padding:4px;
     border-bottom: 3px solid #0072BD;
 }
@@ -47,6 +51,8 @@ body {
 .active {
     float:left;
     margin:2px;
+    margin-left: 5px;
+    margin-right: 5px;
     padding:4px;
     border-bottom: 3px solid #0072BD;
 }
@@ -148,7 +154,11 @@ body {
 }
 
 .dygraph-y2label {
-  margin-top:-10px;
+  margin-top:-15px;
+}
+
+.dygraph-ylabel {
+  margin-top:-15px;
 }
 
 

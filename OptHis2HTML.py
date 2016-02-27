@@ -37,13 +37,13 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
     # General calculations for the uppermost information table are computed like time running, algorithm
     # name, optimization problem name etc.
     # ----------------------------------------------------------------------------------------------------
-
     StartTime = str(starttime)[0:10] + "000"
     EndTime = ""
     RefRate = '1000'
     if inform != "Running":
         EndTime = str(time())[0:10] + "000"
         RefRate = '1000000'
+    Iteration = 'Iteration'   # Label and Legends may be Iteration, Generation or Evaluations depending on Algorithm
 
     if StatusDirectory == "":  # Change the target directory for the status report files if the user wants to
         StatusDirectory = DesOptDir
@@ -86,6 +86,10 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
     # individual would be shown in the graphs
 
     elif Alg.name == "NSGA-II":
+        Iteration = 'Generation'
+        if inform == "0":
+            inform = 'Optimization terminated successfully'
+
         PopSize = Alg.options['PopSize'][1]
 
         for i in range(0, fAll.__len__() / PopSize):  # Iteration trough the Populations
@@ -322,6 +326,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
         hstrnew = hstrnew.replace('xxxxRefRate', RefRate)
         hstrnew = hstrnew.replace('xxxxStartTime', StartTime)
         hstrnew = hstrnew.replace('xxxxEndTime', EndTime)
+        hstrnew = hstrnew.replace('xxxxIteration', Iteration)
     else:
         hstrnew = hstr.replace('xxxxName', OptName)
         hstrnew = hstrnew.replace('xxxxTime', time_now)
@@ -332,6 +337,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
         hstrnew = hstrnew.replace('xxxxRefRate', RefRate)
         hstrnew = hstrnew.replace('xxxxStartTime', StartTime)
         hstrnew = hstrnew.replace('xxxxEndTime', EndTime)
+        hstrnew = hstrnew.replace('xxxxIteration', Iteration)
 
         # remove the hmtl parts which are only needed for constrained problems
         try:

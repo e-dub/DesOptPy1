@@ -43,28 +43,33 @@ This document is divided into 3 parts.
       <table class="overview">
         <tr><td>Name:</td><td>xxxxName</td></tr>
         <tr><td>Algorithm:</td><td>xxxxAlg</td></tr>
-        <tr><td>Last Update:</td><td>xxxxTime</td></tr>
-        <tr><td>Running for:</td><td>
+        <tr><td>Last update:</td><td>xxxxTime</td></tr>
+        <tr><td>Run time:</td><td id="runtime">
           <!-- The following script calculates the time the optimization is already running-->
           <script type="text/javascript">
-          var date1 = new Date(xxxxStartTime);
-          var date2 = new Date(xxxxEndTime);
+          var counter = setInterval(timer, 1000);
 
-          var diff = date2.getTime() - date1.getTime();
+          function timer(){
+            var date1 = new Date(xxxxStartTime);
+            var date2 = new Date(xxxxEndTime);
 
-          var days = Math.floor(diff / (1000 * 60 * 60 * 24));
-          diff -=  days * (1000 * 60 * 60 * 24);
+            var diff = date2.getTime() - date1.getTime();
 
-          var hours = Math.floor(diff / (1000 * 60 * 60));
-          diff -= hours * (1000 * 60 * 60);
+            var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            diff -=  days * (1000 * 60 * 60 * 24);
 
-          var mins = Math.floor(diff / (1000 * 60));
-          diff -= mins * (1000 * 60);
+            var hours = Math.floor(diff / (1000 * 60 * 60));
+            diff -= hours * (1000 * 60 * 60);
 
-          var seconds = Math.floor(diff / (1000));
-          diff -= seconds * (1000);
+            var mins = Math.floor(diff / (1000 * 60));
+            diff -= mins * (1000 * 60);
 
-          document.write(days + " days " + hours + " hours " + mins + " min " + seconds + " sec");
+            var seconds = Math.floor(diff / (1000));
+            diff -= seconds * (1000);
+
+            document.getElementById("runtime").innerHTML = days + " days " + hours + " hours " + mins + " min " + seconds + " sec";
+          }
+
           </script>
         </td></tr><tr>
           <!-- Status can be 'running', 'finished', 'error' etc. -->
@@ -79,7 +84,7 @@ This document is divided into 3 parts.
         <li id="nav2" onclick="showGraph2()">Design variables normalized</li>
         <li id="nav5" onclick="showGraph5()">Design variables</li>
         <!--Start of constraint html part-->
-        <li id="nav3" onclick="showGraph3()">Constraints</li>
+        <li id="nav3" onclick="showGraph3()">All constraints</li>
         <li id="nav4" onclick="showGraph4()">Violated constraints</li>
         <!--End of constraint html part-->
       </ul>
@@ -89,12 +94,12 @@ This document is divided into 3 parts.
 
     <center>
       <!-- Diagrams themself -->
-      <div id="cvs" style="height: 600px; width: 1200px;">[No canvas support or no data yet!]</div>
-      <div id="cvs2" style="height: 600px; width: 1200px;">[No canvas support or no data yet!]</div>
-      <div id="cvs5" style="height: 600px; width: 1200px;">[No canvas support or no data yet!]</div>
+      <div id="cvs" style="height: 600px; width: 1200px;">[No canvas support or no data yet! Refresh page!]</div>
+      <div id="cvs2" style="height: 600px; width: 1200px;">[No canvas support or no data yet! Refresh page!]</div>
+      <div id="cvs5" style="height: 600px; width: 1200px;">[No canvas support or no data yet! Refresh page!]</div>
       <!--Start of constraint html part-->
-      <div id="cvs3" style="height: 600px; width: 1200px;">[No canvas support or no data yet!]</div>
-      <div id="cvs4" style="height: 600px; width: 1200px;">[No canvas support or no data yet!]</div>
+      <div id="cvs3" style="height: 600px; width: 1200px;">[No canvas support or no data yet! Refresh page!]</div>
+      <div id="cvs4" style="height: 600px; width: 1200px;">[No canvas support or no data yet! Refresh page!]</div>
       <!--End of constraint html part-->
       <!-- Show Zero checkbox toggles wether the 0 should be shown on the y axis or not -->
       <!-- btn_show opens a new website and displays the data in a table -->
@@ -151,21 +156,29 @@ This document is divided into 3 parts.
       g1 = new Dygraph("cvs", "objFct_maxCon.csv",
       {
         series : {'Constraint': { axis: 'y2' }},
-        xlabel: 'Iterations',
+        xlabel: 'xxxxIteration',
         ylabel: 'Objective function',
         y2label: 'Maximum constraint',
-        independentTicks: true,
         drawAxesAtZero: true,
         legend: 'always',
         labelsDiv: 'legend',
         labelsSeparateLines: true,
         colors: ['blue', 'green'],
         includeZero: incZero,
+        hideOverlayOnMouseOut: false,
         axes:{
           x: {
             axisLabelFormatter: function(d){
               return onlyIntegers(d);
+            },
+            valueFormatter: function(ms){
+              return 'xxxxIteration ' +ms;
             }
+          },
+          y2: {
+            drawGrid: true,
+            independentTicks: true,
+            gridLinePattern: [2,2],
           }
         }
       });
@@ -178,16 +191,20 @@ This document is divided into 3 parts.
       <!-- Graph 2, normalized design variables -->
       g2 = new Dygraph("cvs2", "desVarsNorm.csv",
       {
-        xlabel: 'Iterations',
+        xlabel: 'xxxxIteration',
         ylabel: 'Design variables normalized',
         legend: 'always',
         labelsDiv: 'legend',
         labelsSeparateLines: true,
         includeZero: incZero,
+        hideOverlayOnMouseOut: false,
         axes:{
           x: {
             axisLabelFormatter: function(d){
               return onlyIntegers(d);
+            },
+            valueFormatter: function(ms){
+              return 'xxxxIteration ' +ms;
             }
           }
         }
@@ -200,16 +217,20 @@ This document is divided into 3 parts.
       <!-- Graph 3, denormalized design variables-->
       g3 = new Dygraph("cvs5", "desVars.csv",
       {
-        xlabel: 'Iterations',
+        xlabel: 'xxxxIteration',
         ylabel: 'Design Variables',
         legend: 'always',
         labelsDiv: 'legend',
         labelsSeparateLines: true,
         includeZero: incZero,
+        hideOverlayOnMouseOut: false,
         axes:{
           x: {
             axisLabelFormatter: function(d){
               return onlyIntegers(d);
+            },
+            valueFormatter: function(ms){
+              return 'xxxxIteration ' +ms;
             }
           }
         }
@@ -223,17 +244,21 @@ This document is divided into 3 parts.
       <!-- Graph 4, constraints------------------------------------ -->
       g4 = new Dygraph("cvs3", "constraints.csv",
       {
-        xlabel: 'Iterations',
+        xlabel: 'xxxxIteration',
         ylabel: 'Constraints',
         drawAxesAtZero: 'True',
         legend: 'always',
         labelsDiv: 'legend',
         labelsSeparateLines: true,
         includeZero: incZero,
+        hideOverlayOnMouseOut: false,
         axes:{
           x: {
             axisLabelFormatter: function(d){
               return onlyIntegers(d);
+            },
+            valueFormatter: function(ms){
+              return 'xxxxIteration ' +ms;
             }
           }
         }
@@ -246,17 +271,21 @@ This document is divided into 3 parts.
       <!-- Graph 5, violated constraints                                  -->
       g5 = new Dygraph("cvs4", "constraints.csv",
       {
-        xlabel: 'Iterations',
+        xlabel: 'xxxxIteration',
         ylabel: 'Violated constraints',
         valueRange: [0, null],
         legend: 'always',
         labelsDiv: 'legend',
         labelsSeparateLines: true,
         includeZero: incZero,
+        hideOverlayOnMouseOut: false,
         axes:{
           x: {
             axisLabelFormatter: function(d){
               return onlyIntegers(d);
+            },
+            valueFormatter: function(ms){
+              return 'xxxxIteration ' +ms;
             }
           }
         }
@@ -447,7 +476,7 @@ This document is divided into 3 parts.
 
       <table id="table1">
         <tr>
-          <th>Iteration</th>
+          <th>xxxxIteration</th>
           <th>Objective Function</th>
           <th>Constraint Value</th>
         </tr>
@@ -475,7 +504,7 @@ This document is divided into 3 parts.
 
       <table id="table1">
         <tr>
-          <th>Iteration</th>
+          <th>xxxxIteration</th>
           <th colspan="xxxxnumber_des_var">Design Variables</th>
         </tr>
         xxxxtableDesVar
@@ -502,7 +531,7 @@ This document is divided into 3 parts.
 
       <table id="table1">
         <tr>
-          <th>Iteration</th>
+          <th>xxxxIteration</th>
           <th colspan="xxxxnumber_constraints">Constraints</th>
         </tr>
         xxxxtableConstr
