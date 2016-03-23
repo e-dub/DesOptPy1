@@ -39,7 +39,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
     # ----------------------------------------------------------------------------------------------------
     StartTime = str(starttime)[0:10] + "000"
     EndTime = ""
-    RefRate = '1000'
+    RefRate = '2000'
     if inform != "Running":
         EndTime = str(time())[0:10] + "000"
         RefRate = '1000000'
@@ -87,7 +87,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
 
     elif Alg.name == "NSGA-II":
         Iteration = 'Generation'
-        if inform == "0":
+        if inform == 0:
             inform = 'Optimization terminated successfully'
 
         PopSize = Alg.options['PopSize'][1]
@@ -365,14 +365,14 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
                 StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep + "desVarsNorm.csv")
     shutil.copy("constraints.csv",
                 StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep + "constraints.csv")
-    if not os.path.exists(StatusDirectory + os.sep + "Results" + os.sep + "dygraph-combined.js"):
-        for file in glob.glob(template_directory + "*.png"):
-            shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep)
-        for file in glob.glob(template_directory + "*.js"):
-            shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep)
-        for file in glob.glob(template_directory + "*.css"):
-            shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep)
-        for file in glob.glob(template_directory + "*.ico"):
-            shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep)
-
+    for file in glob.glob(template_directory + "*.png"):
+        shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep)
+    for file in glob.glob(template_directory + "*.js"):
+        shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep)
+    for file in glob.glob(template_directory + "*.css"):
+        shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep)
+    for file in glob.glob(template_directory + "*.ico"):
+        shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep)
+    for file in glob.glob(template_directory + "view_results.py"):
+        shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep + OptName + os.sep)
     return 0

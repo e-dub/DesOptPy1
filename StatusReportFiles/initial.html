@@ -22,9 +22,9 @@ This document is divided into 3 parts.
 <!-- Head defines some properties which are not displayed on the website itself-->
 <head>
   <!-- The browser icon and the stylesheet are linked and the dygraph package is loaded-->
-  <link rel="icon" href="../DesOptPy_icon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
-  <script src="../dygraph-combined.js"></script>
+  <link rel="icon" href="DesOptPy_icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
+  <script src="dygraph-combined.js"></script>
   <!-- Title that is shown in the broswer tab-->
   <title>StatusMonitoring</title>
 </head>
@@ -33,7 +33,7 @@ This document is divided into 3 parts.
   <!-- banner div contains the DesOptPy picture and is on top of the website-->
   <div id="banner">
     <center>
-      <div style="margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" width="200"></div>
+      <div style="margin: 0px 0px 0px 60px;"><img src="DesOptPy.png" width="200"></div>
     </center>
   </div>
   <center><h2 id="caption">Design Optimization Status Report</h2></center>
@@ -177,7 +177,7 @@ This document is divided into 3 parts.
           },
           y2: {
             drawGrid: true,
-            independentTicks: true,
+            independentTicks: false,
             gridLinePattern: [2,2],
           }
         }
@@ -440,27 +440,27 @@ This document is divided into 3 parts.
       //-- Which diagram is currently shown and thus which table to generate -->
       switch(current_view) {
         case 1:
-        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="tablefilter_all_min.js"></scr' + 'ipt>');
         myWindow.document.write(tableObjFct.innerHTML);
         myWindow.document.close();
         break;
         case 2:
-        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="tablefilter_all_min.js"></scr' + 'ipt>');
         myWindow.document.write(tableDesVar.innerHTML);
         myWindow.document.close();
         break;
         case 3:
-        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="tablefilter_all_min.js"></scr' + 'ipt>');
         myWindow.document.write(tableConstr.innerHTML);
         myWindow.document.close();
         break;
         case 4:
-        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="tablefilter_all_min.js"></scr' + 'ipt>');
         myWindow.document.write(tableConstr.innerHTML);
         myWindow.document.close();
         break;
         case 5:
-        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="../tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="tablefilter_all_min.js"></scr' + 'ipt>');
         myWindow.document.write(tableDesVar.innerHTML);
         myWindow.document.close();
         break;
@@ -471,7 +471,7 @@ This document is divided into 3 parts.
     <!-- Templates for the tables -->
     <div id="tableObjFct" height=1px; width=1px; style="visibility: hidden">
       <head>
-        <link rel="stylesheet" href="../filtergrid.css" type="text/css" media="screen">
+        <link rel="stylesheet" href="filtergrid.css" type="text/css" media="screen">
       </head>
 
       <table id="table1">
@@ -499,7 +499,7 @@ This document is divided into 3 parts.
 
     <div id="tableDesVar" height=1px; width=1px; style="visibility: hidden">
       <head>
-        <link rel="stylesheet" href="../filtergrid.css" type="text/css" media="screen">
+        <link rel="stylesheet" href="filtergrid.css" type="text/css" media="screen">
       </head>
 
       <table id="table1">
@@ -526,7 +526,7 @@ This document is divided into 3 parts.
 
     <div id="tableConstr" height=1px; width=1px; style="visibility: hidden">
       <head>
-        <link rel="stylesheet" href="../filtergrid.css" type="text/css" media="screen">
+        <link rel="stylesheet" href="filtergrid.css" type="text/css" media="screen">
       </head>
 
       <table id="table1">
