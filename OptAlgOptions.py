@@ -11,6 +11,7 @@ Description:
 ---------------------------------------------------------------------------------------------------
 '''
 import sys
+import inspect
 
 class setDefault():
     def __init__(self, Alg):
@@ -105,18 +106,32 @@ class setDefault():
             #self.pCross_bin = 0.
             #self.pMut_bin = 0.
             #self.seed = 0.
+        elif Alg == "ALPSO":
+            self.SwarmSize = 40
+            self.maxOuterIter = 200
+            self.maxInnerIter = 6
+            self.vcrazy = 1e4
+            self.HoodSize = 40
+            self.HoodModel = "gbest"
+            self.HoodSelf = 1
+            self.Scaling = 1
+            self.vmax = 1.0
+            self.vinit = 2.0
+            self.IFILE = False
         elif Alg == "MIDACO":
             self.ACC = 1e-3
             self.ISEED = 1
             #self.QSTART = 0
+            self.FSTOP = 0
             self.AUTOSTOP = 0
-            #self.ORACLE = 0
+            self.ORACLE = 0.0
+            self.FOCUS = 0
             self.ANTS = 0
             self.KERNEL = 0
             self.CHARACTER = 0
-            #self.MAXEVAL = 1e2
-            #self.MAXTIME = 1e3
-            #self.IFILE = True
+            self.MAXEVAL = 10000
+            self.MAXTIME = 86400
+            self.IFILE = False
         #elif Alg[:5] == "PyGMO":
         #    import PyGMO
         #    self = eval("PyGMO.algorithm." + Alg[6:]+"()")
@@ -161,7 +176,7 @@ class setDefault():
             self.neighb_type=2
             self.neighb_param=4
         elif Alg == "PyGMO_pso_gen":
-             self.gen=1
+             self.gen=10
              self.omega=0.7298
              self.eta1=2.05
              self.eta2=2.05
@@ -173,7 +188,7 @@ class setDefault():
             self.gen=100
             self.limit=20
         elif Alg == "PyGMO_sga":
-            self.gen=1
+            self.gen=10
             self.cr=0.95
             self.m=0.02
             self.elitism=1
@@ -437,15 +452,11 @@ class setDefault():
             self.obj_scaling_factor=1.0
             self.mu_init=0.1
             self.screen_output=False
-        elif Alg == "PyGMO_cstrs_self_adaptive":
-            self.algorithm=None
-            self.max_iter=100
-            self.f_tol=1e-15
-            self.x_tol=1e-15
         else:
-            sys.exit("Error on line 329 of __init__.py: Algorithm misspelled or not supported")
+            sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Algorithm misspelled or not supported")
         if Alg[:5] == "PyGMO":
             self.nIndiv=8
+            self.ConstraintHandling = "CoevolutionPenalty"
 
 
     def setSimple(self, stopTol=[], maxIter=[], maxEval=[]):
@@ -694,17 +705,30 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
         #OptAlg.setOption("pCross_bin",0.)
         #OptAlg.setOption("pMut_bin",0.)
         #OptAlg.setOption("seed",0.)
+    elif Alg == "ALPSO":
+        OptAlg.setOption("SwarmSize", UserOpt.SwarmSize)
+        OptAlg.setOption("maxOuterIter", UserOpt.maxOuterIter)
+        OptAlg.setOption("maxInnerIter", UserOpt.maxInnerIter)
+        OptAlg.setOption("vcrazy", UserOpt.vcrazy)
+        OptAlg.setOption("HoodSize", UserOpt.HoodSize)
+        OptAlg.setOption("vmax", UserOpt.vmax)
+        OptAlg.setOption("vinit", UserOpt.vinit)
+        OptAlg.setOption("HoodModel", UserOpt.HoodModel)
+        OptAlg.setOption("HoodSelf", UserOpt.HoodSelf)
+        OptAlg.setOption("Scaling", UserOpt.Scaling)
     elif Alg == "MIDACO":
         OptAlg.setOption("ACC", UserOpt.ACC)
         OptAlg.setOption("ISEED", UserOpt.ISEED)
         #OptAlg.setOption("QSTART",0)
+        OptAlg.setOption("FSTOP", UserOpt.FSTOP)
         OptAlg.setOption("AUTOSTOP", UserOpt.AUTOSTOP)
-        #OptAlg.setOption("ORACLE",0)
+        OptAlg.setOption("ORACLE", float(UserOpt.ORACLE))
+        OptAlg.setOption("FOCUS",UserOpt.FOCUS)
         OptAlg.setOption("ANTS", UserOpt.ANTS)
         OptAlg.setOption("KERNEL", UserOpt.KERNEL)
-        OptAlg.setOption("CHARACTER",)
-        #OptAlg.setOption("MAXEVAL", 1e2)
-        #OptAlg.setOption("MAXTIME", 1e3)
+        OptAlg.setOption("CHARACTER", UserOpt.CHARACTER)
+        OptAlg.setOption("MAXEVAL",  int(UserOpt.MAXEVAL))
+        OptAlg.setOption("MAXTIME", int(UserOpt.MAXTIME))
     elif Alg == "PyGMO_de":
         OptAlg = PyGMO.algorithm.de(gen=UserOpt.gen, f=UserOpt.f, cr=UserOpt.cr,
                                    variant=UserOpt.variant, ftol=UserOpt.ftol, xtol=UserOpt.xtol,
@@ -852,6 +876,6 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
     elif Alg == "PyGMO_cstrs_self_adaptive":
         OptAlg = PyGMO.algorithm.cstrs_self_adaptive(algorithm=UserOpt.algorithm, max_iter=UserOpt.max_iter, f_tol=UserOpt.f_tol, x_tol=UserOpt.x_tol)
     else:
-        sys.exit("Error on line 852 of __init__.py: Algorithm misspelled or not supported")
+        sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Algorithm misspelled or not supported")
     return OptAlg
 
