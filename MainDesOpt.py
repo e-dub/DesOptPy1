@@ -450,7 +450,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 
     def OptSysEqNorm(xNorm):
         xNorm = np.array(xNorm)  # NSGA2 gives a list back, this makes a float! TODO Inquire why it does this!
-        x = denormalize(xNorm, xL, xU, DesVarNorm)
+        x = denormalize(xNorm, x0, xL, xU, DesVarNorm)
         f, g, fail = OptSysEq(x)
         return f, g, fail
 
@@ -466,15 +466,14 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         return dfdx, dgdx, fail
 
     def OptSensEqNorm(xNorm, f, g):
-        x = denormalize(xNorm, xL, xU, DesVarNorm)
+        x = denormalize(xNorm, x0, xL, xU, DesVarNorm)
         dfxdx, dgxdx, fail = OptSensEq(x, f, g)
         dfdx = dfxdx * (xU - xL)
-        #dfdx = normalizeSens(dfxdx, xL, xU, DesVarNorm)
-        dgdx = normalizeSens(dgxdx, xL, xU, DesVarNorm)
-        # TODO not general for all normalizations! needs to be rewritten
+        dgdx = normalizeSens(dgxdx, x0, xL, xU, DesVarNorm)
+        # TODO not general for all normalizations! needs to be rewritten; done: check if correct
+        # dfdx = normalizeSens(dfxdx, xL, xU, DesVarNorm)
         #if dgxdx != []:
         #    dgdx = dgxdx * np.tile((xU - xL), [len(g), 1])
-        #    # TODO not general for all normalizations! needs to be rewritten
         #else:
         #    dgdx = []
         return dfdx, dgdx, fail
@@ -520,12 +519,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     def OptSensEqParaFDNorm(xNorm, f, g):
         x = denormalize(xNorm, xL, xU, DesVarNorm)
         dfxdx, dgxdx, fail = OptSensEqParaFD(x, f, g)
-        #dfdx = dfxdx * (xU - xL)
-        dfdx = normalizeSens(dfxdx, xL, xU, DesVarNorm)
-        # TODO not general for all normalizations! needs to be rewritten
+        dfdx = normalizeSens(dfxdx, x0, xL, xU, DesVarNorm)
+        dgdx = normalizeSens(dgxdx, x0, xL, xU, DesVarNorm)
+        # TODO not general for all normalizations! needs to be rewritten, done: check if correct
+        # dfdx = dfxdx * (xU - xL)
         #dgdx = dgxdx * (np.tile((xU - xL), [len(g), 1]))
-        dgdx = normalizeSens(dgxdx, xL, xU, DesVarNorm)
-        # TODO not general for all normalizations! needs to be rewritten
         return dfdx, dgdx, fail
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -551,7 +549,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             fDoE = np.zeros([np.size(xDoE_Norm, 0), 1])
             gDoE = np.zeros([np.size(xDoE_Norm, 0), n_gc])
             for ii in range(np.size(xDoE_Norm, 0)):
-                xDoE[ii] = denormalize(xDoE_Norm[ii], xL, xU, DesVarNorm)
+                xDoE[ii] = denormalize(xDoE_Norm[ii], x0, xL, xU, DesVarNorm)
                 fDoEii, gDoEii, fail = OptSysEqNorm(xDoE_Norm[ii])
                 fDoE[ii] = fDoEii
                 gDoE[ii, :] = gDoEii
@@ -625,7 +623,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 
     def ApproxOptSysEqNorm(xNorm):
         xNorm = xNorm[0:np.size(xL), ]
-        x = denormalize(xNorm, xL, xU, DesVarNorm)
+        x = denormalize(xNorm, x0, xL, xU, DesVarNorm)
         f = approx_f.predict(x)
         g = np.zeros(len(gc))
         for ii in range(len(gc)):
@@ -653,7 +651,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         xUnorm = xU
         DefOptSysEq = OptSysEq
     else:
-        [x0norm, xLnorm, xUnorm] = normalize(x0, xL, xU, DesVarNorm)
+        [x0norm, xLnorm, xUnorm] = normalize(x0, x0, xL, xU, DesVarNorm)
         DefOptSysEq = OptSysEqNorm
     nx = np.size(x0)
     ng = np.size(gc)
@@ -968,12 +966,12 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     else:
         xOpt = np.resize(xOpt, [np.size(xL), ])
         xOptNorm = xOpt
-        xOpt = denormalize(xOptNorm.T, xL, xU, DesVarNorm)
+        xOpt = denormalize(xOptNorm.T, x0, xL, xU, DesVarNorm)
         try:
             xIterNorm = xIter[:, 0:np.size(xL)]
             xIter = np.zeros(np.shape(xIterNorm))
             for ii in range(len(xIterNorm)):
-                xIter[ii] = denormalize(xIterNorm[ii], xL, xU, DesVarNorm)
+                xIter[ii] = denormalize(xIterNorm[ii], x0, xL, xU, DesVarNorm)
         except:
             x0norm = []
             xIterNorm = []

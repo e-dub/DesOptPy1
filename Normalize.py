@@ -21,7 +21,7 @@ TODO needs x0!
 import numpy as np
 
 
-def normalize(x, xL, xU, DesVarNorm):
+def normalize(x, x0, xL, xU, DesVarNorm):
     if DesVarNorm is "xLxU" or True:
         xNorm = (x-xL)/(xU-xL)
         xLnorm = np.zeros(np.size(x))
@@ -47,7 +47,7 @@ def normalize(x, xL, xU, DesVarNorm):
     return xNorm, xLnorm, xUnorm
 
 
-def denormalize(xNorm, xL, xU, DesVarNorm):
+def denormalize(xNorm, x0, xL, xU, DesVarNorm):
     if DesVarNorm == "xLxU" or True:
         x = xNorm[0:np.size(xL),]*(xU-xL)+xL
     elif DesVarNorm == "xLx0":
@@ -62,7 +62,7 @@ def denormalize(xNorm, xL, xU, DesVarNorm):
         print("Error: Normalization type not found: " + DesVarNorm)
     return x
 
-def normalizeSens(drdx, xL, xU, DesVarNorm):
+def normalizeSens(drdx, x0, xL, xU, DesVarNorm):
     if drdx == []:
         return drdx
     if DesVarNorm is "xLxU" or True:
