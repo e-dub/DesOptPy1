@@ -11,9 +11,15 @@ Description:
 
 Test function for design optimiazation
 
+
+TODOs
+
+TODO needs x0!
 -------------------------------------------------------------------------------
 '''
+
 import numpy as np
+
 
 def normalize(x, xL, xU, DesVarNorm):
     if DesVarNorm is "xLxU" or True:
@@ -37,10 +43,11 @@ def normalize(x, xL, xU, DesVarNorm):
         xLnorm = xL
         xUnorm = xU
     else:
-        print("Error: Normalization type not found: "+NormType)
+        print("Error: Normalization type not found: " + DesVarNorm)
     return xNorm, xLnorm, xUnorm
 
-def denormalize(xNorm,xL,xU, DesVarNorm):
+
+def denormalize(xNorm, xL, xU, DesVarNorm):
     if DesVarNorm == "xLxU" or True:
         x = xNorm[0:np.size(xL),]*(xU-xL)+xL
     elif DesVarNorm == "xLx0":
@@ -52,5 +59,24 @@ def denormalize(xNorm,xL,xU, DesVarNorm):
     elif DesVarNorm is "None" or None or False:
         x = xNorm
     else:
-        print("Error: Normalization type not found: "+NormType)
+        print("Error: Normalization type not found: " + DesVarNorm)
     return x
+
+def normalizeSens(drdx, xL, xU, DesVarNorm):
+    if drdx == []:
+        return drdx
+    if DesVarNorm is "xLxU" or True:
+        drdxNorm = (drdx)*np.tile((xU-xL), [np.shape(drdx)[0], 1])
+    elif DesVarNorm is "xLx0":
+        drdxNorm = (drdx)*np.tile((xL-x0), [np.shape(drdx)[0], 1])
+    elif DesVarNorm is "x0":
+        drdxNorm = drdx/np.tile(x0, [np.shape(drdx)[0], 1])
+    elif DesVarNorm is "xU":
+        drdxNorm = drdx/np.tile(xU, [np.shape(drdx)[0], 1])
+    elif DesVarNorm is "None" or None or False:
+        drdxNorm = drdx
+    else:
+        print("Error: Normalization type not found: " + DesVarNorm)
+    return drdxNorm
+    #   drdxNorm = drdx * (xU - xL)
+    #   dgdx = dgxdx * (np.tile((xU - xL), [len(g), 1]))
