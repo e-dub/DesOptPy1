@@ -244,7 +244,7 @@ if IsPyGMO:
             HistData.write(g, "con")
             if self.StatusReport == 1:
                 try:
-                    OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.xL, self.xU, self.DesVarNorm, self.inform[0], self.OptTime0)
+                    OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.x0, self.xL, self.xU, self.DesVarNorm, self.inform[0], self.OptTime0)
                 except:
                     sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__")
             if g is not []:
@@ -300,7 +300,7 @@ if IsPyGMO:
             HistData.write(self.g, "con")
             if self.StatusReport == 1:
                 try:
-                    OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.xL, self.xU, self.DesVarNorm, self.inform[0], self.OptTime0)
+                    OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.x0, self.xL, self.xU, self.DesVarNorm, self.inform[0], self.OptTime0)
                 except:
                     sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__ with status report")
 
@@ -436,7 +436,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         global nEval
         nEval += 1
         if StatusReport:
-            OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, xL, xU, DesVarNorm, inform[0], OptTime0)
+            OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, x0, xL, xU, DesVarNorm, inform[0], OptTime0)
         if len(xDis) > 0:
             nD = len(xDis)
             gDis = [[]]*2*nD
@@ -899,7 +899,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #       Optimization post-processing
 #-----------------------------------------------------------------------------------------------------------------------
     if StatusReport == 1:
-        OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, xL, xU, DesVarNorm, inform.values()[0], OptTime0)
+        OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, x0, xL, xU, DesVarNorm, inform.values()[0], OptTime0)
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
     hhmmss0 = time.strftime("%H", loctime0)+' : '+time.strftime("%M", loctime0)+' : '+time.strftime("%S", loctime0)

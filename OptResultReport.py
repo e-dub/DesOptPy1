@@ -1,10 +1,11 @@
+
 # -*- coding: utf-8 -*-
 '''
 ----------------------------------------------------------------------------------------------------
 Title:          OptResultReport.py
 Units:          Unitless
-Date:           December 15, 2014
-Authors:        S. Rudolph, E. J. Wehrle, F. Wachter
+Date:           June 12, 2016
+Authors:        E. J. Wehrle, S. Rudolph, F. Wachter
 ----------------------------------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ try:
     TikzRendered = True
 except:
     TikzRendered = False
+TikzRendered = False
 import numpy as np
 import sys
 import getopt
@@ -47,7 +49,6 @@ fontPP = FontProperties()
 fontPP.set_size(10)
 FileTypeRendered = ["png", "svg"]
 FileTypeRaw = ["pdf", "svg"]
-TikzRendered = False
 
 def BarPlot(figName, fun0, funOpt, funLabel0, funLabelOpt, xLabel, yLabel, ResultsFolder, OptName,
             figType=FileTypeRendered, Color0='#FAA43A', ColorOpt='#5DA5DA', figsizex=6,
@@ -71,7 +72,7 @@ def BarPlot(figName, fun0, funOpt, funLabel0, funLabelOpt, xLabel, yLabel, Resul
         plt.tick_params(axis='x', which='both', bottom='off', labelbottom='off')
     plt.xlabel(xLabel)
     plt.ylabel(yLabel)
-    plt.tight_layout()
+    #plt.tight_layout()
     for ii in range(np.size(figType)):
         plt.savefig(ResultsFolder+OptName+'_'+figName+'.'+figType[ii], bbox_extra_artists=(lgd,), bbox_inches='tight')
     if Tikz==True:
@@ -110,7 +111,7 @@ def SingleConvPlot(figName, data, dataLabel, xLabel, yLabel, ResultsFolder, OptN
         numColx = 3
     plt.yticks(size = 10+(numColx-1)*4)
     lgd=ax.legend(bbox_to_anchor=[1.05, 1], loc=2, ncol=numColx, frameon=False, prop=fontPP)
-    plt.tight_layout()
+    #plt.tight_layout()
     for ii in range(np.size(figType)):
         plt.savefig(ResultsFolder+OptName+'_'+figName+'.'+figType[ii], bbox_extra_artists=(lgd,), bbox_inches='tight')
     if Tikz==True:
@@ -122,7 +123,7 @@ def SingleConvPlot(figName, data, dataLabel, xLabel, yLabel, ResultsFolder, OptN
 def DoubleConvPlot(figName, data, dataLabel, xLabel, yLabel, Color, ResultsFolder, OptName,
                    figType=FileTypeRendered, figsizex=6,
                    figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=False,
-                   Tikz=False):
+                   Tikz=False):   
     plt.rc('text', usetex=usetex)
     Plot = plt.figure(figsize=(figsizex, figsizey), dpi=dpi)
     ax1 = Plot.add_subplot(111)
@@ -200,26 +201,18 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
     Opt1Order = OptSolData['Opt1Order']
     hhmmss0 = OptSolData['hhmmss0']
     hhmmss1 = OptSolData['hhmmss1']
+    try:
+        InkscapeVersion = float(subprocess.Popen("inkscape --version", shell=True, stdout=subprocess.PIPE).stdout.read()[8:14])
+        FigureSubfolders = True
+    except:
+        InkscapeVersion = None
+        FigureSubfolders = False
     if operatingSystem != 'Windows':
         InkscapeCall = "inkscape"
         LyxCall = "lyx"
     elif operatingSystem == 'Windows':
-        #InkscapeCall = "C:\\inkscape\\inkscape.exe"
         InkscapeCall = "inkscape"
-        #LyxCall = "c:\\lyx\\lyx.exe"
         LyxCall = "lyx.exe"
-    if Alg in ["MMA", "FFSQP", "FSQP", "GCMMA", "CONMIN", "SLSQP", "PSQP", "KSOPT", "ALGENCAN", "NLPQLP", "IPOPT"]:
-        LabelItEval = "Iteration"
-        LabelItEvalR = r"Iteration"
-    elif Alg == "NSGA2":
-        LabelItEval = "Generation"
-        LabelItEvalR = r"Generation"
-    elif Alg[:5] == "PyGMO":
-        LabelItEval = "Evaluation"
-        LabelItEvalR = r"Evaluation"
-    else:
-        LabelItEval = "Evaluation"
-        LabelItEvalR = r"Evaluation"
     # ---------------------------------------------------------------------------------------------------
     #         Write and save plots
     # ---------------------------------------------------------------------------------------------------
@@ -228,18 +221,18 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         progressbar(0,82)
         if np.size(gOpt) > 0: #Constraints present
             data =[fIterNorm, gMaxIter]
-            dataLabel = ["$\hat{\mathsf{f}}$", "$\mathsf{g}_{max}$"]
+            dataLabel = ["$\hat{\mathsf{f}}$", "$\mathsf{g}_\mathrm{max}$"]
             Color = ["b", "g"]
-            #yLabel = ["Normalized objective function $\hat{\mathsf{f}}$", "Maximum constraint $\mathsf{g}_{max}$"]
-            yLabel = ["$\hat{\mathsf{f}}$", "$\mathsf{g}_{max}$"]
-            DoubleConvPlot("fgMaxIterNormRendered", data, dataLabel, LabelItEval, yLabel, Color, ResultsFolder, OptName,
+            #yLabel = ["Normalized objective function $\hat{\mathsf{f}}$", "Maximum constraint $\mathsf{g}_\mathrm{max}$"]
+            yLabel = ["$\hat{\mathsf{f}}$", "$\mathsf{g}_\mathrm{max}$"]
+            DoubleConvPlot("fgMaxIterNormRendered", data, dataLabel, "Iteration", yLabel, Color, ResultsFolder, OptName,
                            figType=FileTypeRendered, figsizex=5.5, usetex=True, Tikz=TikzRendered)
             data =[fIterNorm, gMaxIter]
             dataLabel = [r"\$\fn\$", r"$\gmax\$"]
             Color = ["b", "g"]
             #yLabel = [r"Normalized objective function \$\fn\$", r"Maximum constraint \$\gmax\$"]
             yLabel = [r"\$\fn\$", r"\$\gmax\$"]
-            DoubleConvPlot("fgMaxIterNorm", data, dataLabel, LabelItEvalR, yLabel, Color, ResultsFolder, OptName,
+            DoubleConvPlot("fgMaxIterNorm", data, dataLabel, r"Iteration", yLabel, Color, ResultsFolder, OptName,
                            figType=FileTypeRaw, figsizex=5.5, usetex=False, Tikz=False)
             progressbar(6,82)
 
@@ -247,25 +240,25 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
             # Objective function and maximum constraint iteration plot
             #---------------------------------------------------------------------------------------------------,
             data =[fIter, gMaxIter]
-            dataLabel = ["$\mathsf{f}$", "$\mathsf{g}_{max}$"]
+            dataLabel = ["$\mathsf{f}$", "$\mathsf{g}_\mathrm{max}$"]
             Color = ["b", "g"]
-            #yLabel = ["Objective function $\mathsf{f}$", "Maximum constraint $\mathsf{g}_{max}$"]
-            yLabel = ["$\mathsf{f}$", "$\mathsf{g}_{max}$"]
-            DoubleConvPlot("fgMaxIterRendered", data, dataLabel, LabelItEval, yLabel, Color, ResultsFolder, OptName,
+            #yLabel = ["Objective function $\mathsf{f}$", "Maximum constraint $\mathsf{g}_\mathrm{max}$"]
+            yLabel = ["$\mathsf{f}$", "$\mathsf{g}_\mathrm{max}$"]
+            DoubleConvPlot("fgMaxIterRendered", data, dataLabel, "Iteration", yLabel, Color, ResultsFolder, OptName,
                            figType=FileTypeRendered, figsizex=6, usetex=True, Tikz=TikzRendered)
             data =[fIter, gMaxIter]
             dataLabel = [r"\$\f\$", r"$\gmax\$"]
             Color = ["b", "g"]
             #yLabel = [r"Objective function \$\f\$", r"Maximum constraint \$\gmax\$"]
             yLabel = [r"\$\f\$", r"\$\gmax\$"]
-            DoubleConvPlot("fgMaxIter", data, dataLabel, LabelItEvalR, yLabel, Color, ResultsFolder, OptName,
+            DoubleConvPlot("fgMaxIter", data, dataLabel, r"Iteration", yLabel, Color, ResultsFolder, OptName,
                            figType=FileTypeRaw, figsizex=6, usetex=False, Tikz=False)
             progressbar(12,82)
 
-            fail = SingleConvPlot("gIterRendered", gIter, "$\mathsf{g}_{%s}$", LabelItEval, "$\mathsf{g}$", ResultsFolder, OptName,
+            fail = SingleConvPlot("gIterRendered", gIter, "$\mathsf{g}_{%s}$", "Iteration", "$\mathsf{g}$", ResultsFolder, OptName,
                               figType=FileTypeRendered, figsizex=6,
                               figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=True, Tikz=TikzRendered)
-            fail = SingleConvPlot("gIter", gIter, r"\$\g_{%s}$", LabelItEvalR, r"\$\g\$", ResultsFolder, OptName,
+            fail = SingleConvPlot("gIter", gIter, r"\$\g_{%s}$", r"Iteration", r"\$\g\$", ResultsFolder, OptName,
                               figType=FileTypeRaw, figsizex=6,
                               figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=False, Tikz=False)
             fail = BarPlot("gBarRendered", gIter[0], gOpt, "$g^0$", "$g^{*}$", "Constraint", "$g$", ResultsFolder, OptName,
@@ -279,16 +272,16 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
             #---------------------------------------------------------------------------------------------------
             # Normalized objective function and maximum constraint iteration plot
             #---------------------------------------------------------------------------------------------------
-            fail = SingleConvPlot("fgMaxIterNormRendered", fIterNorm, "$\hat{\mathsf{f}}$", LabelItEval, "$\hat{\mathsf{f}}$", ResultsFolder, OptName,
+            fail = SingleConvPlot("fgMaxIterNormRendered", fIterNorm, "$\hat{\mathsf{f}}$", "Iteration", "$\hat{\mathsf{f}}$", ResultsFolder, OptName,
                               figType=FileTypeRendered, figsizex=6,
                               figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=True, Tikz=TikzRendered, labelSubscripts=False)
-            fail = SingleConvPlot("fgMaxIterNorm", fIterNorm, r"\$\fn\$", LabelItEvalR, r"\$\fn\$", ResultsFolder, OptName,
+            fail = SingleConvPlot("fgMaxIterNorm", fIterNorm, r"\$\fn\$", r"Iteration", r"\$\fn\$", ResultsFolder, OptName,
                               figType=FileTypeRaw, figsizex=6,
                               figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=False, labelSubscripts=False)
-            fail = SingleConvPlot("fgMaxIterRendered", fIter, "$\hat{mathsf{f}}$", LabelItEval, "$\hat{mathsf{f}}$", ResultsFolder, OptName,
+            fail = SingleConvPlot("fgMaxIterRendered", fIter, "$\hat{\mathsf{f}}$", "Iteration", "$\hat{\mathsf{f}}$", ResultsFolder, OptName,
                               figType=FileTypeRendered, figsizex=6,
                               figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=True, Tikz=TikzRendered, labelSubscripts=False)
-            fail = SingleConvPlot("fgMaxIter", fIter, r"\$\f\$", LabelItEvalR, r"\$\f\$", ResultsFolder, OptName,
+            fail = SingleConvPlot("fgMaxIter", fIter, r"\$\f\$", r"Iteration", r"\$\f\$", ResultsFolder, OptName,
                               figType=FileTypeRaw, figsizex=6,
                               figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=False, labelSubscripts=False)
 
@@ -296,7 +289,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         #---------------------------------------------------------------------------------------------------
         # Objective function at optimum bar plot
         #---------------------------------------------------------------------------------------------------
-        fail = BarPlot("fBarRendered", fIter[0], fOpt, "$\mathsf{f}^0$", "$mathsf{f}^{*}$", "", "$mathsf{f}$", ResultsFolder, OptName,
+        fail = BarPlot("fBarRendered", fIter[0], fOpt, "$\mathsf{f}^0$", "$\mathsf{f}^{*}$", "", "$\mathsf{f}$", ResultsFolder, OptName,
                        figType=FileTypeRendered, Color0='#FAA43A', ColorOpt='#5DA5DA', figsizex=6,
                        figsizey=3, width=0.5, xspacing=0.25, dpi=200, usetex=True, xtick=False, Tikz=TikzRendered)
         fail = BarPlot("fBar", fIter[0], fOpt, r"\$\fin\$", r"\$\fo\$", "", r"\$\f\$", ResultsFolder, OptName,
@@ -310,10 +303,11 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         if len(fGradIter) is not 0:
             DataLabel = r"$\nabla_{\mathsf{x}_{%s}} \mathsf{f}$"
             #DataLabel = u"$\frac{\partial \mathsf{f}}{\partial \mathsf{x_{%s}}}$"
-            fail = SingleConvPlot("fGradIterRendered", fGradIter, DataLabel, LabelItEval, u"$\nabla f$", ResultsFolder, OptName,
-                                  figType=FileTypeRaw, figsizex=6,
-                                  figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=True, Tikz=TikzRendered)
-            fail = SingleConvPlot("fGradIter", fGradIter, r"\$\d_{\x_{%s}} \f\$", LabelItEvalR, r"\$\d \f\$", ResultsFolder, OptName,
+            #fail = SingleConvPlot("fGradIterRendered", fGradIter, DataLabel, "Iteration", u"$\nabla f$", ResultsFolder, OptName,
+            #                       figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=True, Tikz=TikzRendered)
+            fail = SingleConvPlot("fGradIterRendered", fGradIter, DataLabel, "Iteration", r"$\nabla \mathsf{f}$", ResultsFolder, OptName,
+                                   figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=True, Tikz=TikzRendered)
+            fail = SingleConvPlot("fGradIter", fGradIter, r"\$\d_{\x_{%s}} \f\$", r"Iteration", r"\$\d \f\$", ResultsFolder, OptName,
                                   figType=FileTypeRaw, figsizex=6,
                                   figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=False)
         progressbar(35,82)
@@ -321,10 +315,10 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         #---------------------------------------------------------------------------------------------------
         # Design variables iteration plot
         #---------------------------------------------------------------------------------------------------
-        fail = SingleConvPlot("xIterRendered", xIter, "$\mathsf{x}_{%s}$", LabelItEval, "$x$", ResultsFolder, OptName,
+        fail = SingleConvPlot("xIterRendered", xIter, "$\mathsf{x}_{%s}$", "Iteration", "$\mathsf{x}$", ResultsFolder, OptName,
                               figType=FileTypeRaw, figsizex=6,
                               figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=True, Tikz=TikzRendered)
-        fail = SingleConvPlot("xIter", xIter, r"\$\x_{%s}\$", LabelItEvalR, r"\$\x\$", ResultsFolder, OptName,
+        fail = SingleConvPlot("xIter", xIter, r"\$\x_{%s}\$", r"Iteration", r"\$\x\$", ResultsFolder, OptName,
                               figType=FileTypeRaw, figsizex=6,
                               figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=False)
         progressbar(41,82)
@@ -336,10 +330,10 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         if DesVarNorm in ["None", None, False]:
             pass
         else:
-            fail = SingleConvPlot("xIterNormRendered", xIterNorm, "$\hat{mathsf{x}}_{%s}$", LabelItEval, "$\hat{mathsf{x}}$", ResultsFolder, OptName,
+            fail = SingleConvPlot("xIterNormRendered", xIterNorm, "$\hat{\mathsf{x}}_{%s}$", "Iteration", "$\hat{\mathsf{x}}$", ResultsFolder, OptName,
                               figType=FileTypeRendered, figsizex=6,
                               figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=True, Tikz=TikzRendered)
-            fail = SingleConvPlot("xIterNorm", xIterNorm, r"\$\xn_{%s}\$", LabelItEvalR, r"\$\xn\$", ResultsFolder, OptName,
+            fail = SingleConvPlot("xIterNorm", xIterNorm, r"\$\xn_{%s}\$", r"Iteration", r"\$\xn\$", ResultsFolder, OptName,
                               figType=FileTypeRaw, figsizex=6,
                               figsizey=3, width=0.5, xspacing=0.25, dpi=200, xtick=True, usetex=False)
         progressbar(49,82)
@@ -347,7 +341,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         #---------------------------------------------------------------------------------------------------
         # Design variables bar plot
         #---------------------------------------------------------------------------------------------------
-        fail = BarPlot("xBarRendered", x0, xOpt, "$mathsf{x}^0$", "$mathsf{x}^{*}$", "Design variable", "$x$", ResultsFolder, OptName,
+        fail = BarPlot("xBarRendered", x0, xOpt, "$\mathsf{x}^0$", "$\mathsf{x}^{*}$", "Design variable", "$\mathsf{x}$", ResultsFolder, OptName,
                        figType=FileTypeRendered, Color0='#FAA43A', ColorOpt='#5DA5DA', figsizex=6,
                        figsizey=3, width=0.5, xspacing=0.25, dpi=200, usetex=True, xtick=True, Tikz=TikzRendered)
         fail = BarPlot("xBar", x0, xOpt, r"\$\xin$", r"\$\xo$", r"Design variable", r"\$\x$", ResultsFolder, OptName,
@@ -360,7 +354,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         if DesVarNorm in ["None", None, False]:
             pass
         else:
-            fail = BarPlot("xBarNormRendered", x0norm, xOptNorm, "$mathsf{x}^0$", "$mathsf{x}^{*}$", "Design variable", "$\hat{x}$", ResultsFolder, OptName,
+            fail = BarPlot("xBarNormRendered", x0norm, xOptNorm, "$\mathsf{x}^0$", "$\mathsf{x}^{*}$", "Design variable", "$\hat{x}$", ResultsFolder, OptName,
                            figType=FileTypeRendered, Color0='#FAA43A', ColorOpt='#5DA5DA', figsizex=6,
                            figsizey=3, width=0.5, xspacing=0.25, dpi=200, usetex=True, xtick=True, Tikz=TikzRendered)
             fail = BarPlot("xBarNorm", x0norm, xOptNorm, r"\$\xnin$", r"\$\xno$", r"Design variable", r"\$\xn$", ResultsFolder, OptName,
@@ -384,7 +378,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         for ii in range(np.size(FileTypeRendered)):
             plt.savefig(ResultsFolder+OptName+'_gGradOpt.'+FileTypeRendered[ii])
         if TikzRendered==True:
-            tikz_save(ResultsFolder+OptName+'_gGradOpt.tikz')
+            pass #tikz_save(ResultsFolder+OptName+'_gGradOpt.tikz')
         plt.close()
         progressbar(63,82)
 
@@ -394,12 +388,20 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         PlotFiles = ["gBar", "fBar", "fgMaxIterNorm", "fgMaxIter", "gIter",
                       "fGradIter", "xIter", "xIterNorm", "xBar", "xBarNorm"]
         mProc = [[]]*len(PlotFiles)
+        if FigureSubfolders:    
+	        for ii in range(len(FileTypeRendered)):
+	            os.mkdir(ResultsFolder + os.sep + FileTypeRendered[ii])
         for ii in range(len(PlotFiles)):
             mProc[ii] = Popen(InkscapeCall + " -D -z --file="+
                               ResultsFolder+OptName+"_"+ PlotFiles[ii] + ".pdf"+
                               " --export-pdf="+
                               ResultsFolder+OptName+"_"+ PlotFiles[ii] + ".pdf"+
                               " --export-latex", shell=True).wait()
+            if FigureSubfolders:
+                for iii in range(len(FileTypeRendered)):
+                    try: shutil.move(ResultsFolder+OptName+"_"+PlotFiles[ii]+"Rendered."+ FileTypeRendered[iii], 
+                                     ResultsFolder + FileTypeRendered[iii])
+                    except: pass
         progressbar(82,82)
         print ""
         print '# --------------- DIAGRAM GENERATION FINISHED! --------------- #'
@@ -584,7 +586,12 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         # shutil.copy(templatePath + "/FG_CM_blau_oZ_CMYK.eps", ResultsFolder + "FG_CM_blau_oZ_CMYK.eps")
         # shutil.copy(templatePath + "/FGCM_Background.pdf", ResultsFolder + "FGCM_Background.pdf")
         # FileName = ["_ResultPresentationPy.lyx", "_ResultReportPy.lyx"]
-        FileName = ["_ResultReportPy.lyx"]
+
+        if InkscapeVersion == 0.91 or InkscapeVersion == None:
+            FileName = ["_ResultReportNoInkscape.lyx"]
+        else:
+            FileName = ["_ResultReport.lyx"]
+
         for ii in range(len(FileName)):
             fRR = open(templatePath + FileName[ii], "r")
             contentRR = fRR.readlines()
@@ -622,7 +629,9 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
     if lyx == 1:
         for ii in range(len(FileName)):
             os.system(LyxCall + " --export pdf2 " + ResultsFolder + OptName + FileName[ii])
-
+        if InkscapeVersion == 0.91 or InkscapeVersion == None:
+            FileName = ["_ResultReportNoInkscape.lyx"]        
+            shutil.move(ResultsFolder + OptName + FileName[ii][:-3]+"pdf", ResultsFolder + OptName + "_ResultReport.pdf")
 
 def progressbar(actTime, totTime):
     toolbar_width = 60

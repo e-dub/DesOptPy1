@@ -45,11 +45,12 @@ class setDefault():
             self.IFILE = True
         elif Alg == "IPOPT":
             self.tol = 1.0e-3
-            self.print_level = 5
-            self.print_user_options = "yes"
+            self.print_level = 1
+            self.print_user_options = "no"
             self.linear_system_scaling = "none"
-            self.max_iter = 60
-            self.IFILE = True
+            self.max_iter = 10
+            self.IFILE = False
+            #self.IFILE = True
             #self.output_file = OptName+"_Outfile.out"
         elif Alg == "SLSQP":
             self.ACC = 1.0e-3

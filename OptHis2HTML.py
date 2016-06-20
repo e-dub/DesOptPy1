@@ -30,7 +30,7 @@ import sys
 import glob
 
 
-def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, StatusDirectory=""):
+def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, starttime, StatusDirectory=""):
 
     StartTime = str(starttime)[0:10] + "000"
     EndTime = ""
@@ -140,11 +140,11 @@ def OptHis2HTML(OptName, Alg, DesOptDir, xL, xU, DesVarNorm, inform, starttime, 
             for y in range(0, niter + 1):
                 xIter_denormalized[y] = xIter[y]
             for y in range(0, niter + 1):
-                [xIter[y, :],xLnorm, xUnorm] = normalize(xIter_denormalized[y, :], xL, xU, "xLxU")
+                [xIter[y, :],xLnorm, xUnorm] = normalize(xIter_denormalized[y, :], x0, xL, xU, "xLxU")
         else:
             xIter_denormalized = np.zeros((niter + 1, len(xIter[0])))
             for y in range(0, niter + 1):
-                xIter_denormalized[y, :] = denormalize(xIter[y, :], xL, xU, DesVarNorm)
+                xIter_denormalized[y, :] = denormalize(xIter[y, :], x0, xL, xU, DesVarNorm)
 
     time_now = strftime("%Y-%b-%d %H:%M:%S", localtime())  # Aktualisierungszeit auslesen
     ymax = -200000
