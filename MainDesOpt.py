@@ -708,7 +708,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEqParaFDNorm, store_hst=OptName)
                 else:
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEqParaFD, store_hst=OptName)
-            if SensCalc == "AD":
+            elif SensCalc == "AD":
                 if DesVarNorm  not in ["None", None, False]:
                     [fOpt, xOpt, inform] = OptAlg(OptProb, sens_type=OptSensEqNormAD, store_hst=OptName)
                 else:
