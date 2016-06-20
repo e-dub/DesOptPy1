@@ -9,10 +9,9 @@ body {
 /*   coordinates is the div which shows the x and y values */
 
 #coordinates {
-    position: absolute;
-    top: 1270px;
-    left: 0;
-    right: 0;
+     position: absolute;
+    top: 300px;
+    right: 70px;
 }
 
 
@@ -34,6 +33,8 @@ body {
 .deactive{
     float:left;
     margin:2px;
+    margin-left: 5px;
+    margin-right: 5px;
     padding:4px;
     border-bottom: 3px solid #FFFF;
 }
@@ -41,6 +42,8 @@ body {
 .deactive:hover{
     float:left;
     margin:2px;
+    margin-left: 5px;
+    margin-right: 5px;
     padding:4px;
     border-bottom: 3px solid #0072BD;
 }
@@ -48,6 +51,8 @@ body {
 .active {
     float:left;
     margin:2px;
+    margin-left: 5px;
+    margin-right: 5px;
     padding:4px;
     border-bottom: 3px solid #0072BD;
 }
@@ -69,7 +74,7 @@ body {
 
 #cvs {
     position: absolute;
-    top: 250px;
+    top: 300px;
     margin-left: auto;
     margin-right: auto;
     left: 0;
@@ -79,7 +84,7 @@ body {
 
 #cvs2 {
     position: absolute;
-    top: 250px;
+    top: 300px;
     margin-left: auto;
     margin-right: auto;
     left: 0;
@@ -89,7 +94,7 @@ body {
 
 #cvs3 {
     position: absolute;
-    top: 250px;
+    top: 300pxpx;
     margin-left: auto;
     margin-right: auto;
     left: 0;
@@ -99,7 +104,7 @@ body {
 
 #cvs4 {
     position: absolute;
-    top: 250px;
+    top: 300px;
     margin-left: auto;
     margin-right: auto;
     left: 0;
@@ -109,12 +114,18 @@ body {
 
 #cvs5 {
     position: absolute;
-    top: 250px;
+    top: 300px;
     margin-left: auto;
     margin-right: auto;
     left: 0;
     right: 0;
     visibility: hidden;
+}
+
+#legend {
+    position: absolute;
+    top: 360px;
+    right: 20px;
 }
 
 #banner {
@@ -134,12 +145,22 @@ body {
 }
 
 
+
 .overview {
 
     margin-top: 5px;
     margin-bottom: 15px;
 
 }
+
+.dygraph-y2label {
+  margin-top:-15px;
+}
+
+.dygraph-ylabel {
+  margin-top:-15px;
+}
+
 
 .overview TD {
 
@@ -152,7 +173,9 @@ font-size: 8pt;
 table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
-     padding: 5px;
+     padding: 4px;
+     border-left-style: hidden;
+    border-right-style: hidden;
 
 }
 
