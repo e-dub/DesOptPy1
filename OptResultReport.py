@@ -202,7 +202,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
     hhmmss0 = OptSolData['hhmmss0']
     hhmmss1 = OptSolData['hhmmss1']
     try:
-        InkscapeVersion = float(subprocess.Popen("inkscape --version", shell=True, stdout=subprocess.PIPE).stdout.read()[8:14])
+        InkscapeVersion = float(subprocess.Popen("inkscape --version", shell=True, stdout=subprocess.PIPE).stdout.read()[8:13])
         FigureSubfolders = True
     except:
         InkscapeVersion = None
