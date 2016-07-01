@@ -91,11 +91,11 @@ class setDefault():
             self.gtol = 1e-3
             self.maxit = 30
             self.spcdil = 25.
-            self.IFILE = True
+            self.IFILE = False
         elif Alg == "ALGENCAN":
             self.epsfeas = 1e-3
             self.epsopt = 1e-8
-            self.IFILE = True
+            self.IFILE = False
         elif Alg == "NSGA2":
             self.PopSize = 200
             self.maxGen = 10
@@ -206,7 +206,7 @@ class setDefault():
             self.width=0.1
             self.crossover=PyGMO.algorithm._algorithm._vega_crossover_type.EXPONENTIAL
         elif Alg == "PyGMO_sga_gray":
-            self.gen=1
+            self.gen=10
             self.cr=0.95
             self.m=0.02
             self.elitism=1
@@ -253,6 +253,7 @@ class setDefault():
             self.eta_m=50
             self.archive_size=0
         elif Alg == "PyGMO_sa_corana":
+            self.gen = 10
             self.iter=10000
             self.Ts=10
             self.Tf=0.1
