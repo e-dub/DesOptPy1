@@ -2,11 +2,10 @@
 """
 ------------------------------------------------------------------------------------------------------------------------
 Title:          MainDesOpt.py
-Version:        1.2.1
 Units:          Unitless
 Author:         E. J. Wehrle
 Contributors:   S. Rudolph, F. Wachter, M. Richter
-Date:           May 21, 2016
+Date:           July 1, 2016
 ------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -151,7 +150,7 @@ except:
 #-----------------------------------------------------------------------------------------------------------------------
 __title__ = "DESign OPTimization in PYthon"
 __shorttitle__ = "DesOptPy"
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 __all__ = ['DesOpt']
 __author__ = "E. J. Wehrle"
 __copyright__ = "Copyright 2015, 2016, E. J. Wehrle"
@@ -436,8 +435,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         x = np.array(x)  # NSGA2 gives a list back, this makes a float! TODO Inquire why it does this!
         if KeepEval:
             os.mkdir(str(nEval))
-            for filename in glob.glob(os.path.join(os.getcwd(), '*.*')):
-                shutil.copy(filename, str(nEval))
+            for filename in glob.glob('*.*'):
+                if filename[0:len(OptName)] != OptName and filename not in ["desVars.csv", "desVarsNorm.csv", "constraints.csv", "objFct_maxCon.csv", "initial1.html"]:
+                    # [filename[-3:] != "csv" and filename != "inital1.html":
+                    shutil.copy(filename, str(nEval))
             os.chdir(str(nEval))
         f, g = SysEq(x, gc)
         if KeepEval:

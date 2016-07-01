@@ -226,7 +226,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
     for x in range(0, nIter + 1):
         with open('objFct_maxCon.csv', 'ab') as csvfile:
             datawriter = csv.writer(csvfile, dialect='excel')
-            if not gIter[x]:
+            if np.size(gIter[x]) == 0:
                 datawriter.writerow([x, str(float(fIter[x])),  []])
             else: 
                 datawriter.writerow([x, str(float(fIter[x])), float(np.max(gIter[x]))])
