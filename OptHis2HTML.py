@@ -124,6 +124,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
 
 
     else:
+        inform = 'Optimization terminated successfully'
         fIter = [[]] * len(fGradIter)
         xIter = [[]] * len(fGradIter)
         gIter = [[]] * len(fGradIter)
@@ -157,7 +158,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
     fIter = np.asarray(fIter)
     xIter = np.asarray(xIter)
     gIter = np.asarray(gIter)
-    niter = len(fIter) - 1
+    nIter = np.shape(xIter)[0]-1
 
     # ----------------------------------------------------------------------------------------------------
     # The design variables are normalized or denormalized so both can be displayed in the graphs and tables
@@ -166,14 +167,14 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
     if xIter.size != 0:
         if DesVarNorm == False:
             xIter_denormalized = np.zeros((niter + 1, len(xIter[0])))
-            for y in range(0, niter + 1):
+            for y in range(0, nIter + 1):
                 xIter_denormalized[y] = xIter[y]
-            for y in range(0, niter + 1):
+            for y in range(0, nIter + 1):
                 [xIter[y, :], xLnorm, xUnorm] = normalize(xIter_denormalized[y, :], x0, xL, xU, "xLxU")
         else:
-            xIter_denormalized = np.zeros((niter + 1, len(xIter[0])))
-            for y in range(0, niter + 1):
-                xIter_denormalized[y, :] = denormalize(xIter[y, :], x0, xL, xU, DesVarNorm)
+            xIter_denormalized = np.zeros((nIter + 1, len(xIter[0])))
+            for y in range(0, nIter + 1):
+                xIter_denormalized[y, :] = denormalize(xIter[y,:], x0, xL, xU, DesVarNorm)
 
     time_now = strftime("%Y-%b-%d %H:%M:%S", localtime())  # update the time for the information table
 
@@ -184,7 +185,6 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
     # The .csv files are created and the first row is filled with the correct labels. Those .csv files
     # are loaded by the javascript library. Afterwards the files are closed.
     # ----------------------------------------------------------------------------------------------------
-
     with open('objFct_maxCon.csv', 'wb') as csvfile:
         datawriter = csv.writer(csvfile, dialect='excel')
         datawriter.writerow(['Iteration', 'Objective function', 'Constraint'])
@@ -220,17 +220,21 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
     # ----------------------------------------------------------------------------------------------------
     # Now the real data like obj fct value and constraint values are writen into the .csv files
     # ----------------------------------------------------------------------------------------------------
+    #Extremely slow for large number of evaluations!!!! Needs to be redone!
 
     # Objective function and maximum constraint values
-    for x in range(0, niter + 1):
+    for x in range(0, nIter + 1):
         with open('objFct_maxCon.csv', 'ab') as csvfile:
             datawriter = csv.writer(csvfile, dialect='excel')
-            datawriter.writerow([x, str(float(fIter[x])), float(np.max(gIter[x]))])
+            if not gIter[x]:
+                datawriter.writerow([x, str(float(fIter[x])),  []])
+            else: 
+                datawriter.writerow([x, str(float(fIter[x])), float(np.max(gIter[x]))])
         csvfile.close()
 
     # Normalized design variables
     if xIter.size != 0:
-        for x in range(0, niter + 1):
+        for x in range(0, nIter + 1):
             datasets = str(xIter[x][:].tolist()).strip('[]')
             with open('desVarsNorm.csv', 'ab') as csvfile:
                 datawriter = csv.writer(csvfile, dialect='excel', quotechar=' ')
@@ -239,7 +243,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
 
     # non normalized design variables
     if xIter.size != 0:
-        for x in range(0, niter + 1):
+        for x in range(0, nIter + 1):
             datasets_denorm = str(xIter_denormalized[x][:].tolist()).strip('[]')
             with open('desVars.csv', 'ab') as csvfile:
                 datawriter = csv.writer(csvfile, dialect='excel', quotechar=' ')
@@ -248,7 +252,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
 
     # constraint variables
     if gIter.size != 0:
-        for x in range(0, niter + 1):
+        for x in range(0, nIter + 1):
             datasetsg = str(gIter[x][:].tolist()).strip('[]')
             with open('constraints.csv', 'ab') as csvfile:
                 datawriter = csv.writer(csvfile, dialect='excel', quotechar=' ')
@@ -263,11 +267,11 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
     ObjFct_table = "<td></td>"
     if xIter.size != 0:
         if gIter.size != 0:
-            for x in range(0, niter + 1):
+            for x in range(0, nIter + 1):
                 ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + str(round(fIter[x], 4)) + "</td>\n<td>" + str(
                     round(np.max(gIter[x]), 4)) + "</td>\n</tr>"
         else:
-            for x in range(0, niter + 1):
+            for x in range(0, nIter + 1):
                 ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + str(
                     round(fIter[x], 4)) + "</td>\n<td> no constraints </td>\n</tr>"
 
@@ -280,7 +284,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
             DesVar_table += "<td>" + "x&#770;<sub>" + str(x + 1) + "</sub></td>" + "<td>" + "x<sub>" + str(
                 x + 1) + " </sub></td>"
 
-        for y in range(0, niter + 1):
+        for y in range(0, nIter + 1):
             DesVar_table += "<tr>\n<td>" + str(y) + "</td>"
             for x in range(0, len(xIter[0])):
                 DesVar_table += "<td>" + str(round(xIter[y][x], 4)) + "</td><td>" + str(
@@ -294,7 +298,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
         for x in range(0, len(gIter[0])):
             Constraint_table += "<td>" + "g<sub>" + str(x + 1) + "</sub></td>"
 
-        for y in range(0, niter + 1):
+        for y in range(0, nIter + 1):
             Constraint_table += "<tr>\n<td>" + str(y) + "</td>"
             for x in range(0, len(gIter[0])):
                 if (round(gIter[y][x], 4) > 0):

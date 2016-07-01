@@ -2,7 +2,7 @@
 """
 ------------------------------------------------------------------------------------------------------------------------
 Title:          MainDesOpt.py
-Version:        1.2pre
+Version:        1.2.1
 Units:          Unitless
 Author:         E. J. Wehrle
 Contributors:   S. Rudolph, F. Wachter, M. Richter
@@ -151,7 +151,7 @@ except:
 #-----------------------------------------------------------------------------------------------------------------------
 __title__ = "DESign OPTimization in PYthon"
 __shorttitle__ = "DesOptPy"
-__version__ = "1.2"
+__version__ = "1.2.1"
 __all__ = ['DesOpt']
 __author__ = "E. J. Wehrle"
 __copyright__ = "Copyright 2015, 2016, E. J. Wehrle"
@@ -174,6 +174,7 @@ def PrintDesOptPy():
 
 global nEval
 nEval = 0
+
 #-----------------------------------------------------------------------------------------------------------------------
 # PyGMO call (must be outside of main function)
 #-----------------------------------------------------------------------------------------------------------------------
@@ -211,7 +212,7 @@ def ConFnEq(SysEq, x, gc):
 if IsPyGMO:
     class OptSysEqPyGMO(base):
 
-        def __init__(self, SysEq=None, xL=0.0, xU=1.0, gc=[], OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
+        def __init__(self, SysEq=None, x0=0.0, xL=0.0, xU=1.0, gc=[], OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
                      DesVarNorm="DesVarNorm", StatusReport=False, dim=1, nEval=0, inform=[], OptTime0=[]):
             super(OptSysEqPyGMO, self).__init__(dim)
             self.set_bounds(xL, xU)
@@ -223,6 +224,7 @@ if IsPyGMO:
             self.Alg = Alg
             self.xL = xL
             self.xU = xU
+            self.x0 = x0
             self.DesOptDir = DesOptDir
             self.DesVarNorm = DesVarNorm
             self.StatusReport = StatusReport
@@ -243,10 +245,10 @@ if IsPyGMO:
             HistData.write(f, "obj")
             HistData.write(g, "con")
             if self.StatusReport == 1:
-                try:
-                    OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.x0, self.xL, self.xU, self.DesVarNorm, self.inform[0], self.OptTime0)
-                except:
-                    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__")
+                #try:
+                OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.x0, self.xL, self.xU, self.DesVarNorm, self.inform[0], self.OptTime0)
+                #except:
+                #    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__")
             if g is not []:
                 for ii in range(np.size(g)):
                     if g[ii] > 0.0:
@@ -258,7 +260,7 @@ if IsPyGMO:
 
 
     class OptSysEqConPyGMO(base):
-        def __init__(self, SysEq=None, xL=0.0, xU=1.0, gc=[], OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
+        def __init__(self, SysEq=None, x0=0.0, xL=0.0, xU=1.0, gc=[], OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
                      DesVarNorm="DesVarNorm", StatusReport=False, dim=1, nEval=0, inform=[], OptTime0=[]):
             #                                  (nx,       nxdis, nf,      ng,      ng, tolerance on con violation)
             super(OptSysEqConPyGMO, self).__init__(dim, 0, 1, 2, 0, 1e-4)
@@ -269,6 +271,7 @@ if IsPyGMO:
             self.nEval = nEval
             self.OptName = OptName
             self.Alg = Alg
+            self.x0 = x0
             self.xL = xL
             self.xU = xU
             self.DesOptDir = DesOptDir
@@ -278,12 +281,17 @@ if IsPyGMO:
             self.inform = inform
             self.OptTime0 = OptTime0
             self.f = np.zeros(1)
-            self.f = np.zeros(np.shape(gc))
+            self.g = np.zeros(np.shape(gc))
         def _objfun_impl(self, x):
             f = ObjFnEq(self.SysEq, x, self.gc)
             self.f = f
             global HistData
             HistData.write(self.f, "obj")
+            if self.StatusReport == 1:
+                #try:
+                OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.x0, self.xL, self.xU, self.DesVarNorm, self.inform[0], self.OptTime0)
+                #except:
+                #    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__ with status report")
             return(f,)
         def _compute_constraints_impl(self, x):
             #self.nEval += 1
@@ -298,11 +306,6 @@ if IsPyGMO:
                 HistData = pyOpt.History(self.OptName, 'w', optimizer=self.AlgInst, opt_prob=self.OptName)
             HistData.write(x, "x")
             HistData.write(self.g, "con")
-            if self.StatusReport == 1:
-                try:
-                    OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst, self.DesOptDir, self.x0, self.xL, self.xU, self.DesVarNorm, self.inform[0], self.OptTime0)
-                except:
-                    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__ with status report")
 
             return g
 '''
@@ -336,7 +339,7 @@ class OptSysEqPyGMO(base):
 #-----------------------------------------------------------------------------------------------------------------------
 def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", SensCalc="FD", DesVarNorm=True, nf=1,
            deltax=1e-3, StatusReport=False, ResultReport=False, Video=False, nDoE=0, DoE="LHS+Corners", SBDO=False,
-           Approx=[], Debug=False, PrintOut=True, OptNameAdd="", AlgOptions=[], Alarm=True):
+           Approx=[], Debug=False, PrintOut=True, OptNameAdd="", AlgOptions=[], KeepEval=False, Alarm=True):
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Define optimization problem and optimization options
@@ -425,13 +428,20 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 #-----------------------------------------------------------------------------------------------------------------------
 #       Optimization problem
 #-----------------------------------------------------------------------------------------------------------------------
-
+    import glob
 #-----------------------------------------------------------------------------------------------------------------------
 #       Define functions: system equation, normalization, etc.
 #-----------------------------------------------------------------------------------------------------------------------
     def OptSysEq(x):
         x = np.array(x)  # NSGA2 gives a list back, this makes a float! TODO Inquire why it does this!
+        if KeepEval:
+            os.mkdir(str(nEval))
+            for filename in glob.glob(os.path.join(os.getcwd(), '*.*')):
+                shutil.copy(filename, str(nEval))
+            os.chdir(str(nEval))
         f, g = SysEq(x, gc)
+        if KeepEval:
+            os.chdir("..")
         fail = 0
         global nEval
         nEval += 1
@@ -460,7 +470,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         return fpen
 
     def OptSensEq(x, f, g):
-        dfdx, dgdx = SensEq(x, f, g, gc)
+        if KeepEval:
+            os.chdir(str(nEval-1))
+        dfdx, dgdx = SensEq(x, f, g, gc)        
+        if KeepEval:
+            os.chdir("..")
         dfdx = dfdx.reshape(1, len(x))
         fail = 0
         return dfdx, dgdx, fail
@@ -556,7 +570,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             #n_theta = np.size(x0) + 1
 
             # Approximation
-            if Approx == []:
+            if not Approx:
                 ApproxType=[[]]*(1+ng)
                 for ii in range(len(ApproxType)):
                     ApproxType[ii] = "GaussianProcess"
@@ -688,7 +702,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         elif np.size(hc) > 1:
             for ii in range(ng):
                 OptProb.addCon('h' + str(ii + 1), 'i')
-        if AlgOptions == []:
+        if not AlgOptions:
             AlgOptions = OptAlgOptions.setDefault(Alg)
         OptAlg = OptAlgOptions.setUserOptions(AlgOptions, Alg, OptName, OptAlg)
         #if AlgOptions == []:
@@ -771,11 +785,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         #print nindiv
         dim = np.size(x0)
         # prob = OptSysEqPyGMO(dim=dim)
-        if AlgOptions == []:
+        if not AlgOptions:
             AlgOptions = OptAlgOptions.setDefault(Alg)
         OptAlg = OptAlgOptions.setUserOptions(AlgOptions, Alg, OptName, OptAlg)
         if ng == 0 or AlgOptions.ConstraintHandling == "SimplePenalty":
-            prob = OptSysEqPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
+            prob = OptSysEqPyGMO(SysEq=SysEq, x0=x0, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
                                  DesVarNorm=DesVarNorm, StatusReport=StatusReport, inform=inform, OptTime0=OptTime0)
             # prob = problem.death_penalty(prob_old, problem.death_penalty.method.KURI)
             #algo = eval("PyGMO.algorithm." + Alg[6:]+"()")
@@ -822,7 +836,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             StatusReport = False  # turn off status report, so not remade (and destroyed) in following call!
             fOpt, gOpt, fail = OptSysEq(xOpt)  # verification of optimal solution as values above are based on penalty!
         elif AlgOptions.ConstraintHandling == "CoevolutionPenalty":
-            prob = OptSysEqConPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
+            prob = OptSysEqConPyGMO(SysEq=SysEq, x0=x0, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
                                  DesVarNorm=DesVarNorm, StatusReport=StatusReport, inform=inform, OptTime0=OptTime0)
             algo_self_adaptive = PyGMO.algorithm.cstrs_self_adaptive(OptAlg, AlgOptions.gen)
             pop = PyGMO.population(prob, AlgOptions.nIndiv)
@@ -833,16 +847,16 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             #nEval = pop.problem.fevals
             nGen = int(nEval/AlgOptions.nIndiv)
         elif AlgOptions.ConstraintHandling == "MultiobjTrans":
-            Prob = OptSysEqConPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
+            Prob = OptSysEqConPyGMO(SysEq=SysEq, x0=x0, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
                                     DesVarNorm=DesVarNorm, StatusReport=StatusReport, inform=inform, OptTime0=OptTime0)
             ProbNew = (Prob, problem.con2mo.method.OBJ_CSTRS)
             pop = population(prob_mo, pop_size)
             pop = algo.evolve(pop)
         elif AlgOptions.ConstraintHandling == "DeathPenalty":
-            Prob = OptSysEqConPyGMO(SysEq=SysEq, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
+            Prob = OptSysEqConPyGMO(SysEq=SysEq, x0=x0, xL=xL, xU=xU, gc=gc, dim=dim, OptName=OptName, Alg=Alg, DesOptDir=DesOptDir,
                                     DesVarNorm=DesVarNorm, StatusReport=StatusReport, inform=inform, OptTime0=OptTime0)
-            ProbNew = problem.death_penalty(Prob, problem.death_penalty.method.SIMPLE)
-            isl = island(algo, ProbNew, AlgOptions.nIndiv)
+            ProbNew = PyGMO.problem.death_penalty(Prob, PyGMO.problem.death_penalty.method.SIMPLE)
+            isl = PyGMO.island(algo, ProbNew, AlgOptions.nIndiv)
             isl.evolve(1)
             isl.join()
             xOpt = isl.population.champion.x
@@ -861,7 +875,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Constraint handling repair for PyGMO not yet implemented in DesOptPy")
         else:
             sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Constraint handling for PyGMO not recognized")
-
+        try: 
+            global HistData
+            HistData.close()
+        except:
+            pass
 
 #-----------------------------------------------------------------------------------------------------------------------
 #        SciPy optimization
@@ -1229,6 +1247,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
             t = 1
             freq = 350
             os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (t, freq))
+    nEval = 0    
     return xOpt, fOpt, OptSolData
 
 #-----------------------------------------------------------------------------------------------------------------------
