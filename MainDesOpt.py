@@ -477,6 +477,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         if KeepEval:
             os.chdir("..")
         dfdx = dfdx.reshape(1, len(x))
+        dgdx = dgdx.reshape(len(g), len(x))
         fail = 0
         return dfdx, dgdx, fail
 
@@ -543,8 +544,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
 
 #-----------------------------------------------------------------------------------------------------------------------
 #       Surrogate-based optimization (not fully functioning yet!!!!) replace with supy!
-#-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------    
     if SBDO is not False:
+        print "To be removed in future versions!!!!!!!!!!!!!!!!!!"
+        print "Use SuPy!"
         if nDoE > 0:
             import pyDOE
             try:

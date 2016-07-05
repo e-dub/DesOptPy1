@@ -166,7 +166,7 @@ def OptHis2HTML(OptName, Alg, DesOptDir, x0, xL, xU, DesVarNorm, inform, startti
 
     if xIter.size != 0:
         if DesVarNorm == False:
-            xIter_denormalized = np.zeros((niter + 1, len(xIter[0])))
+            xIter_denormalized = np.zeros((nIter + 1, len(xIter[0])))
             for y in range(0, nIter + 1):
                 xIter_denormalized[y] = xIter[y]
             for y in range(0, nIter + 1):
