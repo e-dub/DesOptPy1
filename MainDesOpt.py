@@ -477,7 +477,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
         if KeepEval:
             os.chdir("..")
         dfdx = dfdx.reshape(1, len(x))
-        dgdx = dgdx.reshape(len(g), len(x))
+        if np.size(dgdx)>0:
+            dgdx = dgdx.reshape(len(g), len(x))
         fail = 0
         return dfdx, dgdx, fail
 
