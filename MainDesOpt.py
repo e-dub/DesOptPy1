@@ -520,15 +520,22 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP", Sen
     def VectOptSysEqNorm(x):
         f, g, fail = OptSysEqNorm(x)
         np.array(f)
-        r = np.concatenate((f, g))
+        if len(g)>0:
+            r = np.concatenate((f, g))
+        else:
+            r = f
         return r
 
     def OptSensEqNormAD(x, f, g):
         import autograd
         OptSysEq_dx = autograd.jacobian(VectOptSysEqNorm)
         drdx = OptSysEq_dx(x)
-        dfdx = np.array([drdx[0, :]])
-        dgdx = drdx[1:,:]
+        if g>0:
+            dfdx = np.array([drdx[0, :]])
+            dgdx = drdx[1:,:]
+        else:
+            dfdx = drdx.reshape(1,len(x))
+            dgdx = []
         fail = 0
         return dfdx, dgdx, fail
 
