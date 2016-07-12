@@ -3,18 +3,16 @@
 Title:    Normalize.py
 Units:    -
 Author:   E. J. Wehrle
-Date:     February 15, 2015
+Date:     July 9, 2016
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 Description:
 
-Test function for design optimiazation
+Normalization and denormalization for design optimiazation
 
 
-TODOs
-
-TODO needs x0!
+TODOs:
 -------------------------------------------------------------------------------
 '''
 
@@ -49,18 +47,19 @@ def normalize(x, x0, xL, xU, DesVarNorm):
 
 def denormalize(xNorm, x0, xL, xU, DesVarNorm):
     if DesVarNorm == "xLxU" or True:
-        x = xNorm[0:np.size(xL),]*(xU-xL)+xL
+        x = xNorm[0:np.size(xL), ]*(xU-xL)+xL
     elif DesVarNorm == "xLx0":
-        x = xNorm[0:np.size(xL),]*(x0-xL)+xL
+        x = xNorm[0:np.size(xL), ]*(x0-xL)+xL
     elif DesVarNorm == "x0":
-        x = xNorm[0:np.size(xL),]*x0
+        x = xNorm[0:np.size(xL), ]*x0
     elif DesVarNorm == "xU":
-        x = xNorm[0:np.size(xL),]*xU
+        x = xNorm[0:np.size(xL), ]*xU
     elif DesVarNorm is "None" or None or False:
         x = xNorm
     else:
         print("Error: Normalization type not found: " + DesVarNorm)
     return x
+
 
 def normalizeSens(drdx, x0, xL, xU, DesVarNorm):
     if drdx == []:
@@ -78,5 +77,3 @@ def normalizeSens(drdx, x0, xL, xU, DesVarNorm):
     else:
         print("Error: Normalization type not found: " + DesVarNorm)
     return drdxNorm
-    #   drdxNorm = drdx * (xU - xL)
-    #   dgdx = dgxdx * (np.tile((xU - xL), [len(g), 1]))
