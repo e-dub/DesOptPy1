@@ -5,7 +5,7 @@ Title:          MainDesOpt.py
 Units:          Unitless
 Author:         E. J. Wehrle
 Contributors:   S. Rudolph, F. Wachter, M. Richter
-Date:           July 1, 2016
+Date:           July 13, 2016
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ DesOptPy - DESign OPTimization in PYthon - is an optimization toolbox in Python
 -------------------------------------------------------------------------------
 Change log
 -------------------------------------------------------------------------------
-1.3 July 30, 2016
+1.3 (July 30, 2016)
     Removed support for surrogate model based optimization
     PEP8
 
