@@ -104,14 +104,14 @@ class setDefault():
             self.spcdil = 25.
             self.IFILE = False
         elif Alg == "ALGENCAN":
-            self.epsfeas = 1e-3
-            self.epsopt = 1e-8
-            self.IFILE = True
-            self.efacc = 1e-4           # Feasibility Level for Newton-KKT Acceleration
-            self.eoacc = 1e-4           # Optimality Level for Newton-KKT Acceleration
+            self.epsfeas = 1e-2
+            self.epsopt = 1e-1
+            self.efacc = 1e-2          # Feasibility Level for Newton-KKT Acceleration
+            self.eoacc = 1e-1           # Optimality Level for Newton-KKT Acceleration
             self.checkder = False       # Check Derivatives Flag
             self.iprint = 2             # Output Level (0 - None, 10 - Final, >10 - Iter Details)
             self.ncomp = 6              # Print Precision
+            self.IFILE = True
         elif Alg == "NSGA2":
             self.PopSize = 200
             self.maxGen = 10

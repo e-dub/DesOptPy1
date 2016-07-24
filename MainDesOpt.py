@@ -5,7 +5,7 @@ Title:          MainDesOpt.py
 Units:          Unitless
 Author:         E. J. Wehrle
 Contributors:   S. Rudolph, F. Wachter, M. Richter
-Date:           July 13, 2016
+Date:           July 24, 2016
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -228,7 +228,7 @@ if IsPyGMO:
         def __init__(self, SysEq=None, x0=0.0, xL=0.0, xU=1.0, gc=[],
                      OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
                      DesVarNorm="DesVarNorm", StatusReport=False, dim=1,
-                     nEval=0, inform=[], OptTime0=[]):
+                     nEval=0, inform=[], OptTime0=[], AlgOptions=[]):
             super(OptSysEqPyGMO, self).__init__(dim)
             self.set_bounds(xL, xU)
             self.__dim = dim
@@ -246,6 +246,7 @@ if IsPyGMO:
             self.AlgInst = pyOpt.Optimizer(self.Alg)
             self.inform = inform
             self.OptTime0 = OptTime0
+            self.AlgOptions = AlgOptions
 
         def _objfun_impl(self, x):
             x = np.array(x)
@@ -263,7 +264,7 @@ if IsPyGMO:
             HistData.write(g, "con")
             if self.StatusReport == 1:
                 # try:
-                OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst,
+                OptHis2HTML.OptHis2HTML(self.OptName, self.Alg, self.AlgOptions,
                                         self.DesOptDir, self.x0, self.xL,
                                         self.xU, self.DesVarNorm,
                                         self.inform[0], self.OptTime0)
@@ -282,7 +283,7 @@ if IsPyGMO:
         def __init__(self, SysEq=None, x0=0.0, xL=0.0, xU=1.0, gc=[],
                      OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
                      DesVarNorm="DesVarNorm", StatusReport=False, dim=1,
-                     nEval=0, inform=[], OptTime0=[]):
+                     nEval=0, inform=[], OptTime0=[], AlgOptions=[]):
             #                                  (nx,       nxdis, nf,      ng,      ng, tolerance on con violation)
             super(OptSysEqConPyGMO, self).__init__(dim, 0, 1, 2, 0, 1e-4)
             self.set_bounds(xL, xU)
@@ -303,6 +304,7 @@ if IsPyGMO:
             self.OptTime0 = OptTime0
             self.f = np.zeros(1)
             self.g = np.zeros(np.shape(gc))
+            self.AlgOptions = AlgOptions
 
         def _objfun_impl(self, x):
             f = ObjFnEq(self.SysEq, x, self.gc)
@@ -311,7 +313,7 @@ if IsPyGMO:
             HistData.write(self.f, "obj")
             if self.StatusReport == 1:
                 # try:
-                OptHis2HTML.OptHis2HTML(self.OptName, self.AlgInst,
+                OptHis2HTML.OptHis2HTML(self.OptName, self.Alg, self.AlgOptions,
                                         self.DesOptDir, self.x0, self.xL,
                                         self.xU, self.DesVarNorm,
                                         self.inform[0], self.OptTime0)
@@ -416,11 +418,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     loctime = time.localtime()
     today = time.strftime("%B", time.localtime()) + ' ' + str(loctime[2]) + \
                           ', ' + str(loctime[0])
-    if SBDO:
-        OptNameAdd += "_SBDO"
     OptName = OptModel + OptNameAdd + "_" + Alg + "_" + \
               StartTime.strftime("%Y%m%d%H%M%S")
-    LocalRun = True
+    LocalRun = True         #left over from cluster parallelization...remove?
     ModelDir = os.getcwd()[:-(len(OptModel) + 1)]
     ModelFolder = ModelDir.split(os.sep)[-1]
     DesOptDir = ModelDir[:-(len(ModelFolder) + 1)]
@@ -439,9 +439,6 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         os.mkdir(ResultsDir + os.sep + OptName + os.sep + "ResultReport" +
                  os.sep)
         shutil.copytree(os.getcwd(), RunDir + os.sep + OptName)
-    # if SensCalc == "ParaFD":
-    #    import OptSensParaFD
-    #    os.system("cp -r ParaPythonFn " + homeDir + userName + "/DesOptRun/" + OptName)
     if LocalRun and Debug is False:
         os.chdir("../../Run/" + OptName + "/")
     sys.path.append(os.getcwd())
@@ -490,7 +487,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         global nEval
         nEval += 1
         if StatusReport:
-            OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, x0, xL, xU,
+            OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU,
                                     DesVarNorm, inform[0], OptTime0)
         if len(xDis) > 0:
             nD = len(xDis)
@@ -767,7 +764,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                                  dim=dim, OptName=OptName, Alg=Alg,
                                  DesOptDir=DesOptDir, DesVarNorm=DesVarNorm,
                                  StatusReport=StatusReport, inform=inform,
-                                 OptTime0=OptTime0)
+                                 OptTime0=OptTime0, AlgOptions=AlgOptions)
             # prob = problem.death_penalty(prob_old, problem.death_penalty.method.KURI)
             # algo = eval("PyGMO.algorithm." + Alg[6:]+"()")
             # de (gen=100, f=0.8, cr=0.9, variant=2, ftol=1e-06, xtol=1e-06, screen_output=False)
@@ -817,7 +814,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                                     dim=dim, OptName=OptName, Alg=Alg,
                                     DesOptDir=DesOptDir, DesVarNorm=DesVarNorm,
                                     StatusReport=StatusReport, inform=inform,
-                                    OptTime0=OptTime0)
+                                    OptTime0=OptTime0, AlgOptions=AlgOptions)
             algo_self_adaptive = PyGMO.algorithm.cstrs_self_adaptive(OptAlg, AlgOptions.gen)
             pop = PyGMO.population(prob, AlgOptions.nIndiv)
             pop = algo_self_adaptive.evolve(pop)
@@ -831,7 +828,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                                     dim=dim, OptName=OptName, Alg=Alg,
                                     DesOptDir=DesOptDir, DesVarNorm=DesVarNorm,
                                     StatusReport=StatusReport, inform=inform,
-                                    OptTime0=OptTime0)
+                                    OptTime0=OptTime0, AlgOptions=AlgOptions)
             ProbNew = (Prob, problem.con2mo.method.OBJ_CSTRS)
             pop = population(prob_mo, pop_size)
             pop = algo.evolve(pop)
@@ -840,7 +837,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                                     dim=dim, OptName=OptName, Alg=Alg,
                                     DesOptDir=DesOptDir, DesVarNorm=DesVarNorm,
                                     StatusReport=StatusReport, inform=inform,
-                                    OptTime0=OptTime0)
+                                    OptTime0=OptTime0, AlgOptions=AlgOptions)
             ProbNew = PyGMO.problem.death_penalty(Prob,
                                                   PyGMO.problem.death_penalty.method.SIMPLE)
             isl = PyGMO.island(algo, ProbNew, AlgOptions.nIndiv)
@@ -914,7 +911,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 #       Optimization post-processing
 # -----------------------------------------------------------------------------
     if StatusReport == 1:
-        OptHis2HTML.OptHis2HTML(OptName, OptAlg, DesOptDir, x0, xL, xU,
+        OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU,
                                 DesVarNorm, inform.values()[0], OptTime0)
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
@@ -931,9 +928,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 
     NewRead = True
     if NewRead:
-        fIter, xIter, gIter, gGradIter, fGradIter, inform =  OptReadHis(OptName, OptAlg,
-                                                                x0, xL, xU,
-                                                                DesVarNorm)
+        fIter, xIter, gIter, gGradIter, fGradIter, inform =  OptReadHis(OptName, Alg,
+                                                                        AlgOptions,
+                                                                        x0, xL, xU,
+                                                                        DesVarNorm)
         xOpt = np.resize(xOpt[0:np.size(xL)], np.size(xL))
         if DesVarNorm in ["None", None, False]:
             x0norm = []

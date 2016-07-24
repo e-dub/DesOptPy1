@@ -18,27 +18,27 @@ import pyOpt
 import numpy as np
 from Normalize import normalize, denormalize
 
-def OptReadHis(OptName, Alg, x0, xL, xU, DesVarNorm):
+def OptReadHis(OptName, Alg, AlgOptions, x0, xL, xU, DesVarNorm):
     OptHist = pyOpt.History(OptName, "r")
     inform = " "
     fAll = OptHist.read([0, -1], ["obj"])[0]["obj"]
     xAll = OptHist.read([0, -1], ["x"])[0]["x"]
     gAll = OptHist.read([0, -1], ["con"])[0]["con"]
-    if Alg.name == "NLPQLP":
+    if Alg == "NLPQLP":
         gAll = [x * -1 for x in gAll]
     gGradIter = OptHist.read([0, -1], ["grad_con"])[0]["grad_con"]
     fGradIter = OptHist.read([0, -1], ["grad_obj"])[0]["grad_obj"]
     failIter = OptHist.read([0, -1], ["fail"])[0]["fail"]
 
-    if Alg.name in ["COBYLA", "NSGA2", "SDPEN", "ALPSO", "MIDACO", "ALGENCAN", "ALHSO"] or Alg.name[:5] == "PyGMO":
+    if Alg in ["COBYLA", "NSGA2", "SDPEN", "ALPSO", "MIDACO", "ALGENCAN", "ALHSO"] or Alg[:5] == "PyGMO":
         fIter = fAll
         xIter = xAll
         gIter = gAll
-    elif Alg.name == "NSGA-II" and np.size(gAll)>0:
+    elif Alg == "NSGA-II" and np.size(gAll)>0:
         Iteration = 'Generation'
         if inform == 0:
             inform = 'Optimization terminated successfully'
-        PopSize = Alg.options['PopSize'][1]
+        PopSize = AlgOptions['PopSize'][1]
         for i in range(0, fAll.__len__() / PopSize):  # Iteration trough the Populations
             best_fitness = 9999999
             max_violation_of_all_g = np.empty(PopSize)
@@ -83,7 +83,7 @@ def OptReadHis(OptName, Alg, x0, xL, xU, DesVarNorm):
             xIter[ii] = xAll[iii]
             gIter[ii] = gAll[iii]
     OptHist.close()
-#    if Alg.name != "NSGA2":
+#    if Alg != "NSGA2":
 #        if len(fGradIter) == 0:  # first calculation
 #            fIter = fAll
 #            xIter = xAll
