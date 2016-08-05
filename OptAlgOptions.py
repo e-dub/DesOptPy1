@@ -113,7 +113,7 @@ class setDefault():
             self.ncomp = 6              # Print Precision
             self.IFILE = True
         elif Alg == "NSGA2":
-            self.PopSize = 200
+            self.PopSize = 300
             self.maxGen = 10
             # self.IFILE = True
             # self.pCross_real = 0.6

@@ -1,9 +1,7 @@
-#LyX 2.2 created this file. For more info see http://www.lyx.org/
-\lyxformat 508
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
 \begin_document
 \begin_header
-\save_transient_properties true
-\origin unavailable
 \textclass scrreprt
 \begin_preamble
 \usepackage{graphicx,psfrag}
@@ -58,16 +56,16 @@ figs-within-sections
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman "palatino" "default"
-\font_sans "helvet" "default"
-\font_typewriter "courier" "default"
-\font_math "auto" "auto"
+\font_roman palatino
+\font_sans helvet
+\font_typewriter courier
+\font_math auto
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc true
 \font_osf true
-\font_sf_scale 100 100
-\font_tt_scale 100 100
+\font_sf_scale 100
+\font_tt_scale 100
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -185,11 +183,6 @@ width "100text%"
 special "none"
 height "1in"
 height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -589,7 +582,7 @@ Properties of computer of optimization run
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="2">
-<features booktabs="true" tabularvalignment="middle">
+<features rotate="0" booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <row>
@@ -748,7 +741,7 @@ Information about the optimization problem and the algorithm
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="2">
-<features booktabs="true" tabularvalignment="middle">
+<features rotate="0" booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <row>
@@ -899,7 +892,7 @@ status collapsed
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="3">
-<features tabularvalignment="middle">
+<features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -975,7 +968,7 @@ Gradiant calculation type
 \begin_inset Text
 
 \begin_layout Plain Layout
-\SpecialChar softhyphen
+\SpecialChar \-
 
 \end_layout
 
@@ -1167,7 +1160,7 @@ status collapsed
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="28" columns="4">
-<features tabularvalignment="middle">
+<features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2920,7 +2913,7 @@ status collapsed
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="21" columns="4">
-<features tabularvalignment="middle">
+<features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -4248,7 +4241,7 @@ status collapsed
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="18" columns="4">
-<features tabularvalignment="middle">
+<features rotate="0" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -5400,7 +5393,7 @@ status open
 
 
 \backslash
-IfFileExists{svg/AAA_fgMaxIterRendered.svg}
+IfFileExists{AAA_fgMaxIterRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5415,7 +5408,7 @@ svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-includegraphics{svg/AAA_fgMaxIterRendered.svg}
+includegraphics{AAA_fgMaxIterRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5463,7 +5456,7 @@ status open
 
 
 \backslash
-IfFileExists{svg/AAA_fgMaxIterNormRendered.svg}
+IfFileExists{AAA_fgMaxIterNormRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5478,7 +5471,7 @@ svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-includegraphics{svg/AAA_fgMaxIterNormRendered.svg}
+includegraphics{AAA_fgMaxIterNormRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5544,7 +5537,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_fBarRendered.svg}
+includegraphics{AAA_fBarRendered}
 \end_layout
 
 \end_inset
@@ -5591,7 +5584,7 @@ status open
 
 
 \backslash
-IfFileExists{svg/AAA_fGradIterRendered.svg}
+IfFileExists{AAA_fGradIterRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5606,7 +5599,7 @@ svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-includegraphics{svg/AAA_fGradIterRendered.svg}
+includegraphics{AAA_fGradIterRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5737,7 +5730,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_xIterRendered.svg}
+includegraphics{AAA_xIterRendered}
 \end_layout
 
 \end_inset
@@ -5798,7 +5791,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_xBarRendered.svg}
+includegraphics{AAA_xBarRendered}
 \end_layout
 
 \end_inset
@@ -5843,7 +5836,7 @@ status open
 
 
 \backslash
-IfFileExists{svg/AAA_xIterNormRendered.svg}
+IfFileExists{AAA_xIterNormRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5880,7 +5873,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_xIterNormRendered.svg}
+includegraphics{AAA_xIterNormRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5919,7 +5912,7 @@ status open
 
 
 \backslash
-IfFileExists{svg/AAA_xBarNormRendered.svg}
+IfFileExists{AAA_xBarNormRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5956,7 +5949,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_xBarNormRendered.svg}
+includegraphics{AAA_xBarNormRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5998,10 +5991,6 @@ Constraints
 \end_inset
 
 
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -6014,7 +6003,7 @@ status open
 
 
 \backslash
-IfFileExists{svg/AAA_gIterRendered.svg}
+IfFileExists{AAA_gIterRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -6058,7 +6047,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_gIterRendered.svg}
+includegraphics{AAA_gIterRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -6097,7 +6086,7 @@ status open
 
 
 \backslash
-IfFileExists{svg/AAA_gBarRendered.svg}
+IfFileExists{AAA_gBarRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -6134,7 +6123,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_gBarRendered.svg}
+includegraphics{AAA_gBarRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -6266,10 +6255,6 @@ typeout{Hinweis: Die Datei AAA_DesignVarTableNorm wurde nicht gefunden}}
 \end_inset
 
 
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -6339,10 +6324,6 @@ typeout{Hinweis: Die Datei AAA_FirstOrderLagrangeTable.tex wurde nicht gefunden}
 \end_inset
 
 
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -6399,10 +6380,6 @@ typeout{Hinweis: Die Datei AAA_ShadowPricesTable.tex wurde nicht gefunden}}
 \end_inset
 
 
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -6453,7 +6430,7 @@ Properties of optimization run
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="4">
-<features booktabs="true" tabularvalignment="middle">
+<features rotate="0" booktabs="true" tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">

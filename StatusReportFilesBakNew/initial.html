@@ -1,28 +1,20 @@
 <!--
--------------------------------------------------------------------------------
-Title:          initial.html
-Units:          Unitless
-Date:           August 5, 2016
-Authors:        E. J. Wehrle, F. Wachter
--------------------------------------------------------------------------------
 
--------------------------------------------------------------------------------
-Description
--------------------------------------------------------------------------------
-This is the template for the status report file. The Graphs are done with 
-dyGraph.  The Style Sheet is located in the style.css file.
-Parts surrounded with "Start of constraint html part" and "End of ..." are 
-deleted if the optimization problem is unconstrained.
+Autor: Florian Wachter
+E-Mail: florian.wachter@tum.de
+Date: 22.06.2015
 
-This document is divided into two parts.
+
+This is the template for the status report file. The Graphs are done with dyGraph
+The Style Sheet is located in the style.css file.
+Parts surrounded with "Start of constraint html part" and "End of ..." are deleted if the
+optimization problem is unconstrained.
+
+This document is divided into 3 parts.
 * Definition of the html layout and its context.
 * Javascript code with generates the diagrams and handles buttons etc.
+* Templates for the tables which are shown when the user presses the "Show data in table" button
 
--------------------------------------------------------------------------------
-To do and ideas
--------------------------------------------------------------------------------
-
--------------------------------------------------------------------------------
 -->
 
 <!DOCTYPE html >
@@ -30,9 +22,9 @@ To do and ideas
 <!-- Head defines some properties which are not displayed on the website itself-->
 <head>
   <!-- The browser icon and the stylesheet are linked and the dygraph package is loaded-->
-  <link rel="icon" href="../DesOptPy_icon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="../style.css" type="text/css" media="screen"/>
-  <script src="../dygraph-combined.js"></script>
+  <link rel="icon" href="DesOptPy_icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="style.css" type="text/css" media="screen"/>
+  <script src="dygraph-combined.js"></script>
   <!-- Title that is shown in the broswer tab-->
   <title>StatusMonitoring</title>
 </head>
@@ -41,7 +33,7 @@ To do and ideas
   <!-- banner div contains the DesOptPy picture and is on top of the website-->
   <div id="banner">
     <center>
-      <div style="margin: 0px 0px 0px 60px;"><img src="../DesOptPy.png" width="200"></div>
+      <div style="margin: 0px 0px 0px 60px;"><img src="DesOptPy.png" width="200"></div>
     </center>
   </div>
   <center><h2 id="caption">Design Optimization Status Report</h2></center>
@@ -110,8 +102,10 @@ To do and ideas
       <div id="cvs4" style="height: 600px; width: 1200px;">[No canvas support or no data yet! Refresh page!]</div>
       <!--End of constraint html part-->
       <!-- Show Zero checkbox toggles wether the 0 should be shown on the y axis or not -->
+      <!-- btn_show opens a new website and displays the data in a table -->
       <div id="coordinates">
         <input id="showZero" onclick="drawDiagrams()"type=checkbox>Show Zero</input><br>
+        <button onclick="show_table()" id="btn_show" > Show data in table</button>
       </div>
       <!-- The legend div contains the diagram legends right to the diagrams-->
       <div id="legend">
@@ -158,13 +152,13 @@ To do and ideas
         incZero = false;
       }
 
-      <!-- Graph 1, Objective function and max constraint -->
-      g1 = new Dygraph("cvs", "f_gMax.csv",
+      <!-- Graph 1, Objective function and biggest constraint -->
+      g1 = new Dygraph("cvs", "objFct_maxCon.csv",
       {
-        series : {'Maximum constraint function': { axis: 'y2' }},
+        series : {'Constraint': { axis: 'y2' }},
         xlabel: 'xxxxIteration',
         ylabel: 'Objective function',
-        y2label: 'Max constraint function',
+        y2label: 'Maximum constraint',
         drawAxesAtZero: true,
         legend: 'always',
         labelsDiv: 'legend',
@@ -191,14 +185,14 @@ To do and ideas
       //-- The automatic refresh intervall is 1000ms while the optimization is running -->
       //-- When the optimization finished the refresh rate is 100s -->
       window.intervalId = setInterval(function() {
-        g1.updateOptions( { 'file': "f_gMax.csv" } );
+        g1.updateOptions( { 'file': "objFct_maxCon.csv" } );
       }, xxxxRefRate);
 
       <!-- Graph 2, normalized design variables -->
-      g2 = new Dygraph("cvs2", "xNorm.csv",
+      g2 = new Dygraph("cvs2", "desVarsNorm.csv",
       {
         xlabel: 'xxxxIteration',
-        ylabel: 'Normalized design variables',
+        ylabel: 'Design variables normalized',
         legend: 'always',
         labelsDiv: 'legend',
         labelsSeparateLines: true,
@@ -215,12 +209,13 @@ To do and ideas
           }
         }
       });
+
       window.intervalId = setInterval(function() {
-        g2.updateOptions( { 'file': "xNorm.csv" } );
+        g2.updateOptions( { 'file': "desVarsNorm.csv" } );
       }, xxxxRefRate);
 
       <!-- Graph 3, denormalized design variables-->
-      g3 = new Dygraph("cvs5", "x.csv",
+      g3 = new Dygraph("cvs5", "desVars.csv",
       {
         xlabel: 'xxxxIteration',
         ylabel: 'Design Variables',
@@ -242,12 +237,12 @@ To do and ideas
       });
 
       window.intervalId = setInterval(function() {
-        g3.updateOptions( { 'file': "x.csv" } );
+        g3.updateOptions( { 'file': "desVars.csv" } );
       }, xxxxRefRate);
 
       <!--Start of constraint html part-->
       <!-- Graph 4, constraints------------------------------------ -->
-      g4 = new Dygraph("cvs3", "g.csv",
+      g4 = new Dygraph("cvs3", "constraints.csv",
       {
         xlabel: 'xxxxIteration',
         ylabel: 'Constraints',
@@ -270,11 +265,11 @@ To do and ideas
       });
 
       window.intervalId = setInterval(function() {
-        g4.updateOptions( { 'file': "g.csv" } );
+        g4.updateOptions( { 'file': "constraints.csv" } );
       }, xxxxRefRate);
 
       <!-- Graph 5, violated constraints                                  -->
-      g5 = new Dygraph("cvs4", "g.csv",
+      g5 = new Dygraph("cvs4", "constraints.csv",
       {
         xlabel: 'xxxxIteration',
         ylabel: 'Violated constraints',
@@ -297,7 +292,7 @@ To do and ideas
       });
 
       window.intervalId = setInterval(function() {
-        g5.updateOptions( { 'file': "g.csv" } );
+        g5.updateOptions( { 'file': "constraints.csv" } );
       }, xxxxRefRate);
 
       <!--End of constraint html part-->
@@ -437,6 +432,124 @@ To do and ideas
 
       <!--End of constraint html part-->
     }
+
+    //-- Show the current diagram data as a table in a new website tab -->
+    function show_table() {
+      //-- open new webpage -->
+      var myWindow = window.open();
+      //-- Which diagram is currently shown and thus which table to generate -->
+      switch(current_view) {
+        case 1:
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write(tableObjFct.innerHTML);
+        myWindow.document.close();
+        break;
+        case 2:
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write(tableDesVar.innerHTML);
+        myWindow.document.close();
+        break;
+        case 3:
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write(tableConstr.innerHTML);
+        myWindow.document.close();
+        break;
+        case 4:
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write(tableConstr.innerHTML);
+        myWindow.document.close();
+        break;
+        case 5:
+        myWindow.document.write('<scr' + 'ipt type="text/javascript" language="javascript" src="tablefilter_all_min.js"></scr' + 'ipt>');
+        myWindow.document.write(tableDesVar.innerHTML);
+        myWindow.document.close();
+        break;
+      }
+    }
     </script>
+
+    <!-- Templates for the tables -->
+    <div id="tableObjFct" height=1px; width=1px; style="visibility: hidden">
+      <head>
+        <link rel="stylesheet" href="filtergrid.css" type="text/css" media="screen">
+      </head>
+
+      <table id="table1">
+        <tr>
+          <th>xxxxIteration</th>
+          <th>Objective Function</th>
+          <th>Constraint Value</th>
+        </tr>
+        xxxxtableObjFct
+      </table>
+      <script language="javascript" type="text/javascript">
+      var table1_Props = {
+        filters_row_index: 1,
+        alternate_rows: true,
+        col_width: ["60px","130px","130px"],//prevents column width variations
+        rows_counter: true,
+        rows_counter_text: "Total rows: ",
+        btn_reset: true,
+        mark_active_columns: true,
+        selectable: true,
+      };
+      var tf3 = setFilterGrid( "table1",table1_Props );
+      </script>
+    </div>
+
+    <div id="tableDesVar" height=1px; width=1px; style="visibility: hidden">
+      <head>
+        <link rel="stylesheet" href="filtergrid.css" type="text/css" media="screen">
+      </head>
+
+      <table id="table1">
+        <tr>
+          <th>xxxxIteration</th>
+          <th colspan="xxxxnumber_des_var">Design Variables</th>
+        </tr>
+        xxxxtableDesVar
+      </table>
+      <script language="javascript" type="text/javascript">
+      var table1_Props = {
+        filters_row_index: 1,
+        alternate_rows: true,
+        col_width: ["120px","170px",null,null,null],//prevents column width variations
+        rows_counter: true,
+        rows_counter_text: "Total rows: ",
+        btn_reset: true,
+        mark_active_columns: true,
+        selectable: true,
+      };
+      var tf3 = setFilterGrid( "table1",table1_Props );
+      </script>
+    </div>
+
+    <div id="tableConstr" height=1px; width=1px; style="visibility: hidden">
+      <head>
+        <link rel="stylesheet" href="filtergrid.css" type="text/css" media="screen">
+      </head>
+
+      <table id="table1">
+        <tr>
+          <th>xxxxIteration</th>
+          <th colspan="xxxxnumber_constraints">Constraints</th>
+        </tr>
+        xxxxtableConstr
+      </table>
+      <script language="javascript" type="text/javascript">
+      var table1_Props = {
+        filters_row_index: 1,
+        alternate_rows: true,
+        col_width: ["120px","170px",null,null,null],//prevents column width variations
+        rows_counter: true,
+        rows_counter_text: "Total rows: ",
+        btn_reset: true,
+        mark_active_columns: true,
+        selectable: true,
+      };
+      var tf3 = setFilterGrid( "table1",table1_Props );
+      </script>
+    </div>
+    <!-- Templates for the tables end here -->
   </body>
   </html>

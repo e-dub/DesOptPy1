@@ -1,0 +1,188 @@
+
+body {
+    font-family: Verdana, 'Lucida Sans Unicode', sans-serif;
+    width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    }
+
+/*   coordinates is the div which shows the x and y values */
+
+#coordinates {
+     position: absolute;
+    top: 300px;
+    right: 70px;
+}
+
+
+#nav_div {
+    text-align: center;
+}
+
+#nav {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    border-top:3px solid rgba(207, 207, 255, 0.52);
+    /* For IE, the outcast */
+    zoom:1;
+    *display: inline;
+    list-style:none;
+}
+
+.deactive{
+    float:left;
+    margin:2px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding:4px;
+    border-bottom: 3px solid #FFFF;
+}
+
+.deactive:hover{
+    float:left;
+    margin:2px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding:4px;
+    border-bottom: 3px solid #0072BD;
+}
+
+.active {
+    float:left;
+    margin:2px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding:4px;
+    border-bottom: 3px solid #0072BD;
+}
+
+#btn_show {
+    border:none;
+}
+
+#btn_show:hover {
+    background: #0072BD;
+}
+
+#nav a {
+    display:block;
+    text-align:center;
+    width:150px; /* fixed width */
+    text-decoration:none;
+}
+
+#cvs {
+    position: absolute;
+    top: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    visibility: visible;
+}
+
+#cvs2 {
+    position: absolute;
+    top: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+}
+
+#cvs3 {
+    position: absolute;
+    top: 300pxpx;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+}
+
+#cvs4 {
+    position: absolute;
+    top: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+}
+
+#cvs5 {
+    position: absolute;
+    top: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    visibility: hidden;
+}
+
+#legend {
+    position: absolute;
+    top: 360px;
+    right: 20px;
+}
+
+#banner {
+
+    width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding:0px;
+    border-bottom: 2px solid white;
+    background-color: white;
+
+}
+
+#caption {
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+
+
+.overview {
+
+    margin-top: 5px;
+    margin-bottom: 15px;
+
+}
+
+.dygraph-y2label {
+  margin-top:-15px;
+}
+
+.dygraph-ylabel {
+  margin-top:-15px;
+}
+
+
+.overview TD {
+
+font-size: 8pt;
+
+}
+
+
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+     padding: 4px;
+     border-left-style: hidden;
+    border-right-style: hidden;
+
+}
+
+td.negativ {
+  background-color : rgba(255,0,0,0.1);
+}
+td.positiv {
+  background-color : rgba(0,255,0,0.1);
+}
+

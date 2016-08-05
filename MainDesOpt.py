@@ -78,6 +78,8 @@ Change log
 -------------------------------------------------------------------------------
 To do and ideas
 -------------------------------------------------------------------------------
+TODO: Let History or whatever know PyGMO optimizations are over so that
+    statusreprt stops counting time!
 TODO: Constraint handling in PyGMO
 TODO  max line length = 79? (PEP8)
 TODO every iteration to output window (file)
@@ -266,7 +268,7 @@ if IsPyGMO:
                 # try:
                 OptHis2HTML.OptHis2HTML(self.OptName, self.Alg, self.AlgOptions,
                                         self.DesOptDir, self.x0, self.xL,
-                                        self.xU, self.DesVarNorm,
+                                        self.xU, self.gc, self.DesVarNorm,
                                         self.inform[0], self.OptTime0)
                 # except:
                 #    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__")
@@ -315,7 +317,7 @@ if IsPyGMO:
                 # try:
                 OptHis2HTML.OptHis2HTML(self.OptName, self.Alg, self.AlgOptions,
                                         self.DesOptDir, self.x0, self.xL,
-                                        self.xU, self.DesVarNorm,
+                                        self.xU, self.gc, self.DesVarNorm,
                                         self.inform[0], self.OptTime0)
                 # except:
                 #    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__ with status report")
@@ -487,7 +489,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         global nEval
         nEval += 1
         if StatusReport:
-            OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU,
+            OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, gc,
                                     DesVarNorm, inform[0], OptTime0)
         if len(xDis) > 0:
             nD = len(xDis)
@@ -912,7 +914,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
     if StatusReport == 1:
         OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU,
-                                DesVarNorm, inform.values()[0], OptTime0)
+                                gc, DesVarNorm, inform.values()[0], OptTime0)
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
     hhmmss0 = time.strftime("%H", loctime0) + ' : ' + \

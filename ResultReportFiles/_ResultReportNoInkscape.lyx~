@@ -5415,7 +5415,7 @@ svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-includegraphics{svg/AAA_fgMaxIterRendered.svg}
+includegraphics{svg/AAA_fgMaxIterRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5478,7 +5478,7 @@ svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-includegraphics{svg/AAA_fgMaxIterNormRendered.svg}
+includegraphics{svg/AAA_fgMaxIterNormRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5544,7 +5544,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_fBarRendered.svg}
+includegraphics{svg/AAA_fBarRendered}
 \end_layout
 
 \end_inset
@@ -5606,7 +5606,7 @@ svgwidth{1.0
 \backslash
 textwidth} 
 \backslash
-includegraphics{svg/AAA_fGradIterRendered.svg}
+includegraphics{svg/AAA_fGradIterRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5737,7 +5737,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_xIterRendered.svg}
+includegraphics{svg/AAA_xIterRendered}
 \end_layout
 
 \end_inset
@@ -5798,7 +5798,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_xBarRendered.svg}
+includegraphics{svg/AAA_xBarRendered}
 \end_layout
 
 \end_inset
@@ -5880,7 +5880,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_xIterNormRendered.svg}
+includegraphics{svg/AAA_xIterNormRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -5956,7 +5956,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_xBarNormRendered.svg}
+includegraphics{svg/AAA_xBarNormRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -6058,7 +6058,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_gIterRendered.svg}
+includegraphics{svg/AAA_gIterRendered}
 \end_layout
 
 \begin_layout Plain Layout
@@ -6134,7 +6134,7 @@ textwidth}
 
 
 \backslash
-includegraphics{svg/AAA_gBarRendered.svg}
+includegraphics{svg/AAA_gBarRendered}
 \end_layout
 
 \begin_layout Plain Layout

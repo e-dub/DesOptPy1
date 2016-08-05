@@ -17,7 +17,11 @@ optimization.
 -------------------------------------------------------------------------------
 To do and ideas
 -------------------------------------------------------------------------------
-see DesOpt.py
+
+Only read and write last evaluation to save time?
+csv write only new line!!!!!!!!! How?????
+last lines repeated way too much!!!!!!
+-------------------------------------------------------------------------------
 '''
 
 import csv
@@ -30,20 +34,19 @@ from pyOpt import History
 from Normalize import normalize, denormalize
 from OptReadHis import OptReadHis
 
-
-def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inform,
+def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, gc, DesVarNorm, inform,
                 starttime, StatusDirectory=""):
-# -----------------------------------------------------------------------------
-# General calculations for the uppermost information table are computed like
-# time running, algorithm name, optimization problem name etc.
-# -----------------------------------------------------------------------------
     StartTime = str(starttime)[0:10] + "000"
     EndTime = ""
     RefRate = '2000'
     if inform != "Running":
         EndTime = str(time())[0:10] + "000"
         RefRate = '1000000'
-    Iteration = 'Iteration'   # Label and Legends may be Iteration, Generation or Evaluations depending on Algorithm
+    if Alg in ["CONMIN", "MMA", "GCMMA", "NLPQLP", "SLSQP", "FSQP", "KSOPT"]:
+        EvalGenIter = "Iteration"
+    else:
+        EvalGenIter = 'Evaluation'
+       # Label and Legends may be Iteration, Generation or Evaluations depending on Algorithm
     if StatusDirectory == "":  # Change the target directory for the status report files if the user wants to
         StatusDirectory = DesOptDir
     # Variables for the data extraction
@@ -58,163 +61,66 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
                                                                     Alg,
                                                                     AlgOptions,
                                                                     x0, xL, xU,
-                                                                    DesVarNorm)
+                                                                    DesVarNorm,
+                                                                    Iter="All")
     nIter = np.shape(xIter)[0]-1
-# -----------------------------------------------------------------------------
-# The design variables are normalized or denormalized so both can be displayed
-# in the graphs and tables
-# -----------------------------------------------------------------------------
+    xLabel = [EvalGenIter]
     if  xIter.size != 0:
         if DesVarNorm == False:
-            xIterDenorm = np.zeros((nIter + 1, len(xIter[0])))
-            for y in range(0, nIter + 1):
-                xIterDenorm[y] = xIter[y]
-            for y in range(0, nIter + 1):
-                [xIter[y, :], xLnorm, xUnorm] = normalize(xIterDenorm[y, :],
-                                                          x0, xL, xU, "xLxU")
+            xIterDenorm = xIter
         else:
-            xIter = xIter[:, 0:np.size(xL)]
-            xIterDenorm = np.zeros(np.shape(xIter))
-            for ii in range(len(xIterDenorm)):
-                xIterDenorm[ii] = denormalize(xIter[ii], x0, xL, xU, DesVarNorm)
-            #xIterDenorm = np.zeros((nIter + 1, len(x0)))
-#            for y in range(0, nIter + 1):
-#                print denormalize(xIter[y, 0:len(x0)], x0, xL, xU, DesVarNorm)
-#                xIterDenorm[y, :] = denormalize(xIter[y, 0:len(x0)],
-#                                                       x0, xL, xU, DesVarNorm)
+            xIterDenorm = denormalize(xIter, x0, xL, xU, DesVarNorm)
+        with open('f_gMax.csv', 'ab') as csvfile:
+            datawriter = csv.writer(csvfile, dialect='excel')
+            if np.size(gIter) == 0:
+                datawriter.writerow([nIter, str(float(fIter)), []])
+            else:
+                datawriter.writerow([nIter, str(float(fIter[nIter])),
+                                     float(np.max(gIter[nIter]))])
+        datasets = str(xIter.tolist()).strip('[]')
+        with open('xNorm.csv', 'ab') as csvfile:
+            datawriter = csv.writer(csvfile, dialect='excel',
+                                    quotechar=' ')
+            datawriter.writerow([nIter, datasets])
+        datasets_denorm = str(xIterDenorm.tolist()).strip('[]')
+        with open('x.csv', 'ab') as csvfile:
+            datawriter = csv.writer(csvfile, dialect='excel',
+                                    quotechar=' ')
+            datawriter.writerow([nIter, datasets_denorm])
+        if gIter.size != 0:
+            datasetsg = str(gIter.tolist()).strip('[]')
+            with open('g.csv', 'ab') as csvfile:
+                datawriter = csv.writer(csvfile, dialect='excel', quotechar=' ')
+                datawriter.writerow([nIter, datasetsg])
+    else:
+        with open('f_gMax.csv', 'wb') as csvfile:
+            datawriter = csv.writer(csvfile, dialect='excel')
+            datawriter.writerow([EvalGenIter, 'Objective function', 'Max constraint function'])
+        with open('xNorm.csv', 'wb') as csvfile:
+            datawriter = csv.writer(csvfile, delimiter=',', escapechar=' ',
+                                    quoting=csv.QUOTE_NONE)
+            labels = xLabel
+            for i in range(1, xL.size + 1):
+                labels = labels + ['x' + str(i)]
+            datawriter.writerow(labels)
+        with open('x.csv', 'wb') as csvfile:
+            datawriter = csv.writer(csvfile, delimiter=',', escapechar=' ',
+                                    quoting=csv.QUOTE_NONE)
+            labels = xLabel
+            for i in range(1, xL.size + 1):
+                labels = labels + ['x' + str(i)]
+            datawriter.writerow(labels)
+        with open('g.csv', 'wb') as csvfile:
+            datawriter = csv.writer(csvfile, delimiter=',', escapechar=' ',
+                                    quoting=csv.QUOTE_NONE)
+            labels = xLabel
+            if np.size(gc) != 0:
+                for i in range(1, gc.size + 1):
+                    labels = labels + ['g' + str(i)]
+            datawriter.writerow(labels)
     time_now = strftime("%Y-%b-%d %H:%M:%S", localtime())  # update the time for the information table
     number_des_vars = "0"
     number_constraints = "0"
-
-# -----------------------------------------------------------------------------
-# The .csv files are created and the first row is filled with the correct
-# labels. Those .csv files
-# are loaded by the javascript library. Afterwards the files are closed.
-# -----------------------------------------------------------------------------
-    with open('objFct_maxCon.csv', 'wb') as csvfile:
-        datawriter = csv.writer(csvfile, dialect='excel')
-        datawriter.writerow(['Iteration', 'Objective function', 'Constraint'])
-    csvfile.close()
-    with open('desVarsNorm.csv', 'wb') as csvfile:
-        datawriter = csv.writer(csvfile, delimiter=',', escapechar=' ',
-                                quoting=csv.QUOTE_NONE)
-        labels = ['Iteration']
-        if xIter.size != 0:
-            for i in range(1, xIter.shape[1] + 1):
-                labels = labels + ['x' + str(i)]
-        datawriter.writerow(labels)
-    csvfile.close()
-    with open('desVars.csv', 'wb') as csvfile:
-        datawriter = csv.writer(csvfile, delimiter=',', escapechar=' ',
-                                quoting=csv.QUOTE_NONE)
-        labels = ['Iteration']
-        if xIter.size != 0:
-            for i in range(1, xIter.shape[1] + 1):
-                labels = labels + ['x' + str(i)]
-        datawriter.writerow(labels)
-    csvfile.close()
-    with open('constraints.csv', 'wb') as csvfile:
-        datawriter = csv.writer(csvfile, delimiter=',', escapechar=' ',
-                                quoting=csv.QUOTE_NONE)
-        labels = ['Iteration']
-        if gIter.size != 0:
-            for i in range(1, gIter.shape[1] + 1):
-                labels = labels + ['g' + str(i)]
-        datawriter.writerow(labels)
-    csvfile.close()
-
-# -----------------------------------------------------------------------------
-# Now the real data like obj fct value and constraint values are writen into
-# the .csv files
-# -----------------------------------------------------------------------------
-    # Extremely slow for large number of evaluations!!!! Needs to be redone!
-    # Objective function and maximum constraint values
-    for x in range(0, nIter + 1):
-        with open('objFct_maxCon.csv', 'ab') as csvfile:
-            datawriter = csv.writer(csvfile, dialect='excel')
-            if np.size(gIter[x]) == 0:
-                datawriter.writerow([x, str(float(fIter[x])),  []])
-            else:
-                datawriter.writerow([x, str(float(fIter[x])),
-                                     float(np.max(gIter[x]))])
-        csvfile.close()
-    # Normalized design variables
-    if xIter.size != 0:
-        for x in range(0, nIter + 1):
-            datasets = str(xIter[x][:].tolist()).strip('[]')
-            with open('desVarsNorm.csv', 'ab') as csvfile:
-                datawriter = csv.writer(csvfile, dialect='excel',
-                                        quotechar=' ')
-                datawriter.writerow([x, datasets])
-            csvfile.close()
-    # non normalized design variables
-    if xIter.size != 0:
-        for x in range(0, nIter + 1):
-            datasets_denorm = str(xIterDenorm[x][:].tolist()).strip('[]')
-            with open('desVars.csv', 'ab') as csvfile:
-                datawriter = csv.writer(csvfile, dialect='excel',
-                                        quotechar=' ')
-                datawriter.writerow([x, datasets_denorm])
-            csvfile.close()
-    # constraint variables
-    if gIter.size != 0:
-        for x in range(0, nIter + 1):
-            datasetsg = str(gIter[x][:].tolist()).strip('[]')
-            with open('constraints.csv', 'ab') as csvfile:
-                datawriter = csv.writer(csvfile, dialect='excel', quotechar=' ')
-                datawriter.writerow([x, datasetsg])
-            csvfile.close()
-
-# -----------------------------------------------------------------------------
-# The data for the graphs is generated, now follows the table generation
-# routine
-# -----------------------------------------------------------------------------
-    # Objective function table generation
-    ObjFct_table = "<td></td>"
-    if xIter.size != 0:
-        if gIter.size != 0:
-            for x in range(0, nIter + 1):
-                ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + \
-                                str(round(fIter[x], 4)) + "</td>\n<td>" + \
-                                str(round(np.max(gIter[x]), 4)) + \
-                                "</td>\n</tr>"
-        else:
-            for x in range(0, nIter + 1):
-                ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + \
-                                str(round(fIter[x], 4)) + \
-                                "</td>\n<td> no constraints </td>\n</tr>"
-    # Design Variable table generation
-    DesVar_table = "<td></td>"
-    if xIter.size != 0:
-        number_des_vars = str(len(xIter[0]))
-        for x in range(0, len(xIter[0])):
-            DesVar_table += "<td>" + "x&#770;<sub>" + str(x + 1) + \
-                            "</sub></td>" + "<td>" + "x<sub>" + str(x + 1) +  \
-                            " </sub></td>"
-        for y in range(0, nIter + 1):
-            DesVar_table += "<tr>\n<td>" + str(y) + "</td>"
-            for x in range(0, len(xIter[0])):
-                DesVar_table += "<td>" + str(round(xIter[y][x], 4)) + \
-                                "</td><td>" + \
-                                str(round(xIterDenorm[y][x], 4)) + \
-                                "</td>"
-            DesVar_table += "</tr>"
-    # Constraint  table generation
-    Constraint_table = "<td></td>"
-    if gIter.size != 0:
-        number_constraints = str(len(gIter[0]))
-        for x in range(0, len(gIter[0])):
-            Constraint_table += "<td>" + "g<sub>" + str(x + 1) + "</sub></td>"
-        for y in range(0, nIter + 1):
-            Constraint_table += "<tr>\n<td>" + str(y) + "</td>"
-            for x in range(0, len(gIter[0])):
-                if (round(gIter[y][x], 4) > 0):
-                    Constraint_table += "<td class=\"negativ\">" + \
-                                        str(round(gIter[y][x], 4)) + "</td>"
-                else:
-                    Constraint_table += "<td class=\"positiv\">" + \
-                                        str(round(gIter[y][x], 4)) + "</td>"
-            Constraint_table += "</tr>"
 
 # -----------------------------------------------------------------------------
 # Everything is computed, now the html master template is opened and the
@@ -227,28 +133,28 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
     if gIter.size != 0 or gIter.size > 100:
         hstrnew = hstr.replace('xxxxName', OptName)
         hstrnew = hstrnew.replace('xxxxTime', time_now)
-        hstrnew = hstrnew.replace('xxxxtableObjFct', ObjFct_table)
-        hstrnew = hstrnew.replace('xxxxtableDesVar', DesVar_table)
+        #hstrnew = hstrnew.replace('xxxxtableObjFct', ObjFct_table)
+        #hstrnew = hstrnew.replace('xxxxtableDesVar', DesVar_table)
         hstrnew = hstrnew.replace('xxxxnumber_des_var', number_des_vars * 2)
-        hstrnew = hstrnew.replace('xxxxtableConstr', Constraint_table)
+        #hstrnew = hstrnew.replace('xxxxtableConstr', Constraint_table)
         hstrnew = hstrnew.replace('xxxxnumber_constraints', number_constraints)
         hstrnew = hstrnew.replace('xxxxAlg', Alg)
-        hstrnew = hstrnew.replace('xxxxStatus', str(inform))
+        #hstrnew = hstrnew.replace('xxxxStatus', str(inform))
         hstrnew = hstrnew.replace('xxxxRefRate', RefRate)
         hstrnew = hstrnew.replace('xxxxStartTime', StartTime)
         hstrnew = hstrnew.replace('xxxxEndTime', EndTime)
-        hstrnew = hstrnew.replace('xxxxIteration', Iteration)
+        hstrnew = hstrnew.replace('xxxxIteration', EvalGenIter)
     else:
         hstrnew = hstr.replace('xxxxName', OptName)
         hstrnew = hstrnew.replace('xxxxTime', time_now)
-        hstrnew = hstrnew.replace('xxxxtableObjFct', ObjFct_table)
-        hstrnew = hstrnew.replace('xxxxtableDesVar', DesVar_table)
+        #hstrnew = hstrnew.replace('xxxxtableObjFct', ObjFct_table)
+        #hstrnew = hstrnew.replace('xxxxtableDesVar', DesVar_table)
         hstrnew = hstrnew.replace('xxxxAlg', Alg)
-        hstrnew = hstrnew.replace('xxxxStatus', inform)
+        #hstrnew = hstrnew.replace('xxxxStatus', inform)
         hstrnew = hstrnew.replace('xxxxRefRate', RefRate)
         hstrnew = hstrnew.replace('xxxxStartTime', StartTime)
         hstrnew = hstrnew.replace('xxxxEndTime', EndTime)
-        hstrnew = hstrnew.replace('xxxxIteration', Iteration)
+        hstrnew = hstrnew.replace('xxxxIteration', EvalGenIter)
         # remove the hmtl parts which are only needed for constrained problems
         try:
             for i in range(0, 10):
@@ -260,24 +166,26 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
     html.write(hstrnew)
     html.close()
     # copy everything needed to the result directory
+    # no more coping of everything!
+    # TODO give absolute path above!!
     if not os.path.exists(StatusDirectory + os.sep + "Results" + os.sep +
                           OptName):
         os.makedirs(StatusDirectory + os.sep + "Results" + os.sep + OptName)
     shutil.copy("initial1.html",
                 StatusDirectory + os.sep + "Results" + os.sep + OptName +
                 os.sep + OptName + "_Status.html")
-    shutil.copy("objFct_maxCon.csv",
+    shutil.copy("f_gMax.csv",
                 StatusDirectory + os.sep + "Results" + os.sep + OptName +
-                os.sep + "objFct_maxCon.csv")
-    shutil.copy("desVars.csv",
+                os.sep + "f_gMax.csv")
+    shutil.copy("x.csv",
                 StatusDirectory + os.sep + "Results" + os.sep + OptName +
-                os.sep + "desVars.csv")
-    shutil.copy("desVarsNorm.csv",
+                os.sep + "x.csv")
+    shutil.copy("xNorm.csv",
                 StatusDirectory + os.sep + "Results" + os.sep + OptName +
-                os.sep + "desVarsNorm.csv")
-    shutil.copy("constraints.csv",
+                os.sep + "xNorm.csv")
+    shutil.copy("g.csv",
                 StatusDirectory + os.sep + "Results" + os.sep + OptName +
-                os.sep + "constraints.csv")
+                os.sep + "g.csv")
     for file in glob.glob(template_directory + "*.png"):
         shutil.copy(file, StatusDirectory + os.sep + "Results" + os.sep +
         OptName + os.sep)

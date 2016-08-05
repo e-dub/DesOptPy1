@@ -18,12 +18,34 @@ import pyOpt
 import numpy as np
 from Normalize import normalize, denormalize
 
-def OptReadHis(OptName, Alg, AlgOptions, x0, xL, xU, DesVarNorm):
-    OptHist = pyOpt.History(OptName, "r")
-    inform = " "
+def ReadLast(OptHist):
+    if OptHist.read(index=-1,ident=["obj"])[0]["obj"] == []:
+        fLast = []
+        xLast = []
+    else:
+        fLast = OptHist.read(index=-1,ident=["obj"])[0]["obj"][0]
+        xLast = OptHist.read(index=-1,ident=["x"])[0]["x"][0]
+    try:
+        gLast = OptHist.read(index=-1,ident=["g"])[0]["g"][0]
+    except:
+        gLast = []
+    return fLast, xLast, gLast
+
+def ReadAll(OptHist):
     fAll = OptHist.read([0, -1], ["obj"])[0]["obj"]
     xAll = OptHist.read([0, -1], ["x"])[0]["x"]
     gAll = OptHist.read([0, -1], ["con"])[0]["con"]
+    return fAll, xAll, gAll
+
+
+def OptReadHis(OptName, Alg, AlgOptions, x0, xL, xU, DesVarNorm, Iter="All"):
+    OptHist = pyOpt.History(OptName, "r")
+    if Iter == "Last":
+        fAll, xAll, gAll = ReadLast(OptHist)
+        return np.asarray(fAll), np.asarray(xAll), np.asarray(gAll), [], [], []
+    else:
+        inform = " "
+        fAll, xAll, gAll = ReadAll(OptHist)
     if Alg == "NLPQLP":
         gAll = [x * -1 for x in gAll]
     gGradIter = OptHist.read([0, -1], ["grad_con"])[0]["grad_con"]
