@@ -16,6 +16,10 @@ DesOptPy - DESign OPTimization in PYthon - is an optimization toolbox in Python
 -------------------------------------------------------------------------------
 Change log
 -------------------------------------------------------------------------------
+1.4 (Future)
+    General clean-up
+    NumPy problems
+
 1.3 (July 30, 2016)
     Removed support for surrogate model based optimization
     PEP8
@@ -78,6 +82,8 @@ Change log
 -------------------------------------------------------------------------------
 To do and ideas
 -------------------------------------------------------------------------------
+TODO: Return lagrangian multipliers for orderly: df/d[g, xU, xL] where non-
+    active components are shown as zero!
 TODO: Constraint handling in PyGMO
 TODO  max line length = 79? (PEP8)
 TODO every iteration to output window (file)
@@ -313,10 +319,11 @@ if IsPyGMO:
             HistData.write(self.f, "obj")
             if self.StatusReport == 1:
                 # try:
-                OptHis2HTML.OptHis2HTML(self.OptName, self.Alg, self.AlgOptions,
-                                        self.DesOptDir, self.x0, self.xL,
-                                        self.xU, self.DesVarNorm,
-                                        self.inform[0], self.OptTime0)
+                OptHis2HTML.OptHis2HTML(self.OptName, self.Alg, 
+                                        self.AlgOptions, self.DesOptDir, 
+                                        self.x0, self.xL, self.xU, 
+                                        self.DesVarNorm, self.inform[0], 
+                                        self.OptTime0)
                 # except:
                 #    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__ with status report")
             return(f,)
@@ -746,7 +753,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
             return f, []
         from mlabwrap import mlab
         mlab._get(ObjFn)
-        mlab.fmincon(mlab._get("ObjFn"), x)      # g,h, dgdx = mlab.fmincon(x.T,cg,ch, nout=3)
+        mlab.fmincon(mlab._get("ObjFn"), x)      
+        # g,h, dgdx = mlab.fmincon(x.T,cg,ch, nout=3)
 
 # -----------------------------------------------------------------------------
 #       PyGMO optimization
@@ -911,8 +919,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 #       Optimization post-processing
 # -----------------------------------------------------------------------------
     if StatusReport == 1:
-        OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU,
-                                DesVarNorm, inform.values()[0], OptTime0)
+        OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, 
+                                xU, DesVarNorm, inform.values()[0], OptTime0)
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
     hhmmss0 = time.strftime("%H", loctime0) + ' : ' + \
@@ -928,10 +936,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 
     NewRead = True
     if NewRead:
-        fIter, xIter, gIter, gGradIter, fGradIter, inform =  OptReadHis(OptName, Alg,
-                                                                        AlgOptions,
-                                                                        x0, xL, xU,
-                                                                        DesVarNorm)
+        fIter, xIter, gIter, gGradIter, fGradIter, inform = OptReadHis(OptName, Alg,
+                                                                       AlgOptions,
+                                                                       x0, xL, xU,
+                                                                       DesVarNorm)
         xOpt = np.resize(xOpt[0:np.size(xL)], np.size(xL))
         if DesVarNorm in ["None", None, False]:
             x0norm = []
@@ -945,7 +953,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                 xIterNorm = xIter[:, 0:np.size(xL)]
                 xIter = np.zeros(np.shape(xIterNorm))
                 for ii in range(len(xIterNorm)):
-                    xIter[ii] = denormalize(xIterNorm[ii], x0, xL, xU, DesVarNorm)
+                    xIter[ii] = denormalize(xIterNorm[ii], x0, xL, xU, 
+                                            DesVarNorm)
             except:
                 x0norm = []
                 xIterNorm = []
@@ -953,7 +962,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         nIter = np.size(fIter, 0)
         if np.size(fIter) > 0:
             if len(fIter[0]) > 0:
-                fIterNorm = fIter / fIter[0]  # fIterNorm=(fIter-fIter[nEval-1])/(fIter[0]-fIter[nEval-1])
+                fIterNorm = fIter / fIter[0]  
+                # fIterNorm=(fIter-fIter[nEval-1])/(fIter[0]-fIter[nEval-1])
             else:
                 fIterNorm = fIter
         else:
@@ -997,18 +1007,18 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                 gIter[ii] = gAll[iii]
         OptHist.close()
 
-    # -----------------------------------------------------------------------------
-    #       Convert all data to numpy arrays
-    # -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+#       Convert all data to numpy arrays
+# -----------------------------------------------------------------------------
         fIter = np.asarray(fIter)
         xIter = np.asarray(xIter)
         gIter = np.asarray(gIter)
         gGradIter = np.asarray(gGradIter)
         fGradIter = np.asarray(fGradIter)
 
-    # -----------------------------------------------------------------------------
-    # Denormalization of design variables
-    # -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Denormalization of design variables
+# -----------------------------------------------------------------------------
         xOpt = np.resize(xOpt[0:np.size(xL)], np.size(xL))
         if DesVarNorm in ["None", None, False]:
             x0norm = []
@@ -1022,7 +1032,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                 xIterNorm = xIter[:, 0:np.size(xL)]
                 xIter = np.zeros(np.shape(xIterNorm))
                 for ii in range(len(xIterNorm)):
-                    xIter[ii] = denormalize(xIterNorm[ii], x0, xL, xU, DesVarNorm)
+                    xIter[ii] = denormalize(xIterNorm[ii], x0, xL, xU,
+                                            DesVarNorm)
             except:
                 x0norm = []
                 xIterNorm = []
@@ -1030,7 +1041,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         nIter = np.size(fIter, 0)
         if np.size(fIter) > 0:
             if len(fIter[0]) > 0:
-                fIterNorm = fIter / fIter[0]  # fIterNorm=(fIter-fIter[nEval-1])/(fIter[0]-fIter[nEval-1])
+                fIterNorm = fIter / fIter[0]  
+                # fIterNorm=(fIter-fIter[nEval-1])/(fIter[0]-fIter[nEval-1])
             else:
                 fIterNorm = fIter
         else:
@@ -1081,7 +1093,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     else:
         xLU_Active = np.concatenate((xL_Active, xU_Active))
     # TODO needs to be investigated for PyGMO!
-    # are there nonlinear constraints active, in case equality constraints are added later, this must also be added
+    # are there nonlinear constraints active, in case equality constraints are 
+    # added later, this must also be added
     if np.size(gc) > 0:  # and Alg[:5] != "PyGMO":
         gMaxIter = np.zeros([nIter])
         for ii in range(len(gIter)):

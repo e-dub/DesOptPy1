@@ -489,6 +489,12 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         if FigureSubfolders:
             for ii in range(len(FileTypeRendered)):
                 os.mkdir(ResultsFolder + os.sep + FileTypeRendered[ii])
+            for ii in range(len(FileTypeRaw)):
+                try: 
+                    os.mkdir(ResultsFolder + os.sep + FileTypeRaw[ii])
+                except:
+                    pass
+        os.mkdir(ResultsFolder + os.sep + "eps/")
         for ii in range(len(PlotFiles)):
             if InkscapeVersion not in ListBadInkscape:
                 mProc[ii] = Popen(InkscapeCall + " -D -z --file=" +
@@ -496,6 +502,12 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
                                   ".pdf --export-pdf=" + ResultsFolder +
                                   OptName + "_" + PlotFiles[ii] +
                                   ".pdf --export-latex", shell=True).wait()
+            else:
+                mProc[ii] = Popen(InkscapeCall + " -D -z --file=" +
+                                  ResultsFolder + OptName + "_" + PlotFiles[ii] +
+                                  ".pdf --export-eps=" + ResultsFolder + 
+                                  "eps/" + OptName + "_" + PlotFiles[ii] +
+                                  ".eps --export-latex", shell=True).wait()
             if FigureSubfolders:
                 for iii in range(len(FileTypeRendered)):
                     try:
@@ -505,6 +517,14 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
                                     ResultsFolder + FileTypeRendered[iii])
                     except:
                         pass
+                for iii in range(len(FileTypeRaw)):
+                    try:
+                        shutil.move(ResultsFolder + OptName + "_" +
+                                    PlotFiles[ii] + "." +
+                                    FileTypeRaw[iii],
+                                    ResultsFolder + FileTypeRaw[iii])
+                    except:
+                        pass
         progressbar(82, 82)
         print "\n"+' '*10 + "Diagram generation finished:" + " "*10 + "\n"
 
@@ -512,7 +532,8 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
 # -----------------------------------------------------------------------------
 # Options Table
 # -----------------------------------------------------------------------------
-        tRR = open("" + ResultsFolder + OptName + "_OptAlgOptionsTable.tex",
+        os.mkdir(ResultsFolder + os.sep + "tex/")
+        tRR = open("" + ResultsFolder + "tex/" + OptName + "_OptAlgOptionsTable.tex",
                    "w")
         optCrit = []
         optCrit.append('\\begin{table}[H] \n')
@@ -538,7 +559,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         optCrit.append('\\end{table}')
         tRR.writelines(optCrit)
         tRR.close()
-        os.system("tex2lyx "+ResultsFolder+OptName+"_OptAlgOptionsTable.tex")
+        os.system("tex2lyx "+ResultsFolder + "tex/" +OptName+"_OptAlgOptionsTable.tex")
 
         # Normalized data
         if DesVarNorm in ["None", None, False]:
@@ -547,7 +568,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
 # -----------------------------------------------------------------------------
 # Normalized design variables table
 # -----------------------------------------------------------------------------
-            tRR = open("" + ResultsFolder+OptName + "_DesignVarTableNorm.tex",
+            tRR = open("" + ResultsFolder + "tex/" +OptName + "_DesignVarNormTable.tex",
                        "w")
             dvT = []
             dvT.append('\\begin{longtable}{cccccc} \n')
@@ -577,12 +598,12 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
             tRR.writelines(dvT)
             tRR.close()
             os.system("tex2lyx " + ResultsFolder+OptName +
-                      "_DesignVarTableNorm.tex")
+                      "_DesignVarNormTable.tex")
 
 # -----------------------------------------------------------------------------
         # Design variables table
 # -----------------------------------------------------------------------------
-        tRR = open("" + ResultsFolder + OptName + "_DesignVarTable.tex", "w")
+        tRR = open("" + ResultsFolder + "tex/"  + OptName + "_DesignVarTable.tex", "w")
         dvT = []
         dvT.append('\\begin{longtable}{cccccc} \n')
         dvT.append(r'\caption{Details of design variables $\x$}')
@@ -611,12 +632,12 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         tRR.writelines(dvT)
         tRR.close()
         # Convert tex file to lyx file
-        os.system("tex2lyx " + ResultsFolder + OptName + "_DesignVarTable.tex")
+        os.system("tex2lyx " + ResultsFolder + "tex/"  + OptName + "_DesignVarTable.tex")
 
 # -----------------------------------------------------------------------------
 # System responses table
 # -----------------------------------------------------------------------------
-        tRR = open(""+ResultsFolder+OptName+"_SystemResponseTable.tex", "w")
+        tRR = open(""+ResultsFolder + "tex/" +OptName+"_SystemResponseTable.tex", "w")
         srT = []
         srT.append('\\begin{longtable}{cccc} \n')
         srT.append('\\caption{System responses} \n')
@@ -648,13 +669,13 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         tRR.writelines(srT)
         tRR.close()
         # Convert tex file to lyx file
-        os.system("tex2lyx "+ResultsFolder+OptName+"_SystemResponseTable.tex")
+        os.system("tex2lyx "+ResultsFolder + "tex/" +OptName+"_SystemResponseTable.tex")
 
 # -----------------------------------------------------------------------------
 # First order and lagrange table
 # -----------------------------------------------------------------------------
         if np.size(gc) > 0:
-            tRR = open("" + ResultsFolder + OptName +
+            tRR = open("" + ResultsFolder  + "tex/" + OptName +
                        "_FirstOrderLagrangeTable.tex", "w")
             optCrit = []
             optCrit.append('\\begin{longtable}{ccc}\n')
@@ -677,7 +698,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
                 optCrit.append('\\end{longtable}')
                 tRR.writelines(optCrit)
                 tRR.close()
-                os.system("tex2lyx " + ResultsFolder+OptName +
+                os.system("tex2lyx " + ResultsFolder + "tex/" +OptName +
                           "_FirstOrderLagrangeTable.tex")
             except:
                 pass
@@ -685,7 +706,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
     # Shadow prices table
 # -----------------------------------------------------------------------------
             if np.size(SPg) > 0:
-                tRR = open("" + ResultsFolder + OptName +
+                tRR = open("" + ResultsFolder  + "tex/" + OptName +
                            "_ShadowPricesTable.tex", "w")
                 optCrit = []
                 optCrit.append('\\begin{longtable}{ccc} \n')
@@ -705,7 +726,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
                 tRR.writelines(optCrit)
                 tRR.close()
                 # Convert tex file to lyx file
-                os.system("tex2lyx " + ResultsFolder + OptName +
+                os.system("tex2lyx " + ResultsFolder + "tex/"  + OptName +
                           "_ShadowPricesTable.tex")
 
     # -----------------------------------------------------------------------------
@@ -720,8 +741,10 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         # shutil.copy(templatePath + "/FGCM_Background.pdf", ResultsFolder + "FGCM_Background.pdf")
         # FileName = ["_ResultPresentationPy.lyx", "_ResultReportPy.lyx"]
 
-        if InkscapeVersion in ListBadInkscape or InkscapeVersion == None:
+        if InkscapeVersion == None:
             FileName = ["_ResultReportNoInkscape.lyx"]
+        elif InkscapeVersion in ListBadInkscape:
+            FileName =  ["_ResultReport_eps.lyx"]
         else:
             FileName = ["_ResultReport.lyx"]
 
@@ -761,12 +784,19 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
             fRR.close()
     if lyx == 1:
         for ii in range(len(FileName)):
-            os.system(LyxCall + " --export pdf2 " + ResultsFolder + OptName +
-                      FileName[ii])
-        if InkscapeVersion in ListBadInkscape or InkscapeVersion == None:
-            FileName = ["_ResultReportNoInkscape.lyx"]
-            shutil.move(ResultsFolder + OptName + FileName[ii][:-3]+"pdf",
-                        ResultsFolder + OptName + "_ResultReport.pdf")
+            if InkscapeVersion in ListBadInkscape:
+                os.system(LyxCall + " --export pdf " + ResultsFolder + OptName +
+                          FileName[ii])
+                
+            else:
+                os.system(LyxCall + " --export pdf2 " + ResultsFolder + OptName +
+                          FileName[ii])
+                if InkscapeVersion == None:
+                    shutil.move(ResultsFolder + OptName + FileName[ii][:-3]+"pdf",
+                                ResultsFolder + OptName + "_ResultReport.pdf")
+        #if InkscapeVersion in ListBadInkscape or 
+        #    FileName = ["_ResultReportNoInkscape.lyx""]
+
 
 def progressbar(actTime, totTime):
     toolbar_width = 60
