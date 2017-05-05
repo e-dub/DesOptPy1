@@ -27,8 +27,8 @@ import shutil
 from time import localtime, strftime, time
 import numpy as np
 from pyOpt import History
-from Normalize import normalize, denormalize
-from OptReadHis import OptReadHis
+from DesOptPy.Normalize import normalize, denormalize
+from DesOptPy.OptReadHis import OptReadHis
 
 
 def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inform,

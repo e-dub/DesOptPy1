@@ -137,10 +137,10 @@ import shutil
 import sys
 import inspect
 import pyOpt
-import OptAlgOptions
-import OptHis2HTML
-import OptVideo
-import OptResultReport
+import DesOptPy.OptAlgOptions as OptAlgOptions
+import DesOptPy.OptHis2HTML as OptHis2HTML
+import DesOptPy.OptVideo as OptVideo
+import DesOptPy.OptResultReport as OptResultReport
 import numpy as np
 try:
     import cPickle as pickle
@@ -153,9 +153,9 @@ import datetime
 import getpass
 import multiprocessing
 import platform
-from Normalize import normalize, denormalize, normalizeSens
-from OptPostProc import OptPostProc
-from OptReadHis import OptReadHis
+from DesOptPy.Normalize import normalize, denormalize, normalizeSens
+from DesOptPy.OptPostProc import OptPostProc
+from DesOptPy.OptReadHis import OptReadHis
 try:
     import PyGMO
     from PyGMO.problem import base
@@ -185,7 +185,8 @@ def PrintDesOptPy():
     print("Version:                 "+__version__)
     print("Internet:                "+__url__)
     print("License:                 "+__license__)
-    print("Copyright:               "+__copyright__)+"\n"
+    print("Copyright:               "+__copyright__)
+    print("\n")
 
 global nEval
 nEval = 0
