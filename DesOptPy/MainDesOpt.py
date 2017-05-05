@@ -131,7 +131,7 @@ TODO Examples
 # -----------------------------------------------------------------------------
 # Import necessary Python packages and toolboxes
 # -----------------------------------------------------------------------------
-from __future__ import division
+from __future__ import absolute_import, division, print_function
 import os
 import shutil
 import sys
@@ -608,7 +608,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # Removed Surrogate-based optimization, use SuPy!
 # -----------------------------------------------------------------------------
     if SBDO is not False:
-        print "Use SuPy!"
+        print("Use SuPy!")
     if xDis is not []:
         for ii in range(np.size(xDis, 0)):
             xExpand0 = np.ones(xDis[ii]) * 1./xDis[ii]   # Start at uniform of all materials etc.
@@ -732,8 +732,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 #       pyCMAES
 # -----------------------------------------------------------------------------
     elif Alg == "pycmaes":
-        print "CMA-ES == not fully implemented in this framework"
-        print "    no constraints"
+        print("CMA-ES == not fully implemented in this framework")
+        print("    no constraints")
         import cma
 
         def CMA_ES_ObjFn(x):
@@ -887,7 +887,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         bounds = [[]]*len(x0)
         for ii in range(len(x0)):
             bounds[ii] = (xL[ii], xU[ii])
-        print bounds
+        print(bounds)
         if Alg[6:] == "de":
             sciopt.differential_evolution(DefOptSysEq, bounds,
                                           strategy='best1bin', maxiter=None,
@@ -1258,7 +1258,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                         os.sep)
         # except WindowsError:
         except:
-            print "Run files not deleted from " + RunDir + os.sep + OptName
+            print("Run files not deleted from " + RunDir + os.sep + OptName)
             shutil.copytree(RunDir + os.sep + OptName,
                             ResultsDir + os.sep + OptName + os.sep +
                             "RunFiles" + os.sep)

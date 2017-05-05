@@ -4,7 +4,7 @@ Created on Wed Nov 27 12:30:04 2013
 
 @author: m.richter
 """
-
+from __future__ import absolute_import, division, print_function
 import os, time, pprint, copy, glob, sys
 import cPickle as pickle
 import numpy as np
@@ -92,7 +92,7 @@ def submit(ii, info, *nodes):
     elif host == 0:
         os.system("python ParallelFD.py&")
     else:
-        print 'Check the environmental variables! There is something wrong here! No job has been submitted!'
+        print('Check the environmental variables! There is something wrong here! No job has been submitted!')
     #endif
     os.chdir('..')
     return 1
@@ -140,9 +140,9 @@ def Para(x, f, g, deltax, OptName, OptNodes):
     jobName     = []
     obj         = info(x, f, g, xdiff, xit, nproc, nodes, OptModel, jobName, optDir, currDir, mainDir, localDir, workDir, user)      # instantiating infos
 
-    print "###################################################"
-    print "\tStart submission !!!"
-    print "###################################################"
+    print("###################################################")
+    print("\tStart submission !!!")
+    print("###################################################")
     for iii in xrange(len(x)):
         obj.jobName = 'iter' + str(nIter) + '_' + str(iii+1)
         schedule(iii,obj)
@@ -150,10 +150,10 @@ def Para(x, f, g, deltax, OptName, OptNodes):
         #endfor
     time.sleep(1)
 
-    print "###################################################"
-    print "\t Start collection  !!!"
-    print "\t    nIter:   %i" %(nIter)
-    print "###################################################"
+    print("###################################################")
+    print("\t Start collection  !!!")
+    print("\t    nIter:   %i" %(nIter))
+    print("###################################################")
 
     #Declaration of the lists
     f = [f]
@@ -163,7 +163,7 @@ def Para(x, f, g, deltax, OptName, OptNodes):
         workDir = localDir + str(ii+1)
         os.chdir(workDir)
         if optDoc == True:
-            print "cwd: \t" + os.getcwd()
+            print("cwd: \t" + os.getcwd())
         else:   pass
         LoopError = 1
         iii = 0
@@ -183,11 +183,11 @@ def Para(x, f, g, deltax, OptName, OptNodes):
             else:
                 time.sleep(1)
                 os.system('ls -l %s *.txt' %(workDir))
-                print "No output .txt-files found !!!"
+                print("No output .txt-files found !!!")
                 iii += 1
         if iii > 10*len(x):
-            print "There must be an error with the system response"
-            print "Check out ANSYS or another analysis tool!!!"
+            print("There must be an error with the system response")
+            print("Check out ANSYS or another analysis tool!!!")
     #endfor
 
     dgdx    = np.zeros([len(g),len(x)])
@@ -212,14 +212,14 @@ def Para(x, f, g, deltax, OptName, OptNodes):
     # Save in MATLAB format (.mat)
     spio.savemat(OptModel + '_grad.mat' , grad,oned_as='row')
 
-    print "###################################################"
-    print "\t Collection succesful %i ;)" %(nIter)
-    print "###################################################"
+    print("###################################################")
+    print("\t Collection succesful %i ;)" %(nIter))
+    print("###################################################")
     if optDoc == True:
-        print "f"       + "\t" + str(f)
-        print "g"       + "\t" + str(g)
-        print "dfdx"    + "\t" + str(dfdx)
-        print "dgdx"    + "\t" + str(dgdx)
+        print("f"       + "\t" + str(f))
+        print("g"       + "\t" + str(g))
+        print("dfdx"    + "\t" + str(dfdx))
+        print("dgdx"    + "\t" + str(dgdx))
     else:   pass
     # Removing all protocols from the submitted jobs -> put on True if still needed !!!
     if jobRec == False:

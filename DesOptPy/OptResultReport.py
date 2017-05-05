@@ -18,7 +18,7 @@ Make result report for the optimization run
 To do and ideas
 -------------------------------------------------------------------------------
 '''
-
+from __future__ import absolute_import, division, print_function
 #import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -251,7 +251,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
 #         Write and save plots
 # -----------------------------------------------------------------------------
     if diagrams == 1:
-        print ' '*10 + "Diagram generation process:" + " "*10 + "\n"
+        print(' '*10 + "Diagram generation process:" + " "*10 + "\n")
         progressbar(0, 82)
         if np.size(gOpt) > 0:  # Constraints present
             data = [fIterNorm, gMaxIter]
@@ -526,7 +526,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
                     except:
                         pass
         progressbar(82, 82)
-        print "\n"+' '*10 + "Diagram generation finished:" + " "*10 + "\n"
+        print("\n"+' '*10 + "Diagram generation finished:" + " "*10 + "\n")
 
     if tables == 1:
 # -----------------------------------------------------------------------------

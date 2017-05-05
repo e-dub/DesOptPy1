@@ -4,6 +4,7 @@ Created on Thu Feb 12 23:33:57 2015
 
 @author: wehrle
 """
+from __future__ import absolute_import, division, print_function
 import numpy as np
 import copy
 
@@ -73,5 +74,5 @@ def NewtonSUMT(DefOptSysEq, x0, xL, xU):
         d2fdxdx = CalcHessian(DefOptSysEq, x, f, dx, gamma)
         xNext = x - np.linalg.inv(d2fdxdx) * dfdx #*d2fdxdx*dfdx
         nIter += 1
-        print xNext
+        print(xNext)
     return(f, x, nIter, nEval)

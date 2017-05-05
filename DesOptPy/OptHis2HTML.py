@@ -19,7 +19,7 @@ To do and ideas
 -------------------------------------------------------------------------------
 see DesOpt.py
 '''
-
+from __future__ import absolute_import, division, print_function
 import csv
 import glob
 import os
@@ -79,7 +79,7 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
                 xIterDenorm[ii] = denormalize(xIter[ii], x0, xL, xU, DesVarNorm)
             #xIterDenorm = np.zeros((nIter + 1, len(x0)))
 #            for y in range(0, nIter + 1):
-#                print denormalize(xIter[y, 0:len(x0)], x0, xL, xU, DesVarNorm)
+#                print(denormalize(xIter[y, 0:len(x0)], x0, xL, xU, DesVarNorm)
 #                xIterDenorm[y, :] = denormalize(xIter[y, 0:len(x0)],
 #                                                       x0, xL, xU, DesVarNorm)
     time_now = strftime("%Y-%b-%d %H:%M:%S", localtime())  # update the time for the information table
@@ -254,7 +254,7 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
             for i in range(0, 10):
                 hstrnew = hstrnew[0:hstrnew.find("<!--Start of constraint html part-->")] + hstrnew[hstrnew.find("<!--End of constraint html part-->") + 34:-1]
         except:
-            print ""
+            print("")
     # generate a new html file which is filled with the actual content
     html = open('initial1.html', 'w')
     html.write(hstrnew)
