@@ -16,7 +16,7 @@ if __name__ == '__main__':
           description='DESign OPTimization in PYthon',
           author='E. J. Wehrle',
           author_email='Erich.Wehrle@unibz.it',
-          copyright="Copyright 2015, 2016, E. J. Wehrle",
+          copyright="Copyright 2015, 2016, 2017, E. J. Wehrle",
           package_data={'': extra_files},
           license='GNU Lesser General Public License',
           url='www.DesOptPy.org',

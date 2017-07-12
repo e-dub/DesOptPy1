@@ -5,7 +5,7 @@ Title:          MainDesOpt.py
 Units:          Unitless
 Author:         E. J. Wehrle
 Contributors:   S. Rudolph, F. Wachter, M. Richter
-Date:           July 24, 2016
+Date:           July 12, 2017
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -171,8 +171,8 @@ __shorttitle__ = "DesOptPy"
 __version__ = "1.3pre"
 __all__ = ['DesOpt']
 __author__ = "E. J. Wehrle"
-__copyright__ = "Copyright 2015, 2016, E. J. Wehrle"
-__email__ = "wehrle(a)tum.de"
+__copyright__ = "Copyright 2015, 2016, 2017, E. J. Wehrle"
+__email__ = "Erich.Wehrle(a)unibz.it"
 __license__ = "GNU Lesser General Public License"
 __url__ = 'www.DesOptPy.org'
 
@@ -320,10 +320,10 @@ if IsPyGMO:
             HistData.write(self.f, "obj")
             if self.StatusReport == 1:
                 # try:
-                OptHis2HTML.OptHis2HTML(self.OptName, self.Alg, 
-                                        self.AlgOptions, self.DesOptDir, 
-                                        self.x0, self.xL, self.xU, 
-                                        self.DesVarNorm, self.inform[0], 
+                OptHis2HTML.OptHis2HTML(self.OptName, self.Alg,
+                                        self.AlgOptions, self.DesOptDir,
+                                        self.x0, self.xL, self.xU,
+                                        self.DesVarNorm, self.inform[0],
                                         self.OptTime0)
                 # except:
                 #    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__ with status report")
@@ -495,8 +495,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         global nEval
         nEval += 1
         if StatusReport:
-            OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU,
-                                    DesVarNorm, inform[0], OptTime0)
+            OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0,
+                                    xL, xU, DesVarNorm, inform[0], OptTime0)
         if len(xDis) > 0:
             nD = len(xDis)
             gDis = [[]]*2*nD
@@ -754,7 +754,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
             return f, []
         from mlabwrap import mlab
         mlab._get(ObjFn)
-        mlab.fmincon(mlab._get("ObjFn"), x)      
+        mlab.fmincon(mlab._get("ObjFn"), x)
         # g,h, dgdx = mlab.fmincon(x.T,cg,ch, nout=3)
 
 # -----------------------------------------------------------------------------
@@ -863,17 +863,31 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
             fOpt = pop.champion.f
             nEval = pop.problem.fevals
         elif AlgOptions.ConstraintHandling == "Immune":
-            sys.exit("Error on line " + str(inspect.currentframe().f_lineno) +
-                     " of file " + __file__ +
-                     ": Constraint handling immune for PyGMO not yet implemented in DesOptPy")
+            raise Exception("Error on line " +
+                            str(inspect.currentframe().f_lineno) +
+                            " of file " + __file__ +
+                            ": Constraint handling immune for PyGMO not yet \
+                            implemented in DesOptPy")
+            #sys.exit("Error on line " + str(inspect.currentframe().f_lineno) +
+            #         " of file " + __file__ +
+            #         ": Constraint handling immune for PyGMO not yet implemented in DesOptPy")
         elif AlgOptions.ConstraintHandling == "Repair":
-            sys.exit("Error on line " + str(inspect.currentframe().f_lineno) +
-                     " of file " + __file__ +
-                     ": Constraint handling repair for PyGMO not yet implemented in DesOptPy")
+            raise Exception("Error on line " +
+                            str(inspect.currentframe().f_lineno) +
+                            " of file " + __file__ +
+                            ": Constraint handling repair for PyGMO not yet \
+                            implemented in DesOptPy")
+            #sys.exit("Error on line " + str(inspect.currentframe().f_lineno) +
+            #         " of file " + __file__ +
+            #         ": Constraint handling repair for PyGMO not yet implemented in DesOptPy")
         else:
-            sys.exit("Error on line " + str(inspect.currentframe().f_lineno) +
-                     " of file " + __file__ +
-                     ": Constraint handling for PyGMO not recognized")
+            raise Exception("Error on line " +
+                            str(inspect.currentframe().f_lineno) +
+                            " of file " + __file__ +
+                            ": Constraint handling for PyGMO not recognized")
+#            sys.exit("Error on line " + str(inspect.currentframe().f_lineno) +
+#                     " of file " + __file__ +
+#                     ": Constraint handling for PyGMO not recognized")
         try:
             global HistData
             HistData.close()
@@ -912,15 +926,19 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 #
 # -----------------------------------------------------------------------------
     else:
-        sys.exit("Error on line " + str(inspect.currentframe().f_lineno) +
-                 " of file " + __file__ +
-                 ": algorithm misspelled or not supported")
+        raise Exception("Error on line " +
+                        str(inspect.currentframe().f_lineno) +
+                        " of file " + __file__ +
+                        ": algorithm misspelled or not supported")
+        #sys.exit("Error on line " + str(inspect.currentframe().f_lineno) +
+        #         " of file " + __file__ +
+        #         ": algorithm misspelled or not supported")
 
 # -----------------------------------------------------------------------------
 #       Optimization post-processing
 # -----------------------------------------------------------------------------
     if StatusReport == 1:
-        OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, 
+        OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL,
                                 xU, DesVarNorm, inform.values()[0], OptTime0)
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
@@ -932,14 +950,17 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                             time.strftime("%M", loctime1) + ' : ' + \
                             time.strftime("%S", loctime1)
     diff = OptTime1 - OptTime0
-    h0, m0, s0 = (diff // 3600), int((diff / 60) - (diff // 3600) * 60), diff % 60
+    h0, m0, s0 = (diff // 3600), int((diff / 60) -
+                 (diff // 3600) * 60), diff % 60
     OptTime = "%02d" % (h0) + " : " + "%02d" % (m0) + " : " + "%02d" % (s0)
 
     NewRead = True
     if NewRead:
-        fIter, xIter, gIter, gGradIter, fGradIter, inform = OptReadHis(OptName, Alg,
+        fIter, xIter, gIter, gGradIter, fGradIter, inform = OptReadHis(OptName,
+                                                                       Alg,
                                                                        AlgOptions,
-                                                                       x0, xL, xU,
+                                                                       x0, xL,
+                                                                       xU,
                                                                        DesVarNorm)
         xOpt = np.resize(xOpt[0:np.size(xL)], np.size(xL))
         if DesVarNorm in ["None", None, False]:
@@ -954,7 +975,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                 xIterNorm = xIter[:, 0:np.size(xL)]
                 xIter = np.zeros(np.shape(xIterNorm))
                 for ii in range(len(xIterNorm)):
-                    xIter[ii] = denormalize(xIterNorm[ii], x0, xL, xU, 
+                    xIter[ii] = denormalize(xIterNorm[ii], x0, xL, xU,
                                             DesVarNorm)
             except:
                 x0norm = []
@@ -963,7 +984,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         nIter = np.size(fIter, 0)
         if np.size(fIter) > 0:
             if len(fIter[0]) > 0:
-                fIterNorm = fIter / fIter[0]  
+                fIterNorm = fIter / fIter[0]
                 # fIterNorm=(fIter-fIter[nEval-1])/(fIter[0]-fIter[nEval-1])
             else:
                 fIterNorm = fIter
@@ -1042,7 +1063,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         nIter = np.size(fIter, 0)
         if np.size(fIter) > 0:
             if len(fIter[0]) > 0:
-                fIterNorm = fIter / fIter[0]  
+                fIterNorm = fIter / fIter[0]
                 # fIterNorm=(fIter-fIter[nEval-1])/(fIter[0]-fIter[nEval-1])
             else:
                 fIterNorm = fIter
@@ -1094,7 +1115,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     else:
         xLU_Active = np.concatenate((xL_Active, xU_Active))
     # TODO needs to be investigated for PyGMO!
-    # are there nonlinear constraints active, in case equality constraints are 
+    # are there nonlinear constraints active, in case equality constraints are
     # added later, this must also be added
     if np.size(gc) > 0:  # and Alg[:5] != "PyGMO":
         gMaxIter = np.zeros([nIter])
