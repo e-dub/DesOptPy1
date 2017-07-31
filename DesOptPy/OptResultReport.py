@@ -27,11 +27,11 @@ from matplotlib import cm
 from matplotlib.font_manager import FontProperties
 import numpy as np
 import sys
-import getopt
-import math
+#import getopt
+#import math
 import os
 import pickle
-import fnmatch
+#import fnmatch
 import shutil
 import subprocess
 import time
@@ -137,7 +137,7 @@ def SingleConvPlot(figName, data, dataLabel, xLabel, yLabel, ResultsFolder,
     if numColx > 3:
         numColx = 3
     plt.yticks(size=10+(numColx-1)*4)
-    lgd = ax.legend(bbox_to_anchor=[1.05, 1], loc=2, ncol=numColx,
+    lgd = ax.legend(bbox_to_anchor=[1.05, 1], loc=2, ncol=int(numColx),
                     frameon=False, prop=fontPP)
     # plt.tight_layout()
     for ii in range(np.size(figType)):
@@ -490,7 +490,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
             for ii in range(len(FileTypeRendered)):
                 os.mkdir(ResultsFolder + os.sep + FileTypeRendered[ii])
             for ii in range(len(FileTypeRaw)):
-                try: 
+                try:
                     os.mkdir(ResultsFolder + os.sep + FileTypeRaw[ii])
                 except:
                     pass
@@ -505,7 +505,7 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
             else:
                 mProc[ii] = Popen(InkscapeCall + " -D -z --file=" +
                                   ResultsFolder + OptName + "_" + PlotFiles[ii] +
-                                  ".pdf --export-eps=" + ResultsFolder + 
+                                  ".pdf --export-eps=" + ResultsFolder +
                                   "eps/" + OptName + "_" + PlotFiles[ii] +
                                   ".eps --export-latex", shell=True).wait()
             if FigureSubfolders:
@@ -787,14 +787,14 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
             if InkscapeVersion in ListBadInkscape:
                 os.system(LyxCall + " --export pdf " + ResultsFolder + OptName +
                           FileName[ii])
-                
+
             else:
                 os.system(LyxCall + " --export pdf2 " + ResultsFolder + OptName +
                           FileName[ii])
                 if InkscapeVersion == None:
                     shutil.move(ResultsFolder + OptName + FileName[ii][:-3]+"pdf",
                                 ResultsFolder + OptName + "_ResultReport.pdf")
-        #if InkscapeVersion in ListBadInkscape or 
+        #if InkscapeVersion in ListBadInkscape or
         #    FileName = ["_ResultReportNoInkscape.lyx""]
 
 

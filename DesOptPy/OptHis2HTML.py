@@ -91,11 +91,11 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
 # labels. Those .csv files
 # are loaded by the javascript library. Afterwards the files are closed.
 # -----------------------------------------------------------------------------
-    with open('objFct_maxCon.csv', 'wb') as csvfile:
+    with open('objFct_maxCon.csv', 'w') as csvfile:
         datawriter = csv.writer(csvfile, dialect='excel')
         datawriter.writerow(['Iteration', 'Objective function', 'Constraint'])
     csvfile.close()
-    with open('desVarsNorm.csv', 'wb') as csvfile:
+    with open('desVarsNorm.csv', 'w') as csvfile:
         datawriter = csv.writer(csvfile, delimiter=',', escapechar=' ',
                                 quoting=csv.QUOTE_NONE)
         labels = ['Iteration']
@@ -104,7 +104,7 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
                 labels = labels + ['x' + str(i)]
         datawriter.writerow(labels)
     csvfile.close()
-    with open('desVars.csv', 'wb') as csvfile:
+    with open('desVars.csv', 'w') as csvfile:
         datawriter = csv.writer(csvfile, delimiter=',', escapechar=' ',
                                 quoting=csv.QUOTE_NONE)
         labels = ['Iteration']
@@ -113,7 +113,7 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
                 labels = labels + ['x' + str(i)]
         datawriter.writerow(labels)
     csvfile.close()
-    with open('constraints.csv', 'wb') as csvfile:
+    with open('constraints.csv', 'w') as csvfile:
         datawriter = csv.writer(csvfile, delimiter=',', escapechar=' ',
                                 quoting=csv.QUOTE_NONE)
         labels = ['Iteration']
@@ -130,7 +130,7 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
     # Extremely slow for large number of evaluations!!!! Needs to be redone!
     # Objective function and maximum constraint values
     for x in range(0, nIter + 1):
-        with open('objFct_maxCon.csv', 'ab') as csvfile:
+        with open('objFct_maxCon.csv', 'a') as csvfile:
             datawriter = csv.writer(csvfile, dialect='excel')
             if np.size(gIter[x]) == 0:
                 datawriter.writerow([x, str(float(fIter[x])),  []])
@@ -142,7 +142,7 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
     if xIter.size != 0:
         for x in range(0, nIter + 1):
             datasets = str(xIter[x][:].tolist()).strip('[]')
-            with open('desVarsNorm.csv', 'ab') as csvfile:
+            with open('desVarsNorm.csv', 'a') as csvfile:
                 datawriter = csv.writer(csvfile, dialect='excel',
                                         quotechar=' ')
                 datawriter.writerow([x, datasets])
@@ -151,7 +151,7 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
     if xIter.size != 0:
         for x in range(0, nIter + 1):
             datasets_denorm = str(xIterDenorm[x][:].tolist()).strip('[]')
-            with open('desVars.csv', 'ab') as csvfile:
+            with open('desVars.csv', 'a') as csvfile:
                 datawriter = csv.writer(csvfile, dialect='excel',
                                         quotechar=' ')
                 datawriter.writerow([x, datasets_denorm])
@@ -160,7 +160,7 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
     if gIter.size != 0:
         for x in range(0, nIter + 1):
             datasetsg = str(gIter[x][:].tolist()).strip('[]')
-            with open('constraints.csv', 'ab') as csvfile:
+            with open('constraints.csv', 'a') as csvfile:
                 datawriter = csv.writer(csvfile, dialect='excel', quotechar=' ')
                 datawriter.writerow([x, datasetsg])
             csvfile.close()
@@ -175,7 +175,7 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
         if gIter.size != 0:
             for x in range(0, nIter + 1):
                 ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + \
-                                str(round(fIter[x], 4)) + "</td>\n<td>" + \
+                                str(round(fIter[x][0], 4)) + "</td>\n<td>" + \
                                 str(round(np.max(gIter[x]), 4)) + \
                                 "</td>\n</tr>"
         else:

@@ -63,8 +63,27 @@ def OptReadHis(OptName, Alg, AlgOptions, x0, xL, xU, DesVarNorm):
                 fIter.append(fAll[pos_of_best_ind])
                 xIter.append(xAll[pos_of_best_ind])
                 gIter.append(gAll[pos_of_best_ind])
-    else:
+    elif Alg == "IPOPT":
+        inform = 'Optimization terminated successfully'
+        fIter = [[]] * int(len(fGradIter)-2)
+        xIter = [[]] * int(len(fGradIter)-2)
+        gIter = [[]] * int(len(fGradIter)-2)
+        for ii in range(len(fIter)):
+            Posdg = OptHist.cues["grad_con"][ii][0]
+            Posf = OptHist.cues["obj"][ii][0]
+            iii = 0
+            while Posdg > Posf:
+                iii = iii + 1
+                try:
+                    Posf = OptHist.cues["obj"][iii][0]
+                except:
+                    Posf = Posdg + 1
+            iii = iii - 1
+            fIter[ii] = fAll[iii]
+            xIter[ii] = xAll[iii]
+            gIter[ii] = gAll[iii]
 
+    else:
         inform = 'Optimization terminated successfully'
         fIter = [[]] * len(fGradIter)
         xIter = [[]] * len(fGradIter)

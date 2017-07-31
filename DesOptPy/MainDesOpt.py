@@ -191,6 +191,7 @@ def PrintDesOptPy():
 global nEval
 nEval = 0
 
+
 # -----------------------------------------------------------------------------
 # PyGMO call (must be outside of main function)
 # -----------------------------------------------------------------------------
@@ -372,7 +373,6 @@ class OptSysEqPyGMO(base):
         g = Data["g"]
         return g
 '''
-
 # -----------------------------------------------------------------------------
 # Main function DesOpt
 # -----------------------------------------------------------------------------
@@ -939,7 +939,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
     if StatusReport == 1:
         OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL,
-                                xU, DesVarNorm, inform.values()[0], OptTime0)
+                                xU, DesVarNorm, inform["text"], OptTime0)
     OptTime1 = time.time()
     loctime0 = time.localtime(OptTime0)
     hhmmss0 = time.strftime("%H", loctime0) + ' : ' + \
@@ -1203,7 +1203,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
 #   §      Save optimization solution to file
 # -----------------------------------------------------------------------------
-    global nEval
+    #global nEval
     OptSolData = {}
     OptSolData['x0'] = x0
     OptSolData['xOpt'] = xOpt

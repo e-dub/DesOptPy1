@@ -5,4 +5,4 @@ Created on Sat May 21 09:21:27 2016
 @author: wehrle
 """
 
-from MainDesOpt import *
+from DesOptPy.MainDesOpt import *
