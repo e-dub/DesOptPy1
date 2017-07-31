@@ -45,11 +45,11 @@ class setDefault():
             self.LQL = True        # QP Solver (True - Quasi-Newton, False - Cholesky)
             self.IFILE = True
         elif Alg == "IPOPT":
-            self.tol = 1.0e-3
-            self.print_level = 1
+            self.tol = 1.0e-6
+            self.print_level = 0
             self.print_user_options = "no"
             self.linear_system_scaling = "none"
-            self.max_iter = 10
+            self.max_iter = 60
             self.IFILE = False
             # self.IFILE = True
             # self.output_file = OptName+"_Outfile.out"
