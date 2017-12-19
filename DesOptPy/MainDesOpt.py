@@ -477,6 +477,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
 
     def OptSysEq(x):
+        #global nEval
         x = np.array(x)  # NSGA2 gives a list back, this makes a float! TODO Inquire why it does this!
         if KeepEval:
             os.mkdir(str(nEval))
@@ -492,7 +493,6 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         if KeepEval:
             os.chdir("..")
         fail = 0
-        global nEval
         nEval += 1
         if StatusReport:
             OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0,
@@ -829,7 +829,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
             pop = algo_self_adaptive.evolve(pop)
             xOpt = pop.champion.x
             fOpt = pop.champion.f
-            global nEval
+            #global nEval
             # nEval = pop.problem.fevals
             nGen = int(nEval/AlgOptions.nIndiv)
         elif AlgOptions.ConstraintHandling == "MultiobjTrans":
