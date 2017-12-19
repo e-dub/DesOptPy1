@@ -137,10 +137,10 @@ import shutil
 import sys
 import inspect
 import pyOpt
-import DesOptPy.OptAlgOptions as OptAlgOptions
-import DesOptPy.OptHis2HTML as OptHis2HTML
-import DesOptPy.OptVideo as OptVideo
-import DesOptPy.OptResultReport as OptResultReport
+from DesOptPy import OptAlgOptions
+from DesOptPy import OptHis2HTML
+from DesOptPy import OptVideo
+from DesOptPy import OptResultReport
 import numpy as np
 try:
     import cPickle as pickle

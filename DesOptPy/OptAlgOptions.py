@@ -2,8 +2,8 @@
 '''
 Title:    OptAlgOptions.py
 Units:    -
-Author:   Originally by S. Rudolph, fully reworked by E. J. Wehrle
-Date:     March 4, 2015
+Author:   E. J. Wehrle, S. Rudolph
+Date:     August 6, 2017
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
