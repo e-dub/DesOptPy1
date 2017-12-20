@@ -477,7 +477,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
 
     def OptSysEq(x):
-        #global nEval
+        global nEval
         x = np.array(x)  # NSGA2 gives a list back, this makes a float! TODO Inquire why it does this!
         if KeepEval:
             os.mkdir(str(nEval))
@@ -1203,7 +1203,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
 #   §      Save optimization solution to file
 # -----------------------------------------------------------------------------
-    #global nEval
+    global nEval
     OptSolData = {}
     OptSolData['x0'] = x0
     OptSolData['xOpt'] = xOpt
