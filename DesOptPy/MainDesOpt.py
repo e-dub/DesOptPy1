@@ -188,7 +188,7 @@ def PrintDesOptPy():
     print("Copyright:               "+__copyright__)
     print("\n")
 
-global nEval
+#global nEval
 nEval = 0
 
 
@@ -200,7 +200,7 @@ HistDat = []
 
 def CombSysEq(SysEq, x, gc):
     f, g = SysEq(np.array(x), gc)
-    global nEval
+    #global nEval
     nEval += 1
     return f, g
 
@@ -261,7 +261,7 @@ if IsPyGMO:
             f, g = CombSysEq(self.SysEq, x, self.gc)
             gnew = np.zeros(np.shape(g))
             global HistData
-            global nEval
+            #global nEval
             self.nEval = nEval
             if nEval == 1:
                 HistData = pyOpt.History(self.OptName, 'w',
@@ -337,7 +337,7 @@ if IsPyGMO:
             # f, g = self.SysEq(np.array(x), self.gc)
             self.g = g
             global HistData
-            global nEval
+            #global nEval
             self.nEval = nEval
             if nEval == 1:
                 HistData = pyOpt.History(self.OptName, 'w',
@@ -391,6 +391,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     """
     :type OptNode: object
     """
+    global nEval
+    #nEval = 0
     if Debug:
         StatusReport = False
         if StatusReport:
@@ -545,7 +547,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         return dfdx, dgdx, fail
 
     def OptSensEqParaFD(x, f, g):
-        global nEval
+        #global nEval
         dfdx, dgdx, nb = OptSensParaFD.Para(x, f, g, deltax, OptName, OptNodes)
         nEval += nb
         fail = 0
@@ -1203,7 +1205,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
 #   §      Save optimization solution to file
 # -----------------------------------------------------------------------------
-    #global nEval
+#    if sys.version_info>(3,6):
+#        pass
+#    else:
     OptSolData = {}
     OptSolData['x0'] = x0
     OptSolData['xOpt'] = xOpt
