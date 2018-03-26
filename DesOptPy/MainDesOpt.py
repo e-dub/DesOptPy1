@@ -143,9 +143,12 @@ from DesOptPy import OptVideo
 from DesOptPy import OptResultReport
 import numpy as np
 try:
-    import cPickle as pickle
+    import _pickle as pickle
 except:
-    import pickle
+    try:
+        import cPickle as pickle
+    except:
+        import pickle
 import scipy.io as spio
 import time
 import copy
@@ -1227,7 +1230,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     OptSolData['OptName'] = OptName
     OptSolData['OptModel'] = OptModel
     OptSolData['OptTime'] = OptTime
-    OptSolData['loctime'] = loctime
+    #OptSolData['loctime'] = loctime
     OptSolData['today'] = today
     OptSolData['computerName'] = computerName
     OptSolData['operatingSystem'] = operatingSystem

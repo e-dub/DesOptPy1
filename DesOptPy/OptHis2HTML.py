@@ -199,7 +199,7 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
                                 str(round(xIterDenorm[y][x], 4)) + \
                                 "</td>"
             DesVar_table += "</tr>"
-    # Constraint  table generation
+    # Constraint table generation
     Constraint_table = "<td></td>"
     if gIter.size != 0:
         number_constraints = str(len(gIter[0]))

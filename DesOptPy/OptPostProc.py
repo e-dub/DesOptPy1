@@ -22,7 +22,7 @@ def OptPostProc(fGradOpt, gc, gOptActiveIndex, g_xLU_GradOptActive,
 #   § Calculate Lagrangian multipliers
 # -----------------------------------------------------------------------------
     if np.size(g_xLU_GradOptActive) > 0:
-        lambda_c, _, _, _ = np.linalg.lstsq(g_xLU_GradOptActive, -fGradOpt)  # lambda_c=np.linalg.solve(cGradOptActive,fGradOpt)
+        lambda_c, _, _, _ = np.linalg.lstsq(g_xLU_GradOptActive, -fGradOpt, rcond=None)  # lambda_c=np.linalg.solve(cGradOptActive,fGradOpt)
 
 # -----------------------------------------------------------------------------
 #   § Calculate shadow prices - Denormalization of Lagrangian multipliers

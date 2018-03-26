@@ -30,7 +30,13 @@ import sys
 #import getopt
 #import math
 import os
-import pickle
+try:
+    import _pickle as pickle
+except:
+    try:
+        import cPickle as pickle
+    except:
+        import pickle
 #import fnmatch
 import shutil
 import subprocess
@@ -190,7 +196,7 @@ def DoubleConvPlot(figName, data, dataLabel, xLabel, yLabel, Color,
 def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
     DirRunFiles = DesOptDir + "/Results/"+optname+"/RunFiles/"
     ResultsFolder = DesOptDir + "/Results/"+optname+"/ResultReport/"
-    file_OptSolData = open(DirRunFiles+optname+"_OptSol.pkl")
+    file_OptSolData = open(DirRunFiles+optname+"_OptSol.pkl", "rb")
     OptSolData = pickle.load(file_OptSolData)
     x0 = OptSolData['x0']
     xOpt = OptSolData['xOpt']
