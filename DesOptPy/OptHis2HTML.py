@@ -181,7 +181,7 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
         else:
             for x in range(0, nIter + 1):
                 ObjFct_table += "<tr>\n<td>" + str(x) + "</td>\n<td>" + \
-                                str(round(fIter[x], 4)) + \
+                                str(round(fIter[x][0], 4)) + \
                                 "</td>\n<td> no constraints </td>\n</tr>"
     # Design Variable table generation
     DesVar_table = "<td></td>"
