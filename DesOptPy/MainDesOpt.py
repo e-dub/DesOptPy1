@@ -82,6 +82,8 @@ Change log
 -------------------------------------------------------------------------------
 To do and ideas
 -------------------------------------------------------------------------------
+TODO: change private (inner) functions to _$FunctionName
+
 TODO: Return lagrangian multipliers for orderly: df/d[g, xU, xL] where non-
     active components are shown as zero!
 TODO: Constraint handling in PyGMO
@@ -156,15 +158,10 @@ import datetime
 import getpass
 import multiprocessing
 import platform
-from DesOptPy.Normalize import normalize, denormalize, normalizeSens
+from DesOptPy.Normalize import normalize, denormalize, normalizeSens, denormalizeSens
 from DesOptPy.OptPostProc import OptPostProc
 from DesOptPy.OptReadHis import OptReadHis
-try:
-    import PyGMO
-    from PyGMO.problem import base
-    IsPyGMO = True
-except:
-    IsPyGMO = False
+
 
 # -----------------------------------------------------------------------------
 # Package details
@@ -194,193 +191,9 @@ def PrintDesOptPy():
 #global nEval
 nEval = 0
 
-
-# -----------------------------------------------------------------------------
-# PyGMO call (must be outside of main function)
-# -----------------------------------------------------------------------------
-HistDat = []
-
-
-def CombSysEq(SysEq, x, gc):
-    f, g = SysEq(np.array(x), gc)
-    #global nEval
-    nEval += 1
-    return f, g
-
-# global xLast
-xLast = []
-
-
-def ObjFnEq(SysEq, x, gc):
-    global xLast
-    if x == xLast:
-        global fIt
-    else:
-        global fIt
-        global gIt
-        fIt, gIt = CombSysEq(SysEq, x, gc)
-        xLast = x
-    return fIt
-
-
-def ConFnEq(SysEq, x, gc):
-    global xLast
-    if x == xLast:
-        global gIt
-    else:
-        global fIt
-        global gIt
-        fIt, gIt = CombSysEq(SysEq, x, gc)
-        xLast = x
-    return gIt
-
-if IsPyGMO:
-    class OptSysEqPyGMO(base):
-        def __init__(self, SysEq=None, x0=0.0, xL=0.0, xU=1.0, gc=[],
-                     OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
-                     DesVarNorm="DesVarNorm", StatusReport=False, dim=1,
-                     nEval=0, inform=[], OptTime0=[], AlgOptions=[]):
-            super(OptSysEqPyGMO, self).__init__(dim)
-            self.set_bounds(xL, xU)
-            self.__dim = dim
-            self.gc = gc
-            self.SysEq = SysEq
-            self.nEval = nEval
-            self.OptName = OptName
-            self.Alg = Alg
-            self.xL = xL
-            self.xU = xU
-            self.x0 = x0
-            self.DesOptDir = DesOptDir
-            self.DesVarNorm = DesVarNorm
-            self.StatusReport = StatusReport
-            self.AlgInst = pyOpt.Optimizer(self.Alg)
-            self.inform = inform
-            self.OptTime0 = OptTime0
-            self.AlgOptions = AlgOptions
-
-        def _objfun_impl(self, x):
-            x = np.array(x)
-            f, g = CombSysEq(self.SysEq, x, self.gc)
-            gnew = np.zeros(np.shape(g))
-            global HistData
-            #global nEval
-            self.nEval = nEval
-            if nEval == 1:
-                HistData = pyOpt.History(self.OptName, 'w',
-                                         optimizer=self.AlgInst,
-                                         opt_prob=self.OptName)
-            HistData.write(x, "x")
-            HistData.write(f, "obj")
-            HistData.write(g, "con")
-            if self.StatusReport == 1:
-                # try:
-                OptHis2HTML.OptHis2HTML(self.OptName, self.Alg, self.AlgOptions,
-                                        self.DesOptDir, self.x0, self.xL,
-                                        self.xU, self.DesVarNorm,
-                                        self.inform[0], self.OptTime0)
-                # except:
-                #    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__")
-            if g is not []:
-                for ii in range(np.size(g)):
-                    if g[ii] > 0.0:
-                        gnew[ii] = 1e4
-                fpen = f + sum(gnew)
-            else:
-                fpen = f
-            return(fpen,)
-
-    class OptSysEqConPyGMO(base):
-        def __init__(self, SysEq=None, x0=0.0, xL=0.0, xU=1.0, gc=[],
-                     OptName="OptName", Alg="Alg", DesOptDir="DesOptDir",
-                     DesVarNorm="DesVarNorm", StatusReport=False, dim=1,
-                     nEval=0, inform=[], OptTime0=[], AlgOptions=[]):
-            #                                  (nx,       nxdis, nf,      ng,      ng, tolerance on con violation)
-            super(OptSysEqConPyGMO, self).__init__(dim, 0, 1, 2, 0, 1e-4)
-            self.set_bounds(xL, xU)
-            self.__dim = dim
-            self.gc = gc
-            self.SysEq = SysEq
-            self.nEval = nEval
-            self.OptName = OptName
-            self.Alg = Alg
-            self.x0 = x0
-            self.xL = xL
-            self.xU = xU
-            self.DesOptDir = DesOptDir
-            self.DesVarNorm = DesVarNorm
-            self.StatusReport = StatusReport
-            self.AlgInst = pyOpt.Optimizer(self.Alg)
-            self.inform = inform
-            self.OptTime0 = OptTime0
-            self.f = np.zeros(1)
-            self.g = np.zeros(np.shape(gc))
-            self.AlgOptions = AlgOptions
-
-        def _objfun_impl(self, x):
-            f = ObjFnEq(self.SysEq, x, self.gc)
-            self.f = f
-            global HistData
-            HistData.write(self.f, "obj")
-            if self.StatusReport == 1:
-                # try:
-                OptHis2HTML.OptHis2HTML(self.OptName, self.Alg,
-                                        self.AlgOptions, self.DesOptDir,
-                                        self.x0, self.xL, self.xU,
-                                        self.DesVarNorm, self.inform[0],
-                                        self.OptTime0)
-                # except:
-                #    sys.exit("Error on line "+ str(inspect.currentframe().f_lineno) + " of file "+ __file__ + ": Problem in OptSysEqPyGMO __init__ with status report")
-            return(f,)
-
-        def _compute_constraints_impl(self, x):
-            # self.nEval += 1
-            # print self.nEval
-            g = ConFnEq(self.SysEq, x, self.gc)
-            # f, g = self.SysEq(np.array(x), self.gc)
-            self.g = g
-            global HistData
-            #global nEval
-            self.nEval = nEval
-            if nEval == 1:
-                HistData = pyOpt.History(self.OptName, 'w',
-                                         optimizer=self.AlgInst,
-                                         opt_prob=self.OptName)
-            HistData.write(x, "x")
-            HistData.write(self.g, "con")
-
-            return g
-'''
-Constrained like this...does not work yet...
-
-class OptSysEqPyGMO(base):
-    def __init__(self, SysEq=None, xL=0.0, xU=2.0,  gc=[], dim=1, nEval=0, c_dim_=[], c_ineq_dim_=[], c_tol_=0):
-        super(OptSysEqPyGMO, self).__init__(dim, 0, c_dim_, c_ineq_dim_, c_tol_)
-        self.set_bounds(xL, xU)
-        self.__dim = dim
-        self.gc = gc
-        self.SysEq = SysEq
-        self.nEval = nEval
-
-    def _objfun_impl(self, x):
-        self.nEval += 1
-        f, g = self.SysEq(x, self.gc)
-        Data['g'] = g
-        output = open("ConPyGMO.pkl", 'wb')
-        pickle.dump(Data, output)
-        output.close()
-        return(f,)
-
-    def _compute_constraints_impl(self,params):
-        Data = pickle.load(open("ConPyGMO.pkl"))
-        g = Data["g"]
-        return g
-'''
 # -----------------------------------------------------------------------------
 # Main function DesOpt
 # -----------------------------------------------------------------------------
-
-
 def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
            SensCalc="FD", DesVarNorm=True, nf=1, deltax=1e-3,
            StatusReport=False, ResultReport=False, Video=False, nDoE=0,
@@ -477,10 +290,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 #       Optimization problem
 # -----------------------------------------------------------------------------
     import glob
+
 # -----------------------------------------------------------------------------
 #       Define functions: system equation, normalization, etc.
 # -----------------------------------------------------------------------------
-
     def OptSysEq(x):
         global nEval
         x = np.array(x)  # NSGA2 gives a list back, this makes a float! TODO Inquire why it does this!
@@ -610,6 +423,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         # dgdx = dgxdx * (np.tile((xU - xL), [len(g), 1]))
         return dfdx, dgdx, fail
 
+
 # -----------------------------------------------------------------------------
 # Removed Surrogate-based optimization, use SuPy!
 # -----------------------------------------------------------------------------
@@ -711,8 +525,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 
         elif Alg in ["SDPEN", "SOLVOPT"]:
             [fOpt, xOpt, inform] = OptAlg(OptProb, store_hst=OptName)
-        else:
+        else:                                               # NSGA2
             [fOpt, xOpt, inform] = OptAlg(OptProb, store_hst=OptName)
+            print(fOpt)
         if PrintOut:
             try:
                 print(OptProb.solution(0))
@@ -767,138 +582,61 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
     elif Alg[:5] == "PyGMO":
         DesVarNorm = "None"
-        # print nindiv
-        dim = np.size(x0)
-        # prob = OptSysEqPyGMO(dim=dim)
-        if not AlgOptions:
-            AlgOptions = OptAlgOptions.setDefault(Alg)
-        OptAlg = OptAlgOptions.setUserOptions(AlgOptions, Alg, OptName, OptAlg)
-        if ng == 0 or AlgOptions.ConstraintHandling == "SimplePenalty":
-            prob = OptSysEqPyGMO(SysEq=SysEq, x0=x0, xL=xL, xU=xU, gc=gc,
-                                 dim=dim, OptName=OptName, Alg=Alg,
-                                 DesOptDir=DesOptDir, DesVarNorm=DesVarNorm,
-                                 StatusReport=StatusReport, inform=inform,
-                                 OptTime0=OptTime0, AlgOptions=AlgOptions)
-            # prob = problem.death_penalty(prob_old, problem.death_penalty.method.KURI)
-            # algo = eval("PyGMO.algorithm." + Alg[6:]+"()")
-            # de (gen=100, f=0.8, cr=0.9, variant=2, ftol=1e-06, xtol=1e-06, screen_output=False)
-            # NSGAII (gen=100, cr=0.95, eta_c=10, m=0.01, eta_m=10)
-            # sga_gray.__init__(gen=1, cr=0.95, m=0.02, elitism=1, mutation=PyGMO.algorithm._algorithm._gray_mutation_type.UNIFORM, selection=PyGMO.algorithm._algorithm._gray_selection_type.ROULETTE, crossover=PyGMO.algorithm._algorithm._gray_crossover_type.SINGLE_POINT)
-            # nsga_II.__init__(gen=100, cr=0.95, eta_c=10, m=0.01, eta_m=10)
-            # emoa  (hv_algorithm=None, gen=100, sel_m=2, cr=0.95, eta_c=10, m=0.01, eta_m=10)
-            # pade  (gen=10, max_parallelism=1, decomposition=PyGMO.problem._problem._decomposition_method.BI, solver=None, T=8, weights=PyGMO.algorithm._algorithm._weight_generation.LOW_DISCREPANCY, z=[])
-            # nspso (gen=100, minW=0.4, maxW=1.0, C1=2.0, C2=2.0, CHI=1.0, v_coeff=0.5, leader_selection_range=5, diversity_mechanism=PyGMO.algorithm._algorithm._diversity_mechanism.CROWDING_DISTANCE)
-            # corana: (iter=10000, Ts=10, Tf=0.1, steps=1, bin_size=20, range=1)
-            # if Alg[6:] in ["de", "bee_colony", "nsga_II", "pso", "pso_gen", "cmaes", "py_cmaes",
-            #               "spea2", "nspso", "pade", "sea", "vega", "sga", "sga_gray", "de_1220",
-            #               "mde_pbx", "jde"]:
-            #    algo.gen = ngen
-            # elif Alg[6:] in ["ihs", "monte_carlo", "sa_corana"]:
-            #    algo.iter = ngen
-            # elif Alg[6:] == "sms_emoa":
-            #    print "sms_emoa not working"
-            # else:
-            #    sys.exit("improper PyGMO algorithm chosen")
-            # algo.f = 1
-            # algo.cr=1
-            # algo.ftol = 1e-3
-            # algo.xtol = 1e-3
-            # algo.variant = 2
-            # algo.screen_output = False
-            # if Alg == "PyGMO_de":
-            #    algo = PyGMO.algorithm.de(gen=ngen, f=1, cr=1, variant=2,
-            #                              ftol=1e-3, xtol=1e-3, screen_output=False)
-            # else:
-            #    algo = PyGMO.algorithm.de(gen=ngen, f=1, cr=1, variant=2,
-            #                              ftol=1e-3, xtol=1e-3, screen_output=False)
-            # pop = PyGMO.population(prob, nIndiv)
-            # pop = PyGMO.population(prob, nIndiv, seed=13598)  # Seed fixed for random generation of first individuals
-            # algo.evolve(pop)
-            isl = PyGMO.island(OptAlg, prob, AlgOptions.nIndiv)
-            isl.evolve(1)
-            isl.join()
-            xOpt = isl.population.champion.x
-            # fOpt = isl.population.champion.f[0]
-            nEval = isl.population.problem.fevals
-            nGen = int(nEval/AlgOptions.nIndiv)  # currently being overwritten and therefore not being used
-            StatusReport = False  # turn off status report, so not remade (and destroyed) in following call!
-            fOpt, gOpt, fail = OptSysEq(xOpt)  # verification of optimal solution as values above are based on penalty!
-        elif AlgOptions.ConstraintHandling == "CoevolutionPenalty":
-            prob = OptSysEqConPyGMO(SysEq=SysEq, x0=x0, xL=xL, xU=xU, gc=gc,
-                                    dim=dim, OptName=OptName, Alg=Alg,
-                                    DesOptDir=DesOptDir, DesVarNorm=DesVarNorm,
-                                    StatusReport=StatusReport, inform=inform,
-                                    OptTime0=OptTime0, AlgOptions=AlgOptions)
-            algo_self_adaptive = PyGMO.algorithm.cstrs_self_adaptive(OptAlg, AlgOptions.gen)
-            pop = PyGMO.population(prob, AlgOptions.nIndiv)
-            pop = algo_self_adaptive.evolve(pop)
-            xOpt = pop.champion.x
-            fOpt = pop.champion.f
-            #global nEval
-            # nEval = pop.problem.fevals
-            nGen = int(nEval/AlgOptions.nIndiv)
-        elif AlgOptions.ConstraintHandling == "MultiobjTrans":
-            Prob = OptSysEqConPyGMO(SysEq=SysEq, x0=x0, xL=xL, xU=xU, gc=gc,
-                                    dim=dim, OptName=OptName, Alg=Alg,
-                                    DesOptDir=DesOptDir, DesVarNorm=DesVarNorm,
-                                    StatusReport=StatusReport, inform=inform,
-                                    OptTime0=OptTime0, AlgOptions=AlgOptions)
-            ProbNew = (Prob, problem.con2mo.method.OBJ_CSTRS)
-            pop = population(prob_mo, pop_size)
-            pop = algo.evolve(pop)
-        elif AlgOptions.ConstraintHandling == "DeathPenalty":
-            Prob = OptSysEqConPyGMO(SysEq=SysEq, x0=x0, xL=xL, xU=xU, gc=gc,
-                                    dim=dim, OptName=OptName, Alg=Alg,
-                                    DesOptDir=DesOptDir, DesVarNorm=DesVarNorm,
-                                    StatusReport=StatusReport, inform=inform,
-                                    OptTime0=OptTime0, AlgOptions=AlgOptions)
-            ProbNew = PyGMO.problem.death_penalty(Prob,
-                                                  PyGMO.problem.death_penalty.method.SIMPLE)
-            isl = PyGMO.island(algo, ProbNew, AlgOptions.nIndiv)
-            isl.evolve(1)
-            isl.join()
-            xOpt = isl.population.champion.x
-            fOpt = isl.population.champion.f
-            nEval = isl.population.problem.fevals
-        elif AlgOptions.ConstraintHandling == "SelfAdaptivePenalty":
-            algo_self_adaptive = algorithm.cstrs_self_adaptive(algo, n_gen)
-            pop = population(Prob, pop_size)
-            pop = algo_self_adaptive.evolve(pop)
-            xOpt = pop.champion.x
-            fOpt = pop.champion.f
-            nEval = pop.problem.fevals
-        elif AlgOptions.ConstraintHandling == "Immune":
-            raise Exception("Error on line " +
-                            str(inspect.currentframe().f_lineno) +
-                            " of file " + __file__ +
-                            ": Constraint handling immune for PyGMO not yet \
-                            implemented in DesOptPy")
-            #sys.exit("Error on line " + str(inspect.currentframe().f_lineno) +
-            #         " of file " + __file__ +
-            #         ": Constraint handling immune for PyGMO not yet implemented in DesOptPy")
-        elif AlgOptions.ConstraintHandling == "Repair":
-            raise Exception("Error on line " +
-                            str(inspect.currentframe().f_lineno) +
-                            " of file " + __file__ +
-                            ": Constraint handling repair for PyGMO not yet \
-                            implemented in DesOptPy")
-            #sys.exit("Error on line " + str(inspect.currentframe().f_lineno) +
-            #         " of file " + __file__ +
-            #         ": Constraint handling repair for PyGMO not yet implemented in DesOptPy")
-        else:
-            raise Exception("Error on line " +
-                            str(inspect.currentframe().f_lineno) +
-                            " of file " + __file__ +
-                            ": Constraint handling for PyGMO not recognized")
-#            sys.exit("Error on line " + str(inspect.currentframe().f_lineno) +
-#                     " of file " + __file__ +
-#                     ": Constraint handling for PyGMO not recognized")
-        try:
-            global HistData
-            HistData.close()
-        except:
-            pass
-
+        import pygmo as pg
+        class OptProbPyGMO():
+            def fitness(self, x):
+                if DesVarNorm == "None":
+                    f, g, fail = OptSysEq(x)
+                else:
+                    f, g, fail = OptSysEqNorm(x)
+                try:
+                    g = g.tolist()
+                except:
+                    pass
+                g.insert(0, f)
+                global HistData
+                if nEval == 1:
+                    AlgInst = pyOpt.Optimizer(Alg)
+                    HistData = pyOpt.History(OptName, 'w', optimizer=AlgInst,
+                                             opt_prob=OptName)
+                HistData.write(x, "x")
+                HistData.write(f, "obj")
+                HistData.write(g, "con")
+                if StatusReport == 1:
+                    OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, 
+                                            DesOptDir, x0, xL, xU, DesVarNorm,
+                                            inform[0], OptTime0)
+                return(g)
+            def get_bounds(self):
+                if DesVarNorm == "None":
+                    return (xL, xU)
+                else:
+                    return (xLnorm, xUnorm)
+            def get_nic(self):
+                return(len(gc))
+            def get_nec(self):
+                return 0
+            def gradient(self, x):
+                return pg.estimate_gradient_h(lambda x: self.fitness(x), x)
+#        prob = pg.problem(OptProbPyGMO(xL.tolist(), xU.tolist(),
+#                                       xLnorm.tolist(), xUnorm.tolist(),
+#                                       gc.tolist(), DesVarNorm))
+        prob = pg.problem(OptProbPyGMO())
+        #algo = pg.algorithm(uda = pg.nlopt('auglag'))
+        #algo.extract(pg.nlopt).local_optimizer = pg.nlopt('var2')
+        #pop = pg.population(prob=prob, size=1)
+        
+        algo = pg.algorithm(pg.cstrs_self_adaptive(iters=30, 
+                                                   algo=eval("pg." + Alg[6:] + 
+                                                             '(10)')))
+        #algo = pg.algorithm(pg.cstrs_self_adaptive(iters=30, algo=pg.de(10)))
+        pop = pg.population(prob=prob, size=300)
+        pop.problem.c_tol = [1E-6] * len(gc)
+        pop = algo.evolve(pop)
+        xOpt = pop.champion_x
+        fOpt = pop.champion_f[0]
+        gOpt = pop.champion_f[1:]
+        
 # -----------------------------------------------------------------------------
 #        SciPy optimization
 # -----------------------------------------------------------------------------
@@ -1160,7 +898,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                 gGradOpt = gGradIter[-1]
             gGradOpt = gGradOpt.reshape([ng, nx]).T
             gGradOptActive = gGradOpt[:, gOptActiveIndex == True]
-            gGradOpt = []
+            #gGradOpt = []
             try:
                 cOptActive = gc[gOptActiveIndex == True]
                 cActiveType = ["Constraint"]*np.size(cOptActive)
@@ -1225,8 +963,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     OptSolData['gOpt'] = gOpt
     OptSolData['fGradIter'] = fGradIter
     OptSolData['gGradIter'] = gGradIter
-    OptSolData['fGradOpt'] = fGradOpt
     OptSolData['gGradOpt'] = gGradOpt
+    OptSolData['gGradOptDenorm'] =denormalizeSens(gGradOpt, x0, xL, xU, DesVarNorm)
+    OptSolData['fGradOpt'] = fGradOpt
+    OptSolData['fGradOptDenorm'] =denormalizeSens(fGradOpt, x0, xL, xU, DesVarNorm)
     OptSolData['OptName'] = OptName
     OptSolData['OptModel'] = OptModel
     OptSolData['OptTime'] = OptTime
@@ -1319,7 +1059,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         print("x* = " + str(xOpt.T))
         print("Lagrangian multipliers = " + str(lambda_c))
         print("Shadow prices = " + str(SPg))
-        print("Time of optimization [h:m:s] = " + OptTime)
+        print("Time of optimization [hh:mm:ss] = " + OptTime)
         try:
             print("nGen = " + str(nGen))
         except:
@@ -1337,6 +1077,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                       --channels 1 synth %s sine %f' % (t, freq))
     nEval = 0
     return xOpt, fOpt, OptSolData
+
+
+
 
 # -----------------------------------------------------------------------------
 #

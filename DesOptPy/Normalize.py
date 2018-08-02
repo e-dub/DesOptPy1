@@ -63,7 +63,7 @@ def denormalize(xNorm, x0, xL, xU, DesVarNorm):
 
 def normalizeSens(drdx, x0, xL, xU, DesVarNorm):
     if drdx == []:
-        return drdx
+        drdxNorm = drdx.copy()
     if DesVarNorm is "xLxU" or True:
         drdxNorm = (drdx)*np.tile((xU-xL), [np.shape(drdx)[0], 1])
     elif DesVarNorm is "xLx0":
@@ -73,7 +73,24 @@ def normalizeSens(drdx, x0, xL, xU, DesVarNorm):
     elif DesVarNorm is "xU":
         drdxNorm = drdx/np.tile(xU, [np.shape(drdx)[0], 1])
     elif DesVarNorm is "None" or None or False:
-        drdxNorm = drdx
+        drdxNorm = drdx.copy()
     else:
         print("Error: Normalization type not found: " + DesVarNorm)
     return drdxNorm
+
+def denormalizeSens(drdx, x0, xL, xU, DesVarNorm):
+    nx = len(x0)
+    nr = int(np.size(drdx)/nx)
+    if drdx == []:
+        drdxDenorm = drdx.copy()
+    if DesVarNorm is "xLxU" or True:
+        drdxDenorm = drdx.reshape(nx, nr)/np.tile((xU-xL).reshape((nx,1)), (1, nr))
+    elif DesVarNorm is "xLx0":
+        drdxDenorm = drdx.reshape(nx, nr)/np.tile((xL-x0).reshape((nx,1)), (1, nr))
+    elif DesVarNorm is "x0":
+        drdxDenorm = drdx.reshape(nx, nr)/np.tile((x0).reshape((nx,1)), (1, nr))
+    elif DesVarNorm is "xU":
+        drdxDenorm = drdx.reshape(nx, nr)/np.tile((xU).reshape((nx,1)), (1, nr))
+    elif DesVarNorm is "None" or None or False:
+        drdxDenorm = (drdx)/np.tile((xU-xL), [np.shape(drdx)[0], 1])
+    return drdxDenorm
