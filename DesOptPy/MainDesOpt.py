@@ -581,8 +581,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 #       PyGMO optimization
 # -----------------------------------------------------------------------------
     elif Alg[:5] == "PyGMO":
-        DesVarNorm = "None"
         import pygmo as pg
+        if not AlgOptions:
+            AlgOptions = OptAlgOptions.setDefault(Alg)
+        #OptAlg = OptAlgOptions.setUserOptions(AlgOptions, Alg, OptName, OptAlg)
         class OptProbPyGMO():
             def fitness(self, x):
                 if DesVarNorm == "None":
@@ -593,7 +595,6 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                     g = g.tolist()
                 except:
                     pass
-                g.insert(0, f)
                 global HistData
                 if nEval == 1:
                     AlgInst = pyOpt.Optimizer(Alg)
@@ -606,7 +607,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                     OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, 
                                             DesOptDir, x0, xL, xU, DesVarNorm,
                                             inform[0], OptTime0)
-                return(g)
+                fg = g
+                fg.insert(0, f)
+                return(fg)
             def get_bounds(self):
                 if DesVarNorm == "None":
                     return (xL, xU)
@@ -626,11 +629,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         #algo.extract(pg.nlopt).local_optimizer = pg.nlopt('var2')
         #pop = pg.population(prob=prob, size=1)
         
-        algo = pg.algorithm(pg.cstrs_self_adaptive(iters=30, 
+        algo = pg.algorithm(pg.cstrs_self_adaptive(iters=AlgOptions.gen,
                                                    algo=eval("pg." + Alg[6:] + 
                                                              '(10)')))
         #algo = pg.algorithm(pg.cstrs_self_adaptive(iters=30, algo=pg.de(10)))
-        pop = pg.population(prob=prob, size=300)
+        pop = pg.population(prob=prob, size=AlgOptions.nIndiv)
         pop.problem.c_tol = [1E-6] * len(gc)
         pop = algo.evolve(pop)
         xOpt = pop.champion_x

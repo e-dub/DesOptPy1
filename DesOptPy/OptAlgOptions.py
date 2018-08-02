@@ -18,7 +18,7 @@ class setDefault():
     def __init__(self, Alg):
         self.Alg = Alg
         if Alg[:5] == "PyGMO":
-            import PyGMO
+            import pygmo as pg
         if Alg == "MMA":
             self.GEPS = 1.0e-3
             self.DABOBJ = 1.0e-3
@@ -176,9 +176,17 @@ class setDefault():
             self.iout = 6               # Output Unit Number
             self.IFILE = True           # Output File Name
         # elif Alg[:5] == "PyGMO":
-        #    import PyGMO
-        #    self = eval("PyGMO.algorithm." + Alg[6:]+"()")
+        #    import pygmo as pg
+        #    self = eval("pg." + Alg[6:]+"()")
         elif Alg == "PyGMO_de":
+            self.gen = 100
+            self.f = 0.8
+            self.cr = 0.9
+            self.variant = 2
+            self.ftol = 1e-3
+            self.xtol = 1e-3
+            self.screen_output = False
+        elif Alg == "PyGMO_sade":
             self.gen = 100
             self.f = 0.8
             self.cr = 0.9
@@ -201,7 +209,7 @@ class setDefault():
             self.ftol = 1e-06
             self.xtol = 1e-06
             self.screen_output = False
-        elif Alg == "PyGMO_de_1220":
+        elif Alg == "PyGMO_de1220":
             self.gen = 100
             self.variant_adptv = 1
             self.allowed_variants = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -231,30 +239,30 @@ class setDefault():
             self.gen = 100
             self.limit = 20
         elif Alg == "PyGMO_sga":
-            self.gen = 10
+            self.gen = 30
             self.cr = 0.95
             self.m = 0.02
             self.elitism = 1
-            self.mutation = PyGMO.algorithm._algorithm._sga_mutation_type.GAUSSIAN
+            #self.mutation = pg._algorithm._sga_mutation_type.GAUSSIAN
             self.width = 0.1
-            self.selection = PyGMO.algorithm._algorithm._sga_selection_type.ROULETTE
-            self.crossover = PyGMO.algorithm._algorithm._sga_crossover_type.EXPONENTIAL
+            #self.selection = pg._algorithm._sga_selection_type.ROULETTE
+            #self.crossover = pg._algorithm._sga_crossover_type.EXPONENTIAL
         elif Alg == "PyGMO_vega":
             self.gen = 1
             self.cr = 0.95
             self.m = 0.02
             self.elitism = 1
-            self.mutation = PyGMO.algorithm._algorithm._vega_mutation_type.GAUSSIAN
+            self.mutation = pg._algorithm._vega_mutation_type.GAUSSIAN
             self.width = 0.1
-            self.crossover = PyGMO.algorithm._algorithm._vega_crossover_type.EXPONENTIAL
+            self.crossover = pg._algorithm._vega_crossover_type.EXPONENTIAL
         elif Alg == "PyGMO_sga_gray":
             self.gen = 10
             self.cr = 0.95
             self.m = 0.02
             self.elitism = 1
-            self.mutation = PyGMO.algorithm._algorithm._gray_mutation_type.UNIFORM
-            self.selection = PyGMO.algorithm._algorithm._gray_selection_type.ROULETTE
-            self.crossover = PyGMO.algorithm._algorithm._gray_crossover_type.SINGLE_POINT
+            self.mutation = pg._algorithm._gray_mutation_type.UNIFORM
+            self.selection = pg._algorithm._gray_selection_type.ROULETTE
+            self.crossover = pg._algorithm._gray_crossover_type.SINGLE_POINT
         elif Alg == "PyGMO_nsga_II":
             self.gen = 100
             self.cr = 0.95
@@ -294,7 +302,7 @@ class setDefault():
             self.m = 0.01
             self.eta_m = 50
             self.archive_size = 0
-        elif Alg == "PyGMO_sa_corana":
+        elif Alg == "PyGMO_simulated_annealing":
             self.gen = 10
             self.iter = 10000
             self.Ts = 10
@@ -302,6 +310,10 @@ class setDefault():
             self.steps = 1
             self.bin_size = 20
             self.range = 1
+        elif Alg == "PyGMO_xnes":
+            self.gen = 100
+            self.iter = 10000
+            self.limit = 20            
         elif Alg == "PyGMO_bee_colony":
             self.gen = 100
             self.limit = 20
@@ -318,7 +330,7 @@ class setDefault():
             self.original_algo_penalties = None
             self.pop_penalties_size = 30
             self.gen = 20
-            # self.method = PyGMO.algorithm._algorithm._co_evo_method_type.SIMPLE
+            # self.method = pg._algorithm._co_evo_method_type.SIMPLE
             self.pen_lower_bound = 0.0
             self.pen_upper_bound = 100000.0
             self.f_tol = 1e-15
@@ -327,9 +339,9 @@ class setDefault():
             self.algorithm = None
             self.algorithm_immune = None
             self.gen = 1
-            self.select_method = PyGMO.algorithm._algorithm._immune_select_method_type.BEST_ANTIBODY
-            self.inject_method = PyGMO.algorithm._algorithm._immune_inject_method_type.CHAMPION
-            self.distance_method = PyGMO.algorithm._algorithm._immune_distance_method_type.EUCLIDEAN
+            self.select_method = pg._algorithm._immune_select_method_type.BEST_ANTIBODY
+            self.inject_method = pg._algorithm._immune_inject_method_type.CHAMPION
+            self.distance_method = pg._algorithm._immune_distance_method_type.EUCLIDEAN
             self.phi = 0.5
             self.gamma = 0.5
             self.sigma = 0.3333333333333333
@@ -501,7 +513,7 @@ class setDefault():
                      " of file " + __file__ +
                      ": Algorithm misspelled or not supported")
         if Alg[:5] == "PyGMO":
-            self.nIndiv = 8
+            self.nIndiv = 100
             self.ConstraintHandling = "CoevolutionPenalty"
 
     def setSimple(self, stopTol=[], maxIter=[], maxEval=[]):
@@ -568,7 +580,7 @@ class setDefault():
 
 def setUserOptions(UserOpt, Alg, OptName, OptAlg):
     if Alg[:5] == "PyGMO":
-        import PyGMO
+        import pygmo as pg
     elif Alg == "NSGA2":
         pass
     elif UserOpt.IFILE is True:     # needs to be changed as all non-pygmo algorithms land here! only for pyOpt!
@@ -718,107 +730,107 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
         OptAlg.setOption("MAXEVAL",  int(UserOpt.MAXEVAL))
         OptAlg.setOption("MAXTIME", int(UserOpt.MAXTIME))
     elif Alg == "PyGMO_de":
-        OptAlg = PyGMO.algorithm.de(gen=UserOpt.gen, f=UserOpt.f,
+        OptAlg = pg.de(gen=UserOpt.gen, f=UserOpt.f,
                                     cr=UserOpt.cr, variant=UserOpt.variant,
                                     ftol=UserOpt.ftol, xtol=UserOpt.xtol,
                                     screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_jde":
-        OptAlg = PyGMO.algorithm.jde(gen=UserOpt.gen, variant=UserOpt.variant,
+        OptAlg = pg.jde(gen=UserOpt.gen, variant=UserOpt.variant,
                                      variant_adptv=UserOpt.variant_adptv,
                                      ftol=UserOpt.ftol, xtol=UserOpt.xtol,
                                      memory=UserOpt.memory,
                                      screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_mde_pbx":
-        OptAlg = PyGMO.algorithm.mde_pbx(gen=UserOpt.gen, qperc=UserOpt.qperc,
+        OptAlg = pg.mde_pbx(gen=UserOpt.gen, qperc=UserOpt.qperc,
                                          nexp=UserOpt.nexp, ftol=UserOpt.ftol,
                                          xtol=UserOpt.xtol,
                                          screen_output=UserOpt.screen_output)
-    elif Alg == "PyGMO_de_1220":
-        OptAlg = PyGMO.algorithm.de_1220(gen=UserOpt.gen,
+    elif Alg == "PyGMO_de1220":
+        OptAlg = pg.de1220(gen=UserOpt.gen,
                                          variant_adptv=UserOpt.variant_adptv,
                                          allowed_variants=UserOpt.allowed_variants,
                                          ftol=UserOpt.ftol, xtol=UserOpt.xtol,
                                          screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_pso":
-        OptAlg = PyGMO.algorithm.pso(gen=UserOpt.gen, omega=UserOpt.omega,
+        OptAlg = pg.pso(gen=UserOpt.gen, omega=UserOpt.omega,
                                      eta1=UserOpt.eta1, eta2=UserOpt.eta2,
                                      vcoeff=UserOpt.vcoeff,
                                      variant=UserOpt.variant,
                                      neighb_type=UserOpt.neighb_type,
                                      neighb_param=UserOpt.neighb_param)
     elif Alg == "PyGMO_pso_gen":
-        OptAlg = PyGMO.algorithm.pso_gen(gen=UserOpt.gen, omega=UserOpt.omega,
+        OptAlg = pg.pso_gen(gen=UserOpt.gen, omega=UserOpt.omega,
                                          eta1=UserOpt.eta1, eta2=UserOpt.eta2,
                                          vcoeff=UserOpt.vcoeff,
                                          variant=UserOpt.variant,
                                          neighb_type=UserOpt.neighb_type,
                                          neighb_param=UserOpt.neighb_param)
     elif Alg == "PyGMO_sea":
-        OptAlg = PyGMO.algorithm.sea(gen=UserOpt.gen, limit=UserOpt.limit)
+        OptAlg = pg.sea(gen=UserOpt.gen, limit=UserOpt.limit)
     elif Alg == "PyGMO_sga":
-        OptAlg = PyGMO.algorithm.sga(gen=UserOpt.gen, cr=UserOpt.cr,
+        OptAlg = pg.sga(gen=UserOpt.gen, cr=UserOpt.cr,
                                      m=UserOpt.m, elitism=UserOpt.elitism,
                                      mutation=UserOpt.mutation,
                                      width=UserOpt.width,
                                      selection=UserOpt.selection,
                                      crossover=UserOpt.crossover)
     elif Alg == "PyGMO_vega":
-        OptAlg = PyGMO.algorithm.vega(gen=UserOpt.gen, cr=UserOpt.cr,
+        OptAlg = pg.vega(gen=UserOpt.gen, cr=UserOpt.cr,
                                       m=UserOpt.m, elitism=UserOpt.elitism,
                                       mutation=UserOpt.mutation,
                                       width=UserOpt.width,
                                       crossover=UserOpt.crossover)
     elif Alg == "PyGMO_sga_gray":
-        OptAlg = PyGMO.algorithm.sga_gray(gen=UserOpt.gen, cr=UserOpt.cr,
+        OptAlg = pg.sga_gray(gen=UserOpt.gen, cr=UserOpt.cr,
                                           m=UserOpt.m, elitism=UserOpt.elitism,
                                           mutation=UserOpt.mutation,
                                           selection=UserOpt.selection,
                                           crossover=UserOpt.crossover)
     elif Alg == "PyGMO_nsga_II":
-        OptAlg = PyGMO.algorithm.nsga_II(gen=UserOpt.gen, cr=UserOpt.cr,
+        OptAlg = pg.nsga_II(gen=UserOpt.gen, cr=UserOpt.cr,
                                          eta_c=UserOpt.eta_c, m=UserOpt.m,
                                          eta_m=UserOpt.eta_m)
     elif Alg == "PyGMO_sms_emoa":
-        OptAlg = PyGMO.algorithm.sms_emoa(hv_algorithm=UserOpt.hv_algorithm,
+        OptAlg = pg.sms_emoa(hv_algorithm=UserOpt.hv_algorithm,
                                           gen=UserOpt.gen, cr=UserOpt.cr,
                                           eta_c=UserOpt.eta_c,
                                           m=UserOpt.m, eta_m=UserOpt.eta_m)
     elif Alg == "PyGMO_pade":
-        OptAlg = PyGMO.algorithm.pade(gen=UserOpt.gen,
+        OptAlg = pg.pade(gen=UserOpt.gen,
                                       decomposition=UserOpt.decomposition,
                                       weights=UserOpt.weights,
                                       solver=UserOpt.weights,
                                       threads=UserOpt.threads,
                                       T=UserOpt.T, z=UserOpt.z)
     elif Alg == "PyGMO_nspso":
-        OptAlg = PyGMO.algorithm.nspso(gen=UserOpt.gen, minW=UserOpt.minW,
+        OptAlg = pg.nspso(gen=UserOpt.gen, minW=UserOpt.minW,
                                        maxW=UserOpt.maxW, C1=UserOpt.C1,
                                        C2=UserOpt.C2, CHI=UserOpt.CHI,
                                        v_coeff=UserOpt.v_coeff,
                                        leader_selection_range=UserOpt.leader_selection_range)
     elif Alg == "PyGMO_spea2":
-        OptAlg = PyGMO.algorithm.spea2(gen=UserOpt.gen, cr=UserOpt.cr,
+        OptAlg = pg.spea2(gen=UserOpt.gen, cr=UserOpt.cr,
                                        eta_c=UserOpt.eta_c, m=UserOpt.m,
                                        eta_m=UserOpt.eta_m,
                                        archive_size=UserOpt.archive_size)
     elif Alg == "PyGMO_sa_corana":
-        OptAlg = PyGMO.algorithm.sa_corana(iter=UserOpt.iter, Ts=UserOpt.Ts,
+        OptAlg = pg.sa_corana(iter=UserOpt.iter, Ts=UserOpt.Ts,
                                            Tf=UserOpt.Tf, steps=UserOpt.steps,
                                            bin_size=UserOpt.bin_size,
                                            range=UserOpt.range)
     elif Alg == "PyGMO_bee_colony":
-        OptAlg = PyGMO.algorithm.bee_colony(gen=UserOpt.gen,
+        OptAlg = pg.bee_colony(gen=UserOpt.gen,
                                             limit=UserOpt.limit)
     elif Alg == "PyGMO_ms":
-        OptAlg = PyGMO.algorithm.ms(algorithm=UserOpt.algorithm,
+        OptAlg = pg.ms(algorithm=UserOpt.algorithm,
                                     iter=UserOpt.iter)
     elif Alg == "PyGMO_mbh":
-        OptAlg = PyGMO.algorithm.mbh(algorithm=UserOpt.algorithm,
+        OptAlg = pg.mbh(algorithm=UserOpt.algorithm,
                                      stop=UserOpt.stop,
                                      perturb=UserOpt.perturb,
                                      screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_cstrs_co_evolution":
-        OptAlg = PyGMO.algorithm.cstrs_co_evolution(original_algo=UserOpt.original_algo,
+        OptAlg = pg.cstrs_co_evolution(original_algo=UserOpt.original_algo,
                                                     original_algo_penalties=UserOpt.original_algo_penalties,
                                                     pop_penalties_size=UserOpt.pop_penalties_size,
                                                     gen=UserOpt.gen,
@@ -827,7 +839,7 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
                                                     f_tol=UserOpt.f_tol,
                                                     x_tol=UserOpt.x_tol)
     elif Alg == "PyGMO_cstrs_immune_system":
-        OptAlg = PyGMO.algorithm.cstrs_immune_system(algorithm=UserOpt.algorithm,
+        OptAlg = pg.cstrs_immune_system(algorithm=UserOpt.algorithm,
                                                      algorithm_immune=UserOpt.algorithm_immune,
                                                      gen=UserOpt.gen,
                                                      select_method=UserOpt.select_method,
@@ -839,7 +851,7 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
                                                      f_tol=UserOpt.f_tol,
                                                      x_tol=UserOpt.x_tol)
     elif Alg == "PyGMO_cstrs_core":
-        OptAlg = PyGMO.algorithm.cstrs_core(algorithm=UserOpt.algorithm,
+        OptAlg = pg.cstrs_core(algorithm=UserOpt.algorithm,
                                             repair_algorithm=UserOpt.repair_algorithm,
                                             gen=UserOpt.gen,
                                             repair_frequency=UserOpt.repair_frequency,
@@ -847,81 +859,81 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
                                             f_tol=UserOpt.f_tol,
                                             x_tol=UserOpt.x_tol)
     elif Alg == "PyGMO_cs":
-        OptAlg = PyGMO.algorithm.cs(max_eval=UserOpt.max_eval,
+        OptAlg = pg.cs(max_eval=UserOpt.max_eval,
                                     stop_range=UserOpt.stop_range,
                                     start_range=UserOpt.start_range,
                                     reduction_coeff=UserOpt.reduction_coeff)
     elif Alg == "PyGMO_ihs":
-        OptAlg = PyGMO.algorithm.ihs(iter=UserOpt.iter, hmcr=UserOpt.hmcr,
+        OptAlg = pg.ihs(iter=UserOpt.iter, hmcr=UserOpt.hmcr,
                                      par_min=UserOpt.par_min,
                                      par_max=UserOpt.par_max,
                                      bw_min=UserOpt.bw_min,
                                      bw_max=UserOpt.bw_max)
     elif Alg == "PyGMO_monte_carlo":
-        OptAlg = PyGMO.algorithm.monte_carlo(iter=UserOpt.iter)
+        OptAlg = pg.monte_carlo(iter=UserOpt.iter)
     elif Alg == "PyGMO_py_example":
-        OptAlg = PyGMO.algorithm.py_example(iter=UserOpt.iter)
+        OptAlg = pg.py_example(iter=UserOpt.iter)
     elif Alg == "PyGMO_py_cmaes":
-        OptAlg = PyGMO.algorithm.py_cmaes(gen=UserOpt.gen, cc=UserOpt.cc,
+        OptAlg = pg.py_cmaes(gen=UserOpt.gen, cc=UserOpt.cc,
                                           cs=UserOpt.cs, c1=UserOpt.c1,
                                           cmu=UserOpt.cmu, ftol=UserOpt.ftol,
                                           xtol=UserOpt.xtol,
                                           memory=UserOpt.memory,
                                           screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_cmaes":
-        OptAlg = PyGMO.algorithm.cmaes(gen=UserOpt.gen, cc=UserOpt.cc,
+        OptAlg = pg.cmaes(gen=UserOpt.gen, cc=UserOpt.cc,
                                        cs=UserOpt.cs, c1=UserOpt.c1,
                                        cmu=UserOpt.cmu, ftol=UserOpt.ftol,
                                        xtol=UserOpt.xtol,
                                        memory=UserOpt.memory,
                                        screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_scipy_fmin":
-        OptAlg = PyGMO.algorithm.scipy_fmin(maxiter=UserOpt.maxiter,
+        OptAlg = pg.scipy_fmin(maxiter=UserOpt.maxiter,
                                             xtol=UserOpt.xtol,
                                             ftol=UserOpt.ftol,
                                             maxfun=UserOpt.maxfun,
                                             disp=UserOpt.disp)
     elif Alg == "PyGMO_scipy_l_bfgs_b":
-        OptAlg = PyGMO.algorithm.scipy_l_bfgs_b(maxfun=UserOpt.maxfun,
+        OptAlg = pg.scipy_l_bfgs_b(maxfun=UserOpt.maxfun,
                                                 m=UserOpt.m,
                                                 factr=UserOpt.factr,
                                                 pgtol=UserOpt.pgtol,
                                                 epsilon=UserOpt.epsilon,
                                                 screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_scipy_slsqp":
-        OptAlg = PyGMO.algorithm.scipy_slsqp(max_iter=UserOpt.max_iter,
+        OptAlg = pg.scipy_slsqp(max_iter=UserOpt.max_iter,
                                              acc=UserOpt.acc,
                                              epsilon=UserOpt.epsilon,
                                              screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_scipy_tnc":
-        OptAlg = PyGMO.algorithm.scipy_tnc(maxfun=UserOpt.maxfun,
+        OptAlg = pg.scipy_tnc(maxfun=UserOpt.maxfun,
                                            xtol=UserOpt.xtol,
                                            ftol=UserOpt.ftol,
                                            pgtol=UserOpt.pgtol,
                                            epsilon=UserOpt.epsilon,
                                            screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_scipy_cobyla":
-        OptAlg = PyGMO.algorithm.scipy_cobyla(max_fun=UserOpt.max_fun,
+        OptAlg = pg.scipy_cobyla(max_fun=UserOpt.max_fun,
                                               rho_end=UserOpt.rho_end,
                                               screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_nlopt_cobyla":
-        OptAlg = PyGMO.algorithm.nlopt_cobyla(max_iter=UserOpt.max_iter,
+        OptAlg = pg.nlopt_cobyla(max_iter=UserOpt.max_iter,
                                               ftol=UserOpt.ftol,
                                               xtol=UserOpt.xtol)
     elif Alg == "PyGMO_nlopt_bobyqa":
-        OptAlg = PyGMO.algorithm.nlopt_bobyqa(max_iter=UserOpt.max_iter,
+        OptAlg = pg.nlopt_bobyqa(max_iter=UserOpt.max_iter,
                                               ftol=UserOpt.ftol,
                                               xtol=UserOpt.xtol)
     elif Alg == "PyGMO_nlopt_sbplx":
-        OptAlg = PyGMO.algorithm.nlopt_sbplx(max_iter=UserOpt.max_iter,
+        OptAlg = pg.nlopt_sbplx(max_iter=UserOpt.max_iter,
                                              ftol=UserOpt.ftol,
                                              xtol=UserOpt.xtol)
     elif Alg == "PyGMO_nlopt_mma":
-        OptAlg = PyGMO.algorithm.nlopt_mma(max_iter=UserOpt.max_iter,
+        OptAlg = pg.nlopt_mma(max_iter=UserOpt.max_iter,
                                            ftol=UserOpt.ftol,
                                            xtol=UserOpt.xtol)
     elif Alg == "PyGMO_nlopt_auglag":
-        OptAlg = PyGMO.algorithm.nlopt_auglag(aux_algo_id=UserOpt.aux_algo_id,
+        OptAlg = pg.nlopt_auglag(aux_algo_id=UserOpt.aux_algo_id,
                                               max_iter=UserOpt.max_iter,
                                               ftol=UserOpt.ftol,
                                               xtol=UserOpt.xtol,
@@ -929,7 +941,7 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
                                               aux_ftol=UserOpt.aux_ftol,
                                               aux_xtol=UserOpt.aux_xtol)
     elif Alg == "PyGMO_nlopt_auglag_eq":
-        OptAlg = PyGMO.algorithm.nlopt_auglag_eq(aux_algo_id=UserOpt.aux_algo_id,
+        OptAlg = pg.nlopt_auglag_eq(aux_algo_id=UserOpt.aux_algo_id,
                                                  max_iter=UserOpt.max_iter,
                                                  ftol=UserOpt.ftol,
                                                  xtol=UserOpt.xtol,
@@ -937,46 +949,46 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
                                                  aux_ftol=UserOpt.aux_ftol,
                                                  aux_xtol=UserOpt.aux_xtol)
     elif Alg == "PyGMO_nlopt_slsqp":
-        OptAlg = PyGMO.algorithm.nlopt_slsqp(max_iter=UserOpt.max_iter,
+        OptAlg = pg.nlopt_slsqp(max_iter=UserOpt.max_iter,
                                              ftol=UserOpt.ftol,
                                              xtol=UserOpt.xtol)
     elif Alg == "PyGMO_gsl_nm2rand":
-        OptAlg = PyGMO.algorithm.gsl_nm2rand(max_iter=UserOpt.max_iter)
+        OptAlg = pg.gsl_nm2rand(max_iter=UserOpt.max_iter)
     elif Alg == "PyGMO_gsl_nm2":
-        OptAlg = PyGMO.algorithm.gsl_nm2(max_iter=UserOpt.max_iter)
+        OptAlg = pg.gsl_nm2(max_iter=UserOpt.max_iter)
     elif Alg == "PyGMO_gsl_nm":
-        OptAlg = PyGMO.algorithm.gsl_nm(max_iter=UserOpt.max_iter)
+        OptAlg = pg.gsl_nm(max_iter=UserOpt.max_iter)
     elif Alg == "PyGMO_gsl_pr":
-        OptAlg = PyGMO.algorithm.gsl_pr(max_iter=UserOpt.max_iter,
+        OptAlg = pg.gsl_pr(max_iter=UserOpt.max_iter,
                                         step_size=UserOpt.step_size,
                                         tol=UserOpt.tol,
                                         grad_step_size=UserOpt.grad_step_size,
                                         grad_tol=UserOpt.grad_tol)
     elif Alg == "PyGMO_gsl_fr":
-        OptAlg = PyGMO.algorithm.gsl_fr(max_iter=UserOpt.max_iter,
+        OptAlg = pg.gsl_fr(max_iter=UserOpt.max_iter,
                                         step_size=UserOpt.step_size,
                                         tol=UserOpt.tol,
                                         grad_step_size=UserOpt.grad_step_size,
                                         grad_tol=UserOpt.grad_tol)
     elif Alg == "PyGMO_gsl_bfgs2":
-        OptAlg = PyGMO.algorithm.gsl_bfgs2(max_iter=UserOpt.max_iter,
+        OptAlg = pg.gsl_bfgs2(max_iter=UserOpt.max_iter,
                                            step_size=UserOpt.step_size,
                                            tol=UserOpt.tol,
                                            grad_step_size=UserOpt.grad_step_size,
                                            grad_tol=UserOpt.grad_tol)
     elif Alg == "PyGMO_gsl_bfgs":
-        OptAlg = PyGMO.algorithm.gsl_bfgs(max_iter=UserOpt.max_iter,
+        OptAlg = pg.gsl_bfgs(max_iter=UserOpt.max_iter,
                                           step_size=UserOpt.step_size,
                                           tol=UserOpt.tol,
                                           grad_step_size=UserOpt.grad_step_size,
                                           grad_tol=UserOpt.grad_tol)
     elif Alg == "PyGMO_snopt":
-        OptAlg = PyGMO.algorithm.snopt(major_iter=UserOpt.major_iter,
+        OptAlg = pg.snopt(major_iter=UserOpt.major_iter,
                                        feas_tol=UserOpt.feas_tol,
                                        opt_tol=UserOpt.opt_tol,
                                        screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_ipopt":
-        OptAlg = PyGMO.algorithm.ipopt(max_iter=UserOpt.max_iter,
+        OptAlg = pg.ipopt(max_iter=UserOpt.max_iter,
                                        constr_viol_tol=UserOpt.contr_viol_tol,
                                        dual_inf_tol=UserOpt.dual_inf_tol,
                                        compl_inf_tol=UserOpt.compl_inf_tol,
@@ -985,7 +997,7 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
                                        mu_init=UserOpt.mu_init,
                                        screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_cstrs_self_adaptive":
-        OptAlg = PyGMO.algorithm.cstrs_self_adaptive(algorithm=UserOpt.algorithm,
+        OptAlg = pg.cstrs_self_adaptive(algorithm=UserOpt.algorithm,
                                                      max_iter=UserOpt.max_iter,
                                                      f_tol=UserOpt.f_tol,
                                                      x_tol=UserOpt.x_tol)
