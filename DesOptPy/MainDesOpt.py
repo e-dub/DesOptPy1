@@ -1,11 +1,12 @@
-# -*-  coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 -------------------------------------------------------------------------------
 Title:          MainDesOpt.py
+Version:        1.4α
 Units:          Unitless
 Author:         E. J. Wehrle
-Contributors:   S. Rudolph, F. Wachter, M. Richter
-Date:           July 12, 2017
+Contributors:   S. Rudolph (<α0.5), F. Wachter (α0.5-1.2), M. Richter (α0.5)
+Date:           August 14, 2018
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -19,6 +20,8 @@ Change log
 1.4 (Future)
     General clean-up
     NumPy problems
+    PyGMO working again
+    Sensitivity analysis
 
 1.3 (July 30, 2016)
     Removed support for surrogate model based optimization
@@ -83,11 +86,9 @@ Change log
 To do and ideas
 -------------------------------------------------------------------------------
 TODO: change private (inner) functions to _$FunctionName
-
 TODO: Return lagrangian multipliers for orderly: df/d[g, xU, xL] where non-
     active components are shown as zero!
 TODO: Constraint handling in PyGMO
-TODO  max line length = 79? (PEP8)
 TODO every iteration to output window (file)
     to output text file as well as status report.
 TODO normalize deltax?
@@ -109,12 +110,6 @@ TODO Output data formats
         readable in Excel?
 TODO excel report with "from xlwt import Workbook"
 TODO range to xrange (xrange is faster)?
-TODO SBDO
-   Adaptive surrogating!
-   DoE methods
-   Approximation methods
-       Polynomial
-       Radial basis: scipy.interpolate.Rbf
 TODO Examples
    SIMP with ground structure
    Multimaterial design (SIMP)
@@ -158,7 +153,8 @@ import datetime
 import getpass
 import multiprocessing
 import platform
-from DesOptPy.Normalize import normalize, denormalize, normalizeSens, denormalizeSens
+from DesOptPy.Normalize import(normalize, denormalize, normalizeSens,
+                               denormalizeSens)
 from DesOptPy.OptPostProc import OptPostProc
 from DesOptPy.OptReadHis import OptReadHis
 
@@ -604,7 +600,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                 HistData.write(f, "obj")
                 HistData.write(g, "con")
                 if StatusReport == 1:
-                    OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, 
+                    OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions,
                                             DesOptDir, x0, xL, xU, DesVarNorm,
                                             inform[0], OptTime0)
                 fg = g
@@ -628,9 +624,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         #algo = pg.algorithm(uda = pg.nlopt('auglag'))
         #algo.extract(pg.nlopt).local_optimizer = pg.nlopt('var2')
         #pop = pg.population(prob=prob, size=1)
-        
+
         algo = pg.algorithm(pg.cstrs_self_adaptive(iters=AlgOptions.gen,
-                                                   algo=eval("pg." + Alg[6:] + 
+                                                   algo=eval("pg." + Alg[6:] +
                                                              '(10)')))
         #algo = pg.algorithm(pg.cstrs_self_adaptive(iters=30, algo=pg.de(10)))
         pop = pg.population(prob=prob, size=AlgOptions.nIndiv)
@@ -639,7 +635,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         xOpt = pop.champion_x
         fOpt = pop.champion_f[0]
         gOpt = pop.champion_f[1:]
-        
+
 # -----------------------------------------------------------------------------
 #        SciPy optimization
 # -----------------------------------------------------------------------------
@@ -967,9 +963,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     OptSolData['fGradIter'] = fGradIter
     OptSolData['gGradIter'] = gGradIter
     OptSolData['gGradOpt'] = gGradOpt
-    OptSolData['gGradOptDenorm'] =denormalizeSens(gGradOpt, x0, xL, xU, DesVarNorm)
+    OptSolData['gGradOptDenorm'] =denormalizeSens(gGradOpt, x0, xL, xU,
+                                                  DesVarNorm)
     OptSolData['fGradOpt'] = fGradOpt
-    OptSolData['fGradOptDenorm'] =denormalizeSens(fGradOpt, x0, xL, xU, DesVarNorm)
+    OptSolData['fGradOptDenorm'] =denormalizeSens(fGradOpt, x0, xL, xU,
+                                                  DesVarNorm)
     OptSolData['OptName'] = OptName
     OptSolData['OptModel'] = OptModel
     OptSolData['OptTime'] = OptTime

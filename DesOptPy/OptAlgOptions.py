@@ -39,7 +39,7 @@ class setDefault():
             self.ACCQP = 1.0e-6    # QP Solver Convergence Accurancy
             self.STPMIN = 1.0e-6   # Minimum Step Length
             self.MAXFUN = 10       # Maximum Number of Function Calls During Line Search
-            self.MAXIT = 50        # Maximum Number of Outer Iterations
+            self.MAXIT = 100        # Maximum Number of Outer Iterations
             self.RHOB = 0.         # BFGS-Update Matrix Initialization Parameter
             self.MODE = 0          # NLPQL Mode (0 - Normal Execution, 1 to 18 - See Manual)
             self.LQL = True        # QP Solver (True - Quasi-Newton, False - Cholesky)
@@ -179,7 +179,7 @@ class setDefault():
         #    import pygmo as pg
         #    self = eval("pg." + Alg[6:]+"()")
         elif Alg == "PyGMO_de":
-            self.gen = 100
+            self.gen = 10
             self.f = 0.8
             self.cr = 0.9
             self.variant = 2
@@ -304,7 +304,7 @@ class setDefault():
             self.archive_size = 0
         elif Alg == "PyGMO_simulated_annealing":
             self.gen = 10
-            self.iter = 10000
+            self.iter = 1000
             self.Ts = 10
             self.Tf = 0.1
             self.steps = 1
@@ -313,7 +313,7 @@ class setDefault():
         elif Alg == "PyGMO_xnes":
             self.gen = 100
             self.iter = 10000
-            self.limit = 20            
+            self.limit = 20
         elif Alg == "PyGMO_bee_colony":
             self.gen = 100
             self.limit = 20
@@ -513,7 +513,7 @@ class setDefault():
                      " of file " + __file__ +
                      ": Algorithm misspelled or not supported")
         if Alg[:5] == "PyGMO":
-            self.nIndiv = 100
+            self.nIndiv = 50
             self.ConstraintHandling = "CoevolutionPenalty"
 
     def setSimple(self, stopTol=[], maxIter=[], maxEval=[]):

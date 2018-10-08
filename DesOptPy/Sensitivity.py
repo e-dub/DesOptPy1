@@ -1,13 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
--------------------------------------------------------------------------------
-Title:          SensAnaFD.py
-Units:          Unitless
-Author:         E. J. Wehrle
-Date:           August 14, 2018
--------------------------------------------------------------------------------
-"""
+
 from DesOptPy.Normalize import(normalize, denormalize, normalizeSens,
                                denormalizeSens)
 import numpy as np
@@ -45,3 +38,11 @@ def FiniteDiff(SysEq, x0, xU=[], xL=[], gc=[], hc=[], SensEq=[],
     dfdx = df/dx
     dgdx = dg/dx
     return(dfdx, dgdx)
+
+#add plots, from Veit
+def PlotSens3D(dfdx, dgdx, labels=[]):
+    return()
+
+
+def PlotSens2D(dfdx, dgdx, labels=[]):
+    return()
