@@ -179,7 +179,7 @@ class setDefault():
         #    import pygmo as pg
         #    self = eval("pg." + Alg[6:]+"()")
         elif Alg == "PyGMO_de":
-            self.gen = 10
+            self.gen = 100
             self.f = 0.8
             self.cr = 0.9
             self.variant = 2
@@ -731,8 +731,8 @@ def setUserOptions(UserOpt, Alg, OptName, OptAlg):
         OptAlg.setOption("MAXTIME", int(UserOpt.MAXTIME))
     elif Alg == "PyGMO_de":
         OptAlg = pg.de(gen=UserOpt.gen, f=UserOpt.f,
-                                    cr=UserOpt.cr, variant=UserOpt.variant,
-                                    ftol=UserOpt.ftol, xtol=UserOpt.xtol,
+                       cr=UserOpt.cr, variant=UserOpt.variant,
+                        tol=UserOpt.ftol, xtol=UserOpt.xtol,
                                     screen_output=UserOpt.screen_output)
     elif Alg == "PyGMO_jde":
         OptAlg = pg.jde(gen=UserOpt.gen, variant=UserOpt.variant,
