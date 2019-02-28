@@ -624,18 +624,20 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         #algo = pg.algorithm(uda = pg.nlopt('auglag'))
         #algo.extract(pg.nlopt).local_optimizer = pg.nlopt('var2')
         #pop = pg.population(prob=prob, size=1)
+
+        pop = pg.population(prob=prob, size=AlgOptions.nIndiv)
         if Alg[6:] == "monte_carlo":
             algo = pg.algorithm.monte_carlo(iters=AlgOptions.iter)
-        else:
+        elif len(gc) > 0:
             algo = pg.algorithm(pg.cstrs_self_adaptive(iters=AlgOptions.gen,
                                                        algo=eval("pg." +
                                                                  Alg[6:] +
                                                                  '(' +
                                                                  str(AlgOptions.nIndiv)+
                                                                  ')')))
-        #algo = pg.algorithm(pg.cstrs_self_adaptive(iters=30, algo=pg.de(10)))
-        pop = pg.population(prob=prob, size=AlgOptions.nIndiv)
-        pop.problem.c_tol = [1E-6] * len(gc)
+            pop.problem.c_tol = [1E-6] * len(gc)
+        else:
+            algo = eval("pg.algorithm(pg." + Alg[6:] + '(' + str(AlgOptions.gen)+'))')
         pop = algo.evolve(pop)
         xOpt = pop.champion_x
         fOpt = pop.champion_f[0]
