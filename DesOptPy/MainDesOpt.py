@@ -886,10 +886,13 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 #   §      Post-processing of optimization solution
 # -----------------------------------------------------------------------------
     lambda_c = CalcLagrangeMult(fGradOpt, g_xLUActiveGradOpt)
+    print(lambda_c)
+    print(g_xLUActiveGradOpt)
+    print(fGradOpt)
     kktOpt, Opt1Order, OptRes, KKTmax = CheckKKT(lambda_c, fGradOpt,
                                                  g_xLUActiveGradOpt,
                                                  gc_xLUActiveOpt)
-    SP = CalcShadowPrice(lambda_c, gc_xLUActiveOpt, gc_xLUActiveType,
+    SPg = CalcShadowPrice(lambda_c, gc_xLUActiveOpt, gc_xLUActiveType,
                          DesVarNorm)
 
 # -----------------------------------------------------------------------------
@@ -1010,6 +1013,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         print("x* = " + str(xOpt.T))
         print("Lagrangian multipliers = " + str(lambda_c))
         print("Shadow prices = " + str(SPg))
+        if kktOpt:
+            print("Karush-Kuhn-Tucker optimality criteria fulfilled")
+        else:
+            print("Karush-Kuhn-Tucker optimality criteria NOT fulfilled")
         print("Time of optimization [hh:mm:ss] = " + OptTime)
         try:
             print("nGen = " + str(nGen))

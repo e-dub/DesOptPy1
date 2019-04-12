@@ -16,7 +16,10 @@ def CalcLagrangeMult(fNabla, gNabla):
 
 
 def CheckKKT(lam, fNabla, gNabla, g, kkteps=1e-6):
-    OptResidual = fNabla-lam@gNabla
+    if len(lam)==1:
+        OptResidual = fNabla-lam*gNabla
+    else:
+        OptResidual = fNabla-lam@gNabla
     Opt1Order = norm(OptResidual)
     kktMax = np.max(np.abs(OptResidual))
     PrimalFeas = (np.max(g) < kkteps)
