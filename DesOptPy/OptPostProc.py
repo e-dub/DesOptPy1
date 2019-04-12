@@ -1,60 +1,36 @@
-# -*- coding: utf-8 -*-
-'''
+"""
 Title:    OptPostProc.py
 Author:   E. J. Wehrle
-Date:     July 9, 2016
--------------------------------------------------------------------------------
-
+Date:     April 12, 2019
 -------------------------------------------------------------------------------
 Description:
-
 Postprocessing of optimization problem via optimality check and shadow prices
-
 -------------------------------------------------------------------------------
-'''
-from __future__ import absolute_import, division, print_function
+"""
 import numpy as np
+from numpy.linalg import pinv, norm
 
 
-def OptPostProc(fGradOpt, gc, gOptActiveIndex, g_xLU_GradOptActive,
-                c_xLU_OptActive, c_xLU_ActiveType, DesVarNorm):
-# -----------------------------------------------------------------------------
-#   § Calculate Lagrangian multipliers
-# -----------------------------------------------------------------------------
-    if np.size(g_xLU_GradOptActive) > 0:
-        lambda_c, _, _, _ = np.linalg.lstsq(g_xLU_GradOptActive, -fGradOpt, rcond=None)  # lambda_c=np.linalg.solve(cGradOptActive,fGradOpt)
+def CalcLagrangeMult(fNabla, gNabla):
+    return(-pinv(gNabla)@fNabla)
 
-# -----------------------------------------------------------------------------
-#   § Calculate shadow prices - Denormalization of Lagrangian multipliers
-# -----------------------------------------------------------------------------
-        SPg = np.zeros(np.shape(lambda_c))
-        for ii in range(np.size(lambda_c)):
-            if c_xLU_OptActive[ii] == 0.0:  # Assume 0 values not normalized
-                SPg[ii] = lambda_c[ii]
-            else:
-                if c_xLU_ActiveType[ii] == "Bound" \
-                   and DesVarNorm in [None, "None", False]:
-                    SPg[ii] = lambda_c[ii]
-                else:
-                    SPg[ii] = lambda_c[ii]/c_xLU_OptActive[ii]
-# here further thoughts are needed to normalized bounds for the shadow prices, this is not yet correct!
-#        if np.size(gc)==1 and gOptActiveIndex.all==True: #correct what about xL and xU in gOptActiveIndex?
-#            SPg=-lambda_c/c_xLU_OptActive
-#        else:
-#            try: SPg=-lambda_c/c_xLU_OptActive
-#            except: SPg=[]
 
-# -----------------------------------------------------------------------------
-#   §     Caclulate optimality after Karush, Kuhn and Tucker, as well as first-order optimality
-# -----------------------------------------------------------------------------
-        OptRes = fGradOpt-np.dot(lambda_c, g_xLU_GradOptActive.T)
-        Opt1Order = np.linalg.norm(OptRes)
-        KKTmax = max(abs(OptRes))
-    else:
-        lambda_c = []
-        lambda_g = []
-        SPg = []
-        OptRes = []
-        Opt1Order = []
-        KKTmax = []
-    return lambda_c, SPg, OptRes, Opt1Order, KKTmax
+def CheckKKT(lam, fNabla, gNabla, g, kkteps=1e-6):
+    OptResidual = fNabla-lam@gNabla
+    Opt1Order = norm(OptResidual)
+    kktMax = np.max(np.abs(OptResidual))
+    PrimalFeas = (np.max(g) < kkteps)
+    DualFeas = (np.min(lam) > -kkteps)
+    ComplSlack = (np.abs(g@lam) < kkteps)
+    kktOpt = bool(PrimalFeas*DualFeas*ComplSlack)
+    return(kktOpt, Opt1Order, OptResidual, kktMax)
+
+
+def CalcShadowPrice(lam, gc, gcType, DesVarNorm):
+    SP = np.zeros(len(lam))
+    for ii in range(len(lam)):
+        if gc == 0.0 or (gcType[ii]=="Bound" and DesVarNorm in [None, "None", False]):
+            SP[ii] = lam[ii]
+        else:
+            SP[ii] = lam[ii]/gc[ii]
+    return SP

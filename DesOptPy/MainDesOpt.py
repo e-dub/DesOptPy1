@@ -155,7 +155,7 @@ import multiprocessing
 import platform
 from DesOptPy.Normalize import(normalize, denormalize, normalizeSens,
                                denormalizeSens)
-from DesOptPy.OptPostProc import OptPostProc
+from DesOptPy.OptPostProc import CalcLagrangeMult, CheckKKT, CalcShadowPrice
 from DesOptPy.OptReadHis import OptReadHis
 
 
@@ -822,132 +822,75 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
 #  Active constraints for use in the calculation of the Lagrangian multipliers and optimality criterion
 # -----------------------------------------------------------------------------
+    xLGrad = -np.eye(nx)
+    xUGrad = np.eye(nx)
+    xGrad = np.concatenate((xLGrad, xUGrad), axis=1)
+    xLU = np.concatenate((xL, xU))
+
     epsActive = 1e-3
-    xL_ActiveIndex = (xOpt - xL) / xU < epsActive
-    xU_ActiveIndex = (xU - xOpt) / xU < epsActive
-    xL_Grad = -np.eye(nx)
-    xU_Grad = np.eye(nx)
-    xL_GradActive = xL_Grad[:, xL_ActiveIndex]
-    xU_GradActive = xU_Grad[:, xU_ActiveIndex]  # or the other way around!
-    xGradActive = np.concatenate((xL_GradActive, xU_GradActive), axis=1)
-    # TODO change so that 1D optimization works!
-    try:
-        xL_Active = xL[xL_ActiveIndex]
-    except:
-        xL_Active = np.array([])
-    try:
-        xU_Active = xU[xU_ActiveIndex]
-    except:
-        xU_Active = np.array([])
-    if len(xL_Active) == 0:
-        xActive = xU_Active
-    elif len(xU_Active) == 0:
-        xActive = xL_Active
-    else:
-        xActive = np.concatenate((xL_Active, xU_Active))
-    if np.size(xL) == 1:
-        if xL_ActiveIndex == False:
-            xL_Active = np.array([])
-        else:
-            xL_Active = xL
-        if xU_ActiveIndex == False:
-            xU_Active = np.array([])
-        else:
-            xU_Active = xU
-    else:
-        xL_Active = xL[xL_ActiveIndex]
-        xU_Active = np.array(xU[xU_ActiveIndex])
-    if len(xL_Active) == 0:
-        xLU_Active = xU_Active
-    elif len(xU_Active) == 0:
-        xLU_Active = xL_Active
-    else:
-        xLU_Active = np.concatenate((xL_Active, xU_Active))
-    # TODO needs to be investigated for PyGMO!
-    # are there nonlinear constraints active, in case equality constraints are
-    # added later, this must also be added
-    if np.size(gc) > 0:  # and Alg[:5] != "PyGMO":
+    xLActiveIndex = (xOpt - xL) / xU < epsActive
+    xUActiveIndex = (xU - xOpt) / xU < epsActive
+    xLActiveGrad = xLGrad[:, xLActiveIndex]
+    xUActiveGrad = xUGrad[:, xUActiveIndex]  # or the other way around!
+    xActiveGrad = np.concatenate((xLActiveGrad, xUActiveGrad), axis=1)
+    xLActive = xL[xLActiveIndex]
+    xUActive = xU[xUActiveIndex]
+    xLUActive = np.concatenate((xLActive, xUActive))
+    xActive = xLUActive
+
+
+    if np.size(gc) > 0:
         gMaxIter = np.zeros([nIter])
         for ii in range(len(gIter)):
             gMaxIter[ii] = max(gIter[ii])
         gOpt = gIter[nIter - 1]
         gOptActiveIndex = gOpt > -epsActive
-        gOptActive = gOpt[gOpt > -epsActive]
     elif np.size(gc) == 0:
         gOptActiveIndex = [[False]] * len(gc)
         gOptActive = np.array([])
         gMaxIter = np.array([] * nIter)
         gOpt = np.array([])
+        gOptActiveIndex = False
     else:
         gMaxIter = np.zeros([nIter])
         for ii in range(len(gIter)):
             gMaxIter[ii] = max(gIter[ii])
         gOptActiveIndex = gOpt > -epsActive
-        gOptActive = gOpt[gOpt > -epsActive]
-    if len(xLU_Active) == 0:
-        g_xLU_OptActive = gOptActive
-    elif len(gOptActive) == 0:
-        g_xLU_OptActive = xLU_Active
-    else:
-        if np.size(xLU_Active) == 1 and np.size(gOptActive) == 1:
-            g_xLU_OptActive = np.array([xLU_Active, gOptActive])
-        else:
-            g_xLU_OptActive = np.concatenate((xLU_Active, gOptActive))
+    gOptActive = gOpt[gOptActiveIndex]
+
+    gxLUOpt = np.concatenate((gOpt, xLU))
+    gxLUOptActive = np.concatenate((gOptActive, xLUActive))
+
+
     if np.size(fGradIter) > 0:  # Iteration data present
-        # fGradOpt = fGradIter[nIter - 1]
         fGradOpt = fGradIter[-1]
-        if np.size(gc) > 0:  # Constrained problem
-            # Which is better? Both the same?
-            try:
-                gGradOpt = gGradIter[nIter-1]
-            except:
-                gGradOpt = gGradIter[-1]
+        if np.size(gc) > 0:
+            gGradOpt = gGradIter[-1]
             gGradOpt = gGradOpt.reshape([ng, nx]).T
             gGradOptActive = gGradOpt[:, gOptActiveIndex == True]
-            #gGradOpt = []
-            try:
-                cOptActive = gc[gOptActiveIndex == True]
-                cActiveType = ["Constraint"]*np.size(cOptActive)
-            except:
-                cOptActive = []
-                cActiveType = []
-            if np.size(xGradActive) == 0:
-                g_xLU_GradOptActive = gGradOptActive
-                c_xLU_OptActive = cOptActive
-                c_xLU_ActiveType = cActiveType
-            elif np.size(gGradOptActive) == 0:
-                g_xLU_GradOptActive = xGradActive
-                c_xLU_OptActive = xActive
-                c_xLU_ActiveType = ["Bound"]*np.size(xActive)
-            else:
-                g_xLU_GradOptActive = np.concatenate((gGradOptActive,
-                                                      xGradActive), axis=1)
-                c_xLU_OptActive = np.concatenate((cOptActive, xActive))
-                xActiveType = ["Bound"]*np.size(xActive)
-                c_xLU_ActiveType = np.concatenate((cActiveType, xActiveType))
-        else:
-            g_xLU_GradOptActive = xGradActive
-            gGradOpt = np.array([])
-            c_xLU_OptActive = np.array([])
-            g_xLU_GradOptActive = np.array([])
-            c_xLU_ActiveType = np.array([])
-
+            gcOptActive = gc[gOptActiveIndex]
+            gcActiveType = ["Constraint"]*np.size(gcOptActive)
+            g_xLUActiveGradOpt = np.concatenate((gGradOptActive, xActiveGrad),
+                                                 axis=1)
+            gc_xLUActiveOpt = np.concatenate((gcOptActive, xActive))
+            xActiveType = ["Bound"]*np.size(xActive)
+            gc_xLUActiveType = np.concatenate((gcActiveType, xActiveType))
     else:
         fGradOpt = np.array([])
         gGradOpt = np.array([])
-        g_xLU_GradOptActive = np.array([])
-        c_xLU_OptActive = np.array([])
-        c_xLU_ActiveType = np.array([])
+        g_xLUActiveGradOpt = np.array([])
+        gc_xLUActiveType = np.array([])
+
 
 # -----------------------------------------------------------------------------
 #   §      Post-processing of optimization solution
 # -----------------------------------------------------------------------------
-    lambda_c, SPg, OptRes, Opt1Order, KKTmax = OptPostProc(fGradOpt, gc,
-                                                           gOptActiveIndex,
-                                                           g_xLU_GradOptActive,
-                                                           c_xLU_OptActive,
-                                                           c_xLU_ActiveType,
-                                                           DesVarNorm)
+    lambda_c = CalcLagrangeMult(fGradOpt, g_xLUActiveGradOpt)
+    kktOpt, Opt1Order, OptRes, KKTmax = CheckKKT(lambda_c, fGradOpt,
+                                                 g_xLUActiveGradOpt,
+                                                 gc_xLUActiveOpt)
+    SP = CalcShadowPrice(lambda_c, gc_xLUActiveOpt, gc_xLUActiveType,
+                         DesVarNorm)
 
 # -----------------------------------------------------------------------------
 #   §      Save optimization solution to file
