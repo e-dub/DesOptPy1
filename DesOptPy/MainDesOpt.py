@@ -317,7 +317,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
             for ii in range(nD):
                 gDis[ii+0] = np.sum(x[-1*xDis[ii]:])-1
                 gDis[ii+1] = 1-np.sum(x[-1*xDis[ii]:])
-            gNew = np.concatenate((g, gDis), 0)
+            gNew = np.vstack((g, gDis), 0)
             g = copy.copy(gNew)
         # TODO add print out for optimization development!!
         return f, g, fail
@@ -349,7 +349,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         x = denormalize(xNorm, x0, xL, xU, DesVarNorm)
         dfxdx, dgxdx, fail = OptSensEq(x, f, g)
         dfdx = dfxdx * (xU - xL)
-        dgdx = normalizeSens(dgxdx, x0, xL, xU, DesVarNorm)
+        if np.size(g) > 0:
+            dgdx = normalizeSens(dgxdx, x0, xL, xU, DesVarNorm)
+        else:
+            dgdx = []
         # TODO not general for all normalizations! needs to be rewritten; done: check if correct
         # dfdx = normalizeSens(dfxdx, xL, xU, DesVarNorm)
         # if dgxdx != []:
@@ -824,19 +827,19 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
     xLGrad = -np.eye(nx)
     xUGrad = np.eye(nx)
-    xGrad = np.concatenate((xLGrad, xUGrad), axis=1)
-    xLU = np.concatenate((xL, xU))
+    xGrad = np.hstack((xLGrad, xUGrad))
+    xLU = np.hstack((xL, xU))
 
     epsActive = 1e-3
     xLActiveIndex = (xOpt - xL) / xU < epsActive
     xUActiveIndex = (xU - xOpt) / xU < epsActive
     xLActiveGrad = xLGrad[:, xLActiveIndex]
-    xUActiveGrad = xUGrad[:, xUActiveIndex]  # or the other way around!
-    xActiveGrad = np.concatenate((xLActiveGrad, xUActiveGrad), axis=1)
-    xLActive = xL[xLActiveIndex]
-    xUActive = xU[xUActiveIndex]
-    xLUActive = np.concatenate((xLActive, xUActive))
-    xActive = xLUActive
+    xUActiveGrad = xUGrad[:, xUActiveIndex]
+    xActiveGrad = np.hstack((xLActiveGrad, xUActiveGrad))
+    xLUActive = np.hstack((xL[xLActiveIndex], xU[xUActiveIndex]))
+    xLActive = xL[xLActiveIndex]-xOpt[xLActiveIndex]
+    xUActive = xOpt[xUActiveIndex]-xU[xUActiveIndex]
+    xActive = np.hstack((xLActive, xUActive))
 
 
     if np.size(gc) > 0:
@@ -845,55 +848,64 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
             gMaxIter[ii] = max(gIter[ii])
         gOpt = gIter[nIter - 1]
         gOptActiveIndex = gOpt > -epsActive
+        gOptActive = gOpt[gOptActiveIndex]
+        gxLUOpt = np.hstack((gOpt, xLU))
+        gxLUOptActive = np.hstack((gOptActive, xActive))
     elif np.size(gc) == 0:
         gOptActiveIndex = [[False]] * len(gc)
         gOptActive = np.array([])
         gMaxIter = np.array([] * nIter)
         gOpt = np.array([])
+        gOpt = np.array([], dtype=np.int64)
+        gOptActive = np.array([], dtype=np.int64)
         gOptActiveIndex = False
-    else:
-        gMaxIter = np.zeros([nIter])
-        for ii in range(len(gIter)):
-            gMaxIter[ii] = max(gIter[ii])
-        gOptActiveIndex = gOpt > -epsActive
-    gOptActive = gOpt[gOptActiveIndex]
-
-    gxLUOpt = np.concatenate((gOpt, xLU))
-    gxLUOptActive = np.concatenate((gOptActive, xLUActive))
+        gxLUOpt = xLU
+        gxLUOptActive = xActive
+#    else:
+#        gMaxIter = np.zeros([nIter])
+#        for ii in range(len(gIter)):
+#            gMaxIter[ii] = max(gIter[ii])
+#        gOptActiveIndex = gOpt > -epsActive
+#        gOptActive = gOpt[gOptActiveIndex]
 
 
     if np.size(fGradIter) > 0:  # Iteration data present
         fGradOpt = fGradIter[-1]
-        if np.size(gc) > 0:
-            gGradOpt = gGradIter[-1]
-            gGradOpt = gGradOpt.reshape([ng, nx]).T
-            gGradOptActive = gGradOpt[:, gOptActiveIndex == True]
-            gcOptActive = gc[gOptActiveIndex]
-            gcActiveType = ["Constraint"]*np.size(gcOptActive)
-            g_xLUActiveGradOpt = np.concatenate((gGradOptActive, xActiveGrad),
-                                                 axis=1)
-            gc_xLUActiveOpt = np.concatenate((gcOptActive, xActive))
-            xActiveType = ["Bound"]*np.size(xActive)
-            gc_xLUActiveType = np.concatenate((gcActiveType, xActiveType))
     else:
         fGradOpt = np.array([])
+    if np.size(gGradIter) > 0:
+        gGradOpt = gGradIter[-1]
+        gGradOpt = gGradOpt.reshape([ng, nx]).T
+        gGradOptActive = gGradOpt[:, gOptActiveIndex == True]
+        gcOptActive = gc[gOptActiveIndex]
+        gcActiveType = ["Constraint"]*np.size(gcOptActive)
+        g_xLUActiveGradOpt = np.hstack((gGradOptActive, xActiveGrad))
+        gc_xLUActiveOpt = np.hstack((gcOptActive, xLUActive))
+        xActiveType = ["Bound"]*np.size(xActive)
+        gc_xLUActiveType = np.hstack((gcActiveType, xActiveType))
+    else:
         gGradOpt = np.array([])
-        g_xLUActiveGradOpt = np.array([])
-        gc_xLUActiveType = np.array([])
-
+        g_xLUActiveGradOpt = xActiveGrad
+        gc_xLUActiveOpt = xLUActive
+        xActiveType = ["Bound"]*np.size(xActive)
+        gc_xLUActiveType = xActiveType
 
 # -----------------------------------------------------------------------------
 #   §      Post-processing of optimization solution
 # -----------------------------------------------------------------------------
-    lambda_c = CalcLagrangeMult(fGradOpt, g_xLUActiveGradOpt)
-    print(lambda_c)
-    print(g_xLUActiveGradOpt)
-    print(fGradOpt)
-    kktOpt, Opt1Order, OptRes, KKTmax = CheckKKT(lambda_c, fGradOpt,
-                                                 g_xLUActiveGradOpt,
-                                                 gc_xLUActiveOpt)
-    SPg = CalcShadowPrice(lambda_c, gc_xLUActiveOpt, gc_xLUActiveType,
-                         DesVarNorm)
+    if np.size(fGradIter) > 0:
+        fGradOpt = fGradOpt.reshape((nx, 1))
+        lambda_c = CalcLagrangeMult(fGradOpt, g_xLUActiveGradOpt)
+        kktOpt, Opt1Order, OptRes, KKTmax = CheckKKT(lambda_c, fGradOpt,
+                                                     g_xLUActiveGradOpt,
+                                                     gxLUOptActive)
+        SPg = CalcShadowPrice(lambda_c, gc_xLUActiveOpt, gc_xLUActiveType,
+                              DesVarNorm)
+    else:
+        SPg = np.array([])
+        kktOpt, Opt1Order, OptRes, KKTmax= [[]]*4
+        lambda_c = []
+
 
 # -----------------------------------------------------------------------------
 #   §      Save optimization solution to file
@@ -1011,12 +1023,16 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         print("f* = " + str(fOpt))
         print("g* = " + str(gOpt))
         print("x* = " + str(xOpt.T))
-        print("Lagrangian multipliers = " + str(lambda_c))
-        print("Shadow prices = " + str(SPg))
+        if np.size(lambda_c) > 0:
+            print("Lagrangian multipliers = " +
+                  str(lambda_c.reshape(np.size(lambda_c,))))
+            print("Shadow prices = " + str(SPg))
         if kktOpt:
             print("Karush-Kuhn-Tucker optimality criteria fulfilled")
-        else:
+        elif kktOpt==0:
             print("Karush-Kuhn-Tucker optimality criteria NOT fulfilled")
+        if Opt1Order:
+            print("First-order residual of Lagrangian function = " + str(Opt1Order))
         print("Time of optimization [hh:mm:ss] = " + OptTime)
         try:
             print("nGen = " + str(nGen))
