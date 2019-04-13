@@ -19,8 +19,8 @@ def FiniteDiff(SysEq, x0, xU=[], xL=[], gc=[], hc=[], SensEq=[],
         return f, g
 
     dx = deltax
-    df = np.zeros((len(x0)))
-    dg = np.zeros((len(gc), len(x0)))
+    df = np.zeros((len(x0), 1))
+    dg = np.zeros((len(x0), len(gc)))
     for ii in range(len(x0)+1):
         if ii == 0:
 #            if DesVarNorm in ["None", None, False]:
@@ -33,8 +33,8 @@ def FiniteDiff(SysEq, x0, xU=[], xL=[], gc=[], hc=[], SensEq=[],
             x = x0.copy()
             x[ii-1] += dx
             fx, gx = OptSysEq(x)
-            df[ii-1] = fx-fx0
-            dg[:, ii-1] = np.array(gx).reshape(len(gc))-gx0
+            df[ii-1, 0] = fx-fx0
+            dg[ii-1, :] = np.array(gx).reshape(len(gc))-gx0
     dfdx = df/dx
     dgdx = dg/dx
     return(dfdx, dgdx)

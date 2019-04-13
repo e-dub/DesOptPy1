@@ -128,7 +128,6 @@ TODO Examples
 # -----------------------------------------------------------------------------
 # Import necessary Python packages and toolboxes
 # -----------------------------------------------------------------------------
-from __future__ import absolute_import, division, print_function
 import os
 import shutil
 import sys
@@ -825,22 +824,21 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
 #  Active constraints for use in the calculation of the Lagrangian multipliers and optimality criterion
 # -----------------------------------------------------------------------------
-    xLGrad = -np.eye(nx)
-    xUGrad = np.eye(nx)
-    xGrad = np.hstack((xLGrad, xUGrad))
-    xLU = np.hstack((xL, xU))
-
     epsActive = 1e-3
-    xLActiveIndex = (xOpt - xL) / xU < epsActive
-    xUActiveIndex = (xU - xOpt) / xU < epsActive
-    xLActiveGrad = xLGrad[:, xLActiveIndex]
-    xUActiveGrad = xUGrad[:, xUActiveIndex]
-    xActiveGrad = np.hstack((xLActiveGrad, xUActiveGrad))
-    xLUActive = np.hstack((xL[xLActiveIndex], xU[xUActiveIndex]))
-    xLActive = xL[xLActiveIndex]-xOpt[xLActiveIndex]
-    xUActive = xOpt[xUActiveIndex]-xU[xUActiveIndex]
-    xActive = np.hstack((xLActive, xUActive))
+    # gBound: values for constraint x-xU and xL-x
+    #
+    xLU = np.hstack((xL, xU))
+    gBoundL = xL-xOpt
+    gBoundU = xOpt-xU
+    gBound = np.hstack((gBoundL, gBoundU))
+    gBoundLGrad = -np.eye(nx)
+    gBoundUGrad = np.eye(nx)
+    gBoundGrad = np.hstack((gBoundLGrad, gBoundUGrad))
 
+    gBoundActiveIndex = gBound > -epsActive
+    xLUActive = xLU[gBoundActiveIndex]
+    gBoundActive = gBound[gBoundActiveIndex]
+    gBoundGradActive = gBoundGrad[:, gBoundActiveIndex]
 
     if np.size(gc) > 0:
         gMaxIter = np.zeros([nIter])
@@ -849,8 +847,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         gOpt = gIter[nIter - 1]
         gOptActiveIndex = gOpt > -epsActive
         gOptActive = gOpt[gOptActiveIndex]
-        gxLUOpt = np.hstack((gOpt, xLU))
-        gxLUOptActive = np.hstack((gOptActive, xActive))
+        gAllOpt = np.hstack((gOpt, gBound))
+        gAllOptActive = np.hstack((gOptActive, gBoundActive))
     elif np.size(gc) == 0:
         gOptActiveIndex = [[False]] * len(gc)
         gOptActive = np.array([])
@@ -859,9 +857,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         gOpt = np.array([], dtype=np.int64)
         gOptActive = np.array([], dtype=np.int64)
         gOptActiveIndex = False
-        gxLUOpt = xLU
-        gxLUOptActive = xActive
-#    else:
+        gAllOpt = gBound
+        gAllOptActive = gBoundActive
+    gAllActiveIndex = np.hstack((gOptActiveIndex, gBoundActiveIndex))
 #        gMaxIter = np.zeros([nIter])
 #        for ii in range(len(gIter)):
 #            gMaxIter[ii] = max(gIter[ii])
@@ -875,14 +873,20 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         fGradOpt = np.array([])
     if np.size(gGradIter) > 0:
         gGradOpt = gGradIter[-1]
+        #gGradOpt = gGradOpt.reshape([nx, ng])
         gGradOpt = gGradOpt.reshape([ng, nx]).T
-        gGradOptActive = gGradOpt[:, gOptActiveIndex == True]
-        gcOptActive = gc[gOptActiveIndex]
-        gcActiveType = ["Constraint"]*np.size(gcOptActive)
-        g_xLUActiveGradOpt = np.hstack((gGradOptActive, xActiveGrad))
-        gc_xLUActiveOpt = np.hstack((gcOptActive, xLUActive))
-        xActiveType = ["Bound"]*np.size(xActive)
-        gc_xLUActiveType = np.hstack((gcActiveType, xActiveType))
+        gGradOptActive = gGradOpt[:, gOptActiveIndex]
+        gcActive = gc[gOptActiveIndex]
+        gcActiveType = ["Constraint"]*np.size(gcActive)
+        gOptActive = gOpt[gOptActiveIndex]
+        gcAll = np.hstack((gc, xLU))
+        gcAllActive = np.hstack((gcActive, xLUActive))
+        gAllOpt = np.hstack((gOpt, gBound))
+        gAllGradOpt = np.hstack((gGradOpt, gBoundGrad))
+        gAllActiveOpt = np.hstack((gOptActive, gBoundActive))
+        gAllGradActiveOpt = np.hstack((gGradOptActive, gBoundGradActive))
+        gBoundActiveType = ["Bound"]*np.size(gBoundActive)
+        gAllActiveType = np.hstack((gcActiveType, gBoundActiveType))
     else:
         gGradOpt = np.array([])
         g_xLUActiveGradOpt = xActiveGrad
@@ -895,11 +899,17 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
     if np.size(fGradIter) > 0:
         fGradOpt = fGradOpt.reshape((nx, 1))
-        lambda_c = CalcLagrangeMult(fGradOpt, g_xLUActiveGradOpt)
+        lamActive = CalcLagrangeMult(fGradOpt, gAllGradActiveOpt)
+        lamAll = np.zeros((np.shape(gAllOpt)))
+        lamAll[gAllActiveIndex] = lamActive[0]
+        lambda_c = lamActive
+        #kktOpt1, Opt1Order1, OptRes1, KKTmax1 = CheckKKT(lamAll, fGradOpt,
+        #                                                 gAllGradOpt,
+        #                                                 gAllOpt)
         kktOpt, Opt1Order, OptRes, KKTmax = CheckKKT(lambda_c, fGradOpt,
-                                                     g_xLUActiveGradOpt,
-                                                     gxLUOptActive)
-        SPg = CalcShadowPrice(lambda_c, gc_xLUActiveOpt, gc_xLUActiveType,
+                                                     gAllGradActiveOpt,
+                                                     gAllOptActive)
+        SPg = CalcShadowPrice(lambda_c, gcAllActive, gAllActiveType,
                               DesVarNorm)
     else:
         SPg = np.array([])

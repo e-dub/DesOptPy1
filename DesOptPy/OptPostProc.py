@@ -20,7 +20,6 @@ def CalcLagrangeMult(fNabla, gNabla):
 def CheckKKT(lam, fNabla, gNabla, g, kkteps=1e-3):
     if np.size(g) == 0:
         OptResidual = fNabla
-        print(np.abs(norm(fNabla)))
         kktOpt = (np.abs(norm(fNabla))<kkteps)
     else:
         if np.size(lam)==1:
