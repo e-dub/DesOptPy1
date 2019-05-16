@@ -887,7 +887,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         gAllActiveType = np.hstack((gcActiveType, gBoundActiveType))
     else:
         gGradOpt = np.array([])
-        gGradOptActive = gGradOpt[:, gOptActiveIndex]
+        gGradOptActive = np.array([])
         g_xLUActiveGradOpt = gBoundGrad
         gc_xLUActiveOpt = gBoundActive
         xActiveType = ["Bound"]*np.size(xLUActive)
