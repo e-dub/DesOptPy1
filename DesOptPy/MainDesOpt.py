@@ -725,9 +725,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
             try:
                 xIterNorm = xIter[:, 0:np.size(xL)]
                 xIter = np.zeros(np.shape(xIterNorm))
-                for ii in range(len(xIterNorm)):
-                    xIter[ii] = denormalize(xIterNorm[ii], x0, xL, xU,
-                                            DesVarNorm)
+                for ii, xIterNormi in enumerate(xIterNorm):
+                    xIter[ii] = denormalize(xIterNormi, x0, xL, xU, DesVarNorm)
             except:
                 x0norm = []
                 xIterNorm = []
@@ -804,9 +803,8 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
             try:
                 xIterNorm = xIter[:, 0:np.size(xL)]
                 xIter = np.zeros(np.shape(xIterNorm))
-                for ii in range(len(xIterNorm)):
-                    xIter[ii] = denormalize(xIterNorm[ii], x0, xL, xU,
-                                            DesVarNorm)
+                for ii, xIterNormi in enumerate(xIterNorm):
+                    xIter[ii] = denormalize(xIterNormi, x0, xL, xU, DesVarNorm)
             except:
                 x0norm = []
                 xIterNorm = []
@@ -889,19 +887,23 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         gAllActiveType = np.hstack((gcActiveType, gBoundActiveType))
     else:
         gGradOpt = np.array([])
-        g_xLUActiveGradOpt = xActiveGrad
-        gc_xLUActiveOpt = xLUActive
-        xActiveType = ["Bound"]*np.size(xActive)
+        gGradOptActive = gGradOpt[:, gOptActiveIndex]
+        g_xLUActiveGradOpt = gBoundGrad
+        gc_xLUActiveOpt = gBoundActive
+        xActiveType = ["Bound"]*np.size(xLUActive)
         gc_xLUActiveType = xActiveType
+        gAllGradActiveOpt = gBoundGradActive
+        gAllActiveType = xActiveType
 
 # -----------------------------------------------------------------------------
 #   §      Post-processing of optimization solution
 # -----------------------------------------------------------------------------
-    if np.size(fGradIter) > 0:
+    if np.size(fGradIter) > 0 and np.size(gAllGradActiveOpt) > 0:
         fGradOpt = fGradOpt.reshape((nx, 1))
         lamActive = CalcLagrangeMult(fGradOpt, gAllGradActiveOpt)
         lamAll = np.zeros((np.shape(gAllOpt)))
-        lamAll[gAllActiveIndex] = lamActive[0]
+        for ii in range(len(lamActive)):
+            lamAll[gAllActiveIndex[ii]] = lamActive[ii]
         lambda_c = lamActive
         #kktOpt1, Opt1Order1, OptRes1, KKTmax1 = CheckKKT(lamAll, fGradOpt,
         #                                                 gAllGradOpt,
@@ -909,7 +911,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         kktOpt, Opt1Order, OptRes, KKTmax = CheckKKT(lambda_c, fGradOpt,
                                                      gAllGradActiveOpt,
                                                      gAllOptActive)
-        SPg = CalcShadowPrice(lambda_c, gcAllActive, gAllActiveType,
+        SPg = CalcShadowPrice(lambda_c, gAllOptActive, gAllActiveType,
                               DesVarNorm)
     else:
         SPg = np.array([])

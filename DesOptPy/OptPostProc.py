@@ -37,9 +37,9 @@ def CheckKKT(lam, fNabla, gNabla, g, kkteps=1e-3):
 
 def CalcShadowPrice(lam, gc, gcType, DesVarNorm):
     SP = np.zeros(len(lam))
-    for ii in range(len(lam)):
+    for ii, lamii in enumerate(lam):
         if gc[ii] == 0.0 or (gcType[ii]=="Bound" and DesVarNorm in [None, "None", False]):
-            SP[ii] = lam[ii]
+            SP[ii] = lamii
         else:
-            SP[ii] = lam[ii]/gc[ii]
+            SP[ii] = lamii/gc[ii]
     return SP
