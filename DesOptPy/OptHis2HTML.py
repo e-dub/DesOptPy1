@@ -31,7 +31,7 @@ from DesOptPy.Normalize import normalize, denormalize
 from DesOptPy.OptReadHis import OptReadHis
 
 
-def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inform,
+def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, gc, DesVarNorm, inform,
                 starttime, StatusDirectory=""):
 # -----------------------------------------------------------------------------
 # General calculations for the uppermost information table are computed like
@@ -58,8 +58,12 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
                                                                     Alg,
                                                                     AlgOptions,
                                                                     x0, xL, xU,
+                                                                    gc,
                                                                     DesVarNorm)
-    nIter = np.shape(xIter)[0]-1
+    if xIter.size > 0:
+        nIter = np.shape(xIter)[1]-1
+    else:
+        nIter = -1
 # -----------------------------------------------------------------------------
 # The design variables are normalized or denormalized so both can be displayed
 # in the graphs and tables
@@ -73,10 +77,10 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, DesVarNorm, inf
 #                [xIter[y, :], xLnorm, xUnorm] = normalize(xIterDenorm[y, :],
 #                                                          x0, xL, xU, "xLxU")
         else:
-            xIter = xIter[:, 0:np.size(xL)]
+            xIter = xIter[0:np.size(xL),:]
             xIterDenorm = np.zeros(np.shape(xIter))
             for ii in range(len(xIterDenorm)):
-                xIterDenorm[ii] = denormalize(xIter[ii], x0, xL, xU, DesVarNorm)
+                xIterDenorm[:, ii] = denormalize(xIter[:, ii], x0, xL, xU, DesVarNorm)
             #xIterDenorm = np.zeros((nIter + 1, len(x0)))
 #            for y in range(0, nIter + 1):
 #                print(denormalize(xIter[y, 0:len(x0)], x0, xL, xU, DesVarNorm)

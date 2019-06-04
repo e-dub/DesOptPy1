@@ -119,18 +119,30 @@ def SingleConvPlot(figName, data, dataLabel, xLabel, yLabel, ResultsFolder,
     Plot = plt.figure(figsize=(figsizex, figsizey), dpi=dpi)
     ax = Plot.add_subplot(111)
     jet = plt.get_cmap('jet')
-    cNorm  = colors.Normalize(vmin=0, vmax=len(data[0]))
+    cNorm  = colors.Normalize(vmin=0, vmax=data[0].size)
     scalarMap = cm.ScalarMappable(norm=cNorm, cmap=jet)
-    for n in range(np.size(data[0])):
+    if len(data.shape)>1:
+        for n in range(np.size(data[0])):
+            if labelSubscripts==True:
+                if usetex==True:
+                    ax.plot(data.T[n], color=scalarMap.to_rgba(n),
+                            label=dataLabel % str(n+1))
+                else:
+                    ax.plot(data.T[n], color=scalarMap.to_rgba(n),
+                            label=dataLabel % str(n+1))
+            else:
+                ax.plot(data.T[n], color=scalarMap.to_rgba(n), label=dataLabel)
+    else:
         if labelSubscripts==True:
             if usetex==True:
-                ax.plot(data[:,n], color=scalarMap.to_rgba(n),
-                        label=dataLabel % str(n+1))
+                ax.plot(data, color=scalarMap.to_rgba(0),
+                        label=dataLabel % str(1))
             else:
-                ax.plot(data[:,n], color=scalarMap.to_rgba(n),
-                        label=dataLabel % str(n+1))
+                ax.plot(data, color=scalarMap.to_rgba(0),
+                        label=dataLabel % str(1))
         else:
-            ax.plot(data[:,n], color=scalarMap.to_rgba(n), label=dataLabel)
+            ax.plot(data, color=scalarMap.to_rgba(0), label=dataLabel)
+
     plt.xlabel(xLabel)
     plt.ylabel(yLabel)
     plt.xlim(xmin=0, xmax=len(data)-1)
@@ -201,18 +213,18 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
     x0 = OptSolData['x0']
     xOpt = OptSolData['xOpt']
     xOptNorm = OptSolData['xOptNorm']
-    xIter = OptSolData['xIter']
-    xIterNorm = OptSolData['xIterNorm']
+    xIter = OptSolData['xIter'].T
+    xIterNorm = OptSolData['xIterNorm'].T
     fOpt = OptSolData['fOpt']
     fIter = OptSolData['fIter']
     fIterNorm = OptSolData['fIterNorm']
     gOpt = OptSolData['gOpt']
-    gIter = OptSolData['gIter']
+    gIter = OptSolData['gIter'].T
     gMaxIter = OptSolData['gMaxIter']
-    fGradIter = OptSolData['fGradIter']
-    gGradIter = OptSolData['gGradIter']
-    fGradOpt = OptSolData['fGradOpt']
-    gGradOpt = OptSolData['gGradOpt']
+    fGradIter = OptSolData['fNablaIter'].T
+    gGradIter = OptSolData['gNablaIter'].T
+    fGradOpt = OptSolData['fNablaOpt']
+    gGradOpt = OptSolData['gNablaOpt']
     OptName = OptSolData['OptName']
     OptModel = OptSolData['OptModel']
     OptTime = OptSolData['OptTime']
@@ -655,11 +667,11 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
         # temp = [r'Objective function  & $\f$ & ',str(round(fIter[0][0],4)),'&',str(round(fOpt[0],4)),'\\tabularnewline']
         if Alg[:5] == "PyGMO":
             temp = [r'Objective function  & $\f$ & ',
-                    str(round(fIter[0][0], 4)), '&', str(round(fOpt[0], 4)),
+                    str(round(fIter[0], 4)), '&', str(round(fOpt[0], 4)),
                     '\\tabularnewline \n']
         else:
             temp = [r'Objective function  & $\f$ & ',
-                    str(round(fIter[0][0], 4)), '&', str(round(fOpt[0], 4)),
+                    str(round(fIter[0], 4)), '&', str(round(fOpt[0], 4)),
                     '\\tabularnewline \n']
         srT = srT + temp
         if np.size(gc) > 0:

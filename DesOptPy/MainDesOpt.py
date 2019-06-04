@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 """
 -------------------------------------------------------------------------------
 Title:          MainDesOpt.py
-Version:        1.4α
+Version:        2019
 Units:          Unitless
 Author:         E. J. Wehrle
 Contributors:   S. Rudolph (<α0.5), F. Wachter (α0.5-1.2), M. Richter (α0.5)
-Date:           August 14, 2018
+Date:           June 4, 2019
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -17,7 +16,7 @@ DesOptPy - DESign OPTimization in PYthon - is an optimization toolbox in Python
 -------------------------------------------------------------------------------
 Change log
 -------------------------------------------------------------------------------
-1.4 (Future)
+2019
     General clean-up
     NumPy problems
     PyGMO working again
@@ -103,7 +102,7 @@ TODO Multiobjective
     http://openopt.org/interalg
     single objective for pareto front fhat = k*f1 + (k-1)*f2, where k = 0...1
 TODO Lagrangian multiplier for one-dimensional optimization, line 423
-TODO gGradIter is forced into
+TODO gNablaIter is forced into
 TODO sens_mode='pgc'
 TODO Output data formats
         pyTables?
@@ -119,8 +118,8 @@ TODO Examples
    Analytical sensitivities,
    Analytical sensitivities for nonlinear dynamic problems
    Discrete problems
-   gGradIter in dgdxIter
-   fGradIter in dfdxIter etc
+   gNablaIter in dgdxIter
+   fNablaIter in dfdxIter etc
 -------------------------------------------------------------------------------
 """
 
@@ -163,10 +162,10 @@ from DesOptPy.OptReadHis import OptReadHis
 # -----------------------------------------------------------------------------
 __title__ = "DESign OPTimization in PYthon"
 __shorttitle__ = "DesOptPy"
-__version__ = "1.3pre"
+__version__ = "2019pre"
 __all__ = ['DesOpt']
 __author__ = "E. J. Wehrle"
-__copyright__ = "Copyright 2015, 2016, 2017, E. J. Wehrle"
+__copyright__ = "Copyright 2015, 2016, 2017, 2018, 2019 E. J. Wehrle"
 __email__ = "Erich.Wehrle(a)unibz.it"
 __license__ = "GNU Lesser General Public License"
 __url__ = 'www.DesOptPy.org'
@@ -309,7 +308,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         nEval += 1
         if StatusReport:
             OptHis2HTML.OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0,
-                                    xL, xU, DesVarNorm, inform[0], OptTime0)
+                                    xL, xU, gc, DesVarNorm, inform[0], OptTime0)
         if len(xDis) > 0:
             nD = len(xDis)
             gDis = [[]]*2*nD
@@ -668,10 +667,10 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     # TODO: add history to these
     elif Alg == "SteepestDescentSUMT":
         from CustomAlgs import SteepestDescentSUMT
-        fOpt, xOpt, nIter, nEval = SteepestDescentSUMT(DefOptSysEq, x0, xL, xU)
+        fOpt, xOpt, nIt, nEval = SteepestDescentSUMT(DefOptSysEq, x0, xL, xU)
     elif Alg == "NewtonSUMT":
         from CustomAlgs import NewtonSUMT
-        fOpt, xOpt, nIter, nEval = NewtonSUMT(DefOptSysEq, x0, xL, xU)
+        fOpt, xOpt, nIt, nEval = NewtonSUMT(DefOptSysEq, x0, xL, xU)
 
 # -----------------------------------------------------------------------------
 #
@@ -705,213 +704,162 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
                  (diff // 3600) * 60), diff % 60
     OptTime = "%02d" % (h0) + " : " + "%02d" % (m0) + " : " + "%02d" % (s0)
 
-    NewRead = True
-    if NewRead:
-        fIter, xIter, gIter, gGradIter, fGradIter, inform = OptReadHis(OptName,
-                                                                       Alg,
-                                                                       AlgOptions,
-                                                                       x0, xL,
-                                                                       xU,
-                                                                       DesVarNorm)
-        xOpt = np.resize(xOpt[0:np.size(xL)], np.size(xL))
-        if DesVarNorm in ["None", None, False]:
-            x0norm = []
-            xIterNorm = []
-            xOptNorm = []
+# -----------------------------------------------------------------------------
+#       Read in history
+# -----------------------------------------------------------------------------
+    fIt, xIt, gIt, gNablaIt, fNablaIt, inform = OptReadHis(OptName, Alg,
+                                                           AlgOptions, x0, xL,
+                                                           xU, gc, DesVarNorm)
+    xOpt = np.resize(xOpt[0:np.size(xL)], np.size(xL))
+    if DesVarNorm in ["None", None, False]:
+        x0norm = np.array([])
+        xItNorm = np.array([])
+        xOptNorm = np.array([])
+    else:
+        xOpt = np.resize(xOpt, [np.size(xL), ])
+        xOptNorm = xOpt
+        xOpt = denormalize(xOptNorm, x0, xL, xU, DesVarNorm)
+        try:
+            xItNorm = xIt[0:np.size(xL), :]
+            xIt = np.zeros(np.shape(xItNorm))
+            for ii, xItNormi in enumerate(xItNorm.T):
+
+                xIt[:, ii] = denormalize(xItNormi, x0, xL, xU, DesVarNorm)
+        except:
+            x0norm = np.array([])
+            xItNorm = np.array([])
+            xOptNorm = np.array([])
+    nIt = np.size(fIt, 0)
+    if np.size(fIt) > 0:
+
+        if fIt[0]==0:
+            fItNorm = fIt
+        elif np.size(fIt) > 0:
+            fItNorm = fIt / fIt[0]
+            # fItNorm=(fIt-fIt[nEval-1])/(fIt[0]-fIt[nEval-1])
         else:
-            xOpt = np.resize(xOpt, [np.size(xL), ])
-            xOptNorm = xOpt
-            xOpt = denormalize(xOptNorm.T, x0, xL, xU, DesVarNorm)
-            try:
-                xIterNorm = xIter[:, 0:np.size(xL)]
-                xIter = np.zeros(np.shape(xIterNorm))
-                for ii, xIterNormi in enumerate(xIterNorm):
-                    xIter[ii] = denormalize(xIterNormi, x0, xL, xU, DesVarNorm)
-            except:
-                x0norm = []
-                xIterNorm = []
-                xOptNorm = []
-        nIter = np.size(fIter, 0)
-        if np.size(fIter) > 0:
-            if len(fIter[0]) > 0:
-                fIterNorm = fIter / fIter[0]
-                # fIterNorm=(fIter-fIter[nEval-1])/(fIter[0]-fIter[nEval-1])
-            else:
-                fIterNorm = fIter
-        else:
-            fIterNorm = []
+            fItNorm = fIt
+    else:
+        fItNorm = np.array([])
+
+
+
+## Denormalization of design variables
+#        xOpt = np.resize(xOpt[0:np.size(xL)], np.size(xL))
+#        if DesVarNorm in ["None", None, False]:
+#            x0norm = []
+#            xItNorm = []
+#            xOptNorm = []
+#        else:
+#            xOpt = np.resize(xOpt, [np.size(xL), ])
+#            xOptNorm = xOpt
+#            xOpt = denormalize(xOptNorm.T, x0, xL, xU, DesVarNorm)
+#            try:
+#                xItNorm = xIt[:, 0:np.size(xL)]
+#                xIt = np.zeros(np.shape(xItNorm))
+#                for ii, xItNormi in enumerate(xItNorm):
+#                    xIt[ii] = denormalize(xItNormi, x0, xL, xU, DesVarNorm)
+#            except:
+#                x0norm = []
+#                xItNorm = []
+#                xOptNorm = []
+#        nIt = np.size(fIt, 0)
+#
+## Normalization of objective function (starting value = 1)
+#        if np.size(fIt) > 0:
+#            if fIt[0]==0:
+#                fItNorm = fIt
+#            elif len(fIt[0]) > 0:
+#                fItNorm = fIt / fIt[0]
+#                # fItNorm=(fIt-fIt[nEval-1])/(fIt[0]-fIt[nEval-1])
+#            else:
+#                fItNorm = fIt
+#        else:
+#            fItNorm = []
 
 # -----------------------------------------------------------------------------
-#       Read in results from history files
-# -----------------------------------------------------------------------------
-    if NewRead is False:
-        OptHist = pyOpt.History(OptName, "r")
-        fAll = OptHist.read([0, -1], ["obj"])[0]["obj"]
-        xAll = OptHist.read([0, -1], ["x"])[0]["x"]
-        gAll = OptHist.read([0, -1], ["con"])[0]["con"]
-        if Alg == "NLPQLP":
-            gAll = [x * -1 for x in gAll]
-        gGradIter = OptHist.read([0, -1], ["grad_con"])[0]["grad_con"]
-        fGradIter = OptHist.read([0, -1], ["grad_obj"])[0]["grad_obj"]
-        failIter = OptHist.read([0, -1], ["fail"])[0]["fail"]
-        if Alg == "COBYLA" or Alg == "NSGA2" or Alg[:5] == "PyGMO":
-            fIter = fAll
-            xIter = xAll
-            gIter = gAll
-        else:
-            fIter = [[]] * len(fGradIter)
-            xIter = [[]] * len(fGradIter)
-            gIter = [[]] * len(fGradIter)
-            # SuIter = [[]] * len(fGradIter)
-            for ii in range(len(fGradIter)):
-                Posdg = OptHist.cues["grad_con"][ii][0]
-                Posf = OptHist.cues["obj"][ii][0]
-                iii = 0
-                while Posdg > Posf:
-                    iii = iii + 1
-                    try:
-                        Posf = OptHist.cues["obj"][iii][0]
-                    except:
-                        Posf = Posdg + 1
-                iii = iii - 1
-                fIter[ii] = fAll[iii]
-                xIter[ii] = xAll[iii]
-                gIter[ii] = gAll[iii]
-        OptHist.close()
-
-# -----------------------------------------------------------------------------
-#       Convert all data to numpy arrays
-# -----------------------------------------------------------------------------
-        fIter = np.asarray(fIter)
-        xIter = np.asarray(xIter)
-        gIter = np.asarray(gIter)
-        gGradIter = np.asarray(gGradIter)
-        fGradIter = np.asarray(fGradIter)
-
-# -----------------------------------------------------------------------------
-# Denormalization of design variables
-# -----------------------------------------------------------------------------
-        xOpt = np.resize(xOpt[0:np.size(xL)], np.size(xL))
-        if DesVarNorm in ["None", None, False]:
-            x0norm = []
-            xIterNorm = []
-            xOptNorm = []
-        else:
-            xOpt = np.resize(xOpt, [np.size(xL), ])
-            xOptNorm = xOpt
-            xOpt = denormalize(xOptNorm.T, x0, xL, xU, DesVarNorm)
-            try:
-                xIterNorm = xIter[:, 0:np.size(xL)]
-                xIter = np.zeros(np.shape(xIterNorm))
-                for ii, xIterNormi in enumerate(xIterNorm):
-                    xIter[ii] = denormalize(xIterNormi, x0, xL, xU, DesVarNorm)
-            except:
-                x0norm = []
-                xIterNorm = []
-                xOptNorm = []
-        nIter = np.size(fIter, 0)
-        if np.size(fIter) > 0:
-            if len(fIter[0]) > 0:
-                fIterNorm = fIter / fIter[0]
-                # fIterNorm=(fIter-fIter[nEval-1])/(fIter[0]-fIter[nEval-1])
-            else:
-                fIterNorm = fIter
-        else:
-            fIterNorm = []
-
-# -----------------------------------------------------------------------------
-#  Active constraints for use in the calculation of the Lagrangian multipliers and optimality criterion
+#  Active constraints for use in the calculation of the Lagrangian multipliers and optimality crItion
 # -----------------------------------------------------------------------------
     epsActive = 1e-3
-    # gBound: values for constraint x-xU and xL-x
-    #
-    xLU = np.hstack((xL, xU))
-    gBoundL = xL-xOpt
-    gBoundU = xOpt-xU
-    gBound = np.hstack((gBoundL, gBoundU))
-    gBoundLGrad = -np.eye(nx)
-    gBoundUGrad = np.eye(nx)
-    gBoundGrad = np.hstack((gBoundLGrad, gBoundUGrad))
+    gL = xL-xOpt
+    gU = xOpt-xU
+    gLU = np.hstack((gL, gU))
+    gLNabla = -np.eye(nx)
+    gUNabla = np.eye(nx)
+    gLUNabla = np.vstack((gLNabla, gUNabla))
+    gLUActiveIndex = gLU > -epsActive
 
-    gBoundActiveIndex = gBound > -epsActive
-    xLUActive = xLU[gBoundActiveIndex]
-    gBoundActive = gBound[gBoundActiveIndex]
-    gBoundGradActive = gBoundGrad[:, gBoundActiveIndex]
+    xLU = np.hstack((xL, xU))
+    xLUActive = xLU[gLUActiveIndex]
+    gLUActive = gLU[gLUActiveIndex]
+    gLUNablaActive = gLUNabla[gLUActiveIndex, :]
+    gLUActiveType = np.asarray(["Bound"]*np.size(gLUActive))
 
     if np.size(gc) > 0:
-        gMaxIter = np.zeros([nIter])
-        for ii in range(len(gIter)):
-            gMaxIter[ii] = max(gIter[ii])
-        gOpt = gIter[nIter - 1]
-        gOptActiveIndex = gOpt > -epsActive
-        gOptActive = gOpt[gOptActiveIndex]
-        gAllOpt = np.hstack((gOpt, gBound))
-        gAllOptActive = np.hstack((gOptActive, gBoundActive))
-    elif np.size(gc) == 0:
-        gOptActiveIndex = [[False]] * len(gc)
-        gOptActive = np.array([])
-        gMaxIter = np.array([] * nIter)
+        gMaxIt = np.zeros([nIt])
+        for ii in range(len(gIt)):
+            gMaxIt[ii] = max(gIt[ii])
+        gOpt = gIt[:, -1]
+        gActiveIndex = gOpt > -epsActive
+        gActive = gOpt[gActiveIndex]
+        gcActive = gc[gActiveIndex]
+        gActiveType = np.asarray(["Inequality"]*np.size(gcActive))
+    else:
+        gIt = np.array([])
+        gMaxIt = np.array([] * nIt)
         gOpt = np.array([])
-        gOpt = np.array([], dtype=np.int64)
-        gOptActive = np.array([], dtype=np.int64)
-        gOptActiveIndex = False
-        gAllOpt = gBound
-        gAllOptActive = gBoundActive
-    gAllActiveIndex = np.hstack((gOptActiveIndex, gBoundActiveIndex))
-#        gMaxIter = np.zeros([nIter])
-#        for ii in range(len(gIter)):
-#            gMaxIter[ii] = max(gIter[ii])
-#        gOptActiveIndex = gOpt > -epsActive
-#        gOptActive = gOpt[gOptActiveIndex]
+        gActiveIndex = np.array([])
+        #gActiveIndex = [[False]] * len(gc)
+        gActive = np.array([])
+        gcActive = np.array([])
+        gActiveType = np.array([])
 
+    gAll = np.hstack((gOpt, gLU))
+    gAllActive = np.hstack((gActive, gLUActive))
+    gcAll = np.hstack((gc, xLU))
+    gcAllActive = np.hstack((gcActive, xLUActive))
 
-    if np.size(fGradIter) > 0:  # Iteration data present
-        fGradOpt = fGradIter[-1]
+    if np.size(fNablaIt) > 0:  # Itation data present
+        fNablaOpt = fNablaIt[:, -1]
+        gNablaOptActive = np.array([])
     else:
-        fGradOpt = np.array([])
-    if np.size(gGradIter) > 0:
-        gGradOpt = gGradIter[-1]
-        #gGradOpt = gGradOpt.reshape([nx, ng])
-        gGradOpt = gGradOpt.reshape([ng, nx]).T
-        gGradOptActive = gGradOpt[:, gOptActiveIndex]
-        gcActive = gc[gOptActiveIndex]
-        gcActiveType = ["Constraint"]*np.size(gcActive)
-        gOptActive = gOpt[gOptActiveIndex]
-        gcAll = np.hstack((gc, xLU))
-        gcAllActive = np.hstack((gcActive, xLUActive))
-        gAllOpt = np.hstack((gOpt, gBound))
-        gAllGradOpt = np.hstack((gGradOpt, gBoundGrad))
-        gAllActiveOpt = np.hstack((gOptActive, gBoundActive))
-        gAllGradActiveOpt = np.hstack((gGradOptActive, gBoundGradActive))
-        gBoundActiveType = ["Bound"]*np.size(gBoundActive)
-        gAllActiveType = np.hstack((gcActiveType, gBoundActiveType))
+        fNablaOpt = np.array([])
+        gNablaOptActive = np.array([])
+    if np.size(gNablaIt) > 0:
+        gNablaOpt = gNablaIt[:, :, -1]
+        gNablaOptActive = gNablaOpt[gActiveIndex, :]
     else:
-        gGradOpt = np.array([])
-        gGradOptActive = np.array([])
-        g_xLUActiveGradOpt = gBoundGrad
-        gc_xLUActiveOpt = gBoundActive
-        xActiveType = ["Bound"]*np.size(xLUActive)
-        gc_xLUActiveType = xActiveType
-        gAllGradActiveOpt = gBoundGradActive
-        gAllActiveType = xActiveType
+        gNablaOpt = np.array([])
+        gNablaOptActive = np.array([])
+    gAllActiveIndex = np.hstack((gActiveIndex, gLUActiveIndex)) if gActiveIndex.size else gLUActiveIndex
+    gAllNablaActive = np.vstack((gNablaOptActive, gLUNablaActive)) if gNablaOptActive.size else gLUNablaActive
+    gAllActiveType = np.hstack((gActiveType, gLUActiveType)) if gActiveType.size else gLUActiveType
+#    gAllGradOpt = np.vstack((gNablaOpt, gBoundGrad))
+#    gAllActiveOpt = np.hstack((gOptActive, gBoundActive))
+#    gAllGradActiveOpt = np.vstack((gNablaOptActive, gBoundGradActive))
+#    gBoundActiveType = ["Bound"]*np.size(gBoundActive)
+#    gAllActiveType = np.hstack((gcActiveType, gBoundActiveType))
+#    gNablaOpt = gNablaIt[:, :, -1]
+#    gNablaOpt = gNablaOpt.reshape([ng, nx])
+#    gNablaOptActive = gNablaOpt[gOptActiveIndex, :]
 
 # -----------------------------------------------------------------------------
 #   §      Post-processing of optimization solution
 # -----------------------------------------------------------------------------
-    if np.size(fGradIter) > 0 and np.size(gAllGradActiveOpt) > 0:
-        fGradOpt = fGradOpt.reshape((nx, 1))
-        lamActive = CalcLagrangeMult(fGradOpt, gAllGradActiveOpt)
-        lamAll = np.zeros((np.shape(gAllOpt)))
+    if np.size(fNablaIt) > 0 and np.size(gAllNablaActive) > 0:
+        #fNablaOpt = fNablaOpt.reshape((nx, 1))
+        lamActive = CalcLagrangeMult(fNablaOpt, gAllNablaActive)
+        lamAll = np.zeros((np.shape(gAll)))
         for ii in range(len(lamActive)):
             lamAll[gAllActiveIndex[ii]] = lamActive[ii]
         lambda_c = lamActive
-        #kktOpt1, Opt1Order1, OptRes1, KKTmax1 = CheckKKT(lamAll, fGradOpt,
+        #kktOpt1, Opt1Order1, OptRes1, KKTmax1 = CheckKKT(lamAll, fNablaOpt,
         #                                                 gAllGradOpt,
         #                                                 gAllOpt)
-        kktOpt, Opt1Order, OptRes, KKTmax = CheckKKT(lambda_c, fGradOpt,
-                                                     gAllGradActiveOpt,
-                                                     gAllOptActive)
-        SPg = CalcShadowPrice(lambda_c, gAllOptActive, gAllActiveType,
+        kktOpt, Opt1Order, OptRes, KKTmax = CheckKKT(lambda_c, fNablaOpt,
+                                                     gAllNablaActive,
+                                                     gAllActive)
+        SPg = CalcShadowPrice(lambda_c, gcAllActive, gAllActiveType,
                               DesVarNorm)
     else:
         SPg = np.array([])
@@ -929,21 +877,21 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     OptSolData['x0'] = x0
     OptSolData['xOpt'] = xOpt
     OptSolData['xOptNorm'] = xOptNorm
-    OptSolData['xIter'] = xIter
-    OptSolData['xIterNorm'] = xIterNorm
+    OptSolData['xIter'] = xIt
+    OptSolData['xIterNorm'] = xItNorm
     OptSolData['fOpt'] = fOpt
-    OptSolData['fIter'] = fIter
-    OptSolData['fIterNorm'] = fIterNorm
-    OptSolData['gIter'] = gIter
-    OptSolData['gMaxIter'] = gMaxIter
+    OptSolData['fIter'] = fIt
+    OptSolData['fIterNorm'] = fItNorm
+    OptSolData['gIter'] = gIt
+    OptSolData['gMaxIter'] = gMaxIt
     OptSolData['gOpt'] = gOpt
-    OptSolData['fGradIter'] = fGradIter
-    OptSolData['gGradIter'] = gGradIter
-    OptSolData['gGradOpt'] = gGradOpt
-    OptSolData['gGradOptDenorm'] =denormalizeSens(gGradOpt, x0, xL, xU,
+    OptSolData['fNablaIter'] = fNablaIt
+    OptSolData['gNablaIter'] = gNablaIt
+    OptSolData['gNablaOpt'] = gNablaOpt
+    OptSolData['gNablaOptDenorm'] =denormalizeSens(gNablaOpt, x0, xL, xU,
                                                   DesVarNorm)
-    OptSolData['fGradOpt'] = fGradOpt
-    OptSolData['fGradOptDenorm'] =denormalizeSens(fGradOpt, x0, xL, xU,
+    OptSolData['fNablaOpt'] = fNablaOpt
+    OptSolData['fNablaOptDenorm'] =denormalizeSens(fNablaOpt, x0, xL, xU,
                                                   DesVarNorm)
     OptSolData['OptName'] = OptName
     OptSolData['OptModel'] = OptModel
@@ -960,11 +908,11 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     OptSolData['KKTmax'] = KKTmax
     OptSolData['lambda_c'] = lambda_c
     OptSolData['nEval'] = nEval
-    OptSolData['nIter'] = nIter
+    OptSolData['nIter'] = nIt
     OptSolData['SPg'] = SPg
     OptSolData['gc'] = gc
     OptSolData['SensCalc'] = SensCalc
-    OptSolData['xIterNorm'] = xIterNorm
+    OptSolData['xIterNorm'] = xItNorm
     OptSolData['x0norm'] = x0norm
     OptSolData['xL'] = xL
     OptSolData['xU'] = xU
@@ -982,9 +930,9 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     output = open(OptName + "_OptSol.pkl", 'wb')
     pickle.dump(OptSolData, output)
     output.close()
-    np.savez(OptName + "_OptSol", x0, xOpt, xOptNorm, xIter, xIterNorm, xIter,
-             xIterNorm, fOpt, fIter, fIterNorm, gIter, gMaxIter, gOpt,
-             fGradIter, gGradIter, fGradOpt, gGradOpt, OptName, OptModel,
+    np.savez(OptName + "_OptSol", x0, xOpt, xOptNorm, xIt, xItNorm, xIt,
+             xItNorm, fOpt, fIt, fItNorm, gIt, gMaxIt, gOpt,
+             fNablaIt, gNablaIt, fNablaOpt, gNablaOpt, OptName, OptModel,
              OptTime, loctime, today, computerName, operatingSystem,
              architecture, nProcessors, userName, Alg, DesVarNorm, KKTmax)
 
@@ -1038,6 +986,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         if np.size(lambda_c) > 0:
             print("Lagrangian multipliers = " +
                   str(lambda_c.reshape(np.size(lambda_c,))))
+            print("Type of active constraints = " + str(gAllActiveType))
             print("Shadow prices = " + str(SPg))
         if kktOpt:
             print("Karush-Kuhn-Tucker optimality criteria fulfilled")
@@ -1049,7 +998,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
         try:
             print("nGen = " + str(nGen))
         except:
-            print("nIter = " + str(nIter))
+            print("nIt = " + str(nIt))
         print("nEval = " + str(nEval))
         if Debug is False:
             print("See results directory: " + ResultsDir + os.sep + OptName)

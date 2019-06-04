@@ -1,26 +1,25 @@
 """
 Title:    OptPostProc.py
 Author:   E. J. Wehrle
-Date:     April 12, 2019
+Date:     June 4, 2019
 -------------------------------------------------------------------------------
 Description:
 Postprocessing of optimization problem via optimality check and shadow prices
 -------------------------------------------------------------------------------
 """
-
 import numpy as np
 from numpy.linalg import pinv, norm
 
 
 def CalcLagrangeMult(fNabla, gNabla):
-    lam = -pinv(gNabla)@fNabla
+    lam = -(fNabla@pinv(gNabla)).T
     return(lam)
 
 
 def CheckKKT(lam, fNabla, gNabla, g, kkteps=1e-3):
     if np.size(g) == 0:
         OptResidual = fNabla
-        kktOpt = (np.abs(norm(fNabla))<kkteps)
+        kktOpt = (np.abs(norm(fNabla)) < kkteps)
     else:
         if np.size(lam)==1:
             OptResidual = fNabla+float(lam)*gNabla
