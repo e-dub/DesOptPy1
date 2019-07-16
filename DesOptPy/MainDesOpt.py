@@ -193,7 +193,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
            StatusReport=False, ResultReport=False, Video=False, nDoE=0,
            DoE="LHS+Corners", SBDO=False, Approx=[], Debug=False,
            PrintOut=True, OptNameAdd="", AlgOptions=[], KeepEval=False,
-           Alarm=True):
+           Alarm=True, PostProc=True):
 
 # -----------------------------------------------------------------------------
 # Define optimization problem and optimization options
@@ -846,7 +846,7 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
 # -----------------------------------------------------------------------------
 #   §      Post-processing of optimization solution
 # -----------------------------------------------------------------------------
-    if np.size(fNablaIt) > 0 and np.size(gAllNablaActive) > 0:
+    if PostProc and np.size(fNablaIt) > 0 and np.size(gAllNablaActive) > 0:
         #fNablaOpt = fNablaOpt.reshape((nx, 1))
         lamActive = CalcLagrangeMult(fNablaOpt, gAllNablaActive)
         lamAll = np.zeros((np.shape(gAll)))
