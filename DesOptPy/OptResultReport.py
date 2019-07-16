@@ -599,8 +599,8 @@ def OptResultReport(optname, OptAlg, DesOptDir, diagrams=1, tables=0, lyx=0):
             dvT.append('\n \\midrule \n')
             if nx == 1:
                 # dvT.append('\\midrule \n')
-                temp = [str(1), r'&$\xn_{1}$&', str(round(x0norm, 4)), '&',
-                        str(0.), '&', str(1.), '&', str(round(xOptNorm, 4)),
+                temp = [str(1), r'&$\xn_{1}$&', str(round(x0norm[0], 4)), '&',
+                        str(0.), '&', str(1.), '&', str(round(xOptNorm[0], 4)),
                         '\\tabularnewline \n']
                 dvT = dvT+temp
             else:
