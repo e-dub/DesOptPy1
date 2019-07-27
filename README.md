@@ -1,43 +1,6 @@
 # DesOptPy
 DESign OPTimization in PYthon
 
-
-
-Release history
-====
-July 27, 2019
------------------
-DesOptPy version 2019 released.
-
-July 30, 2016
------------------
-DesOptPy version 1.3 released.
-
-June 26, 2016
------------------
-DesOptPy version 1.2 released.
-
-November 18, 2015
------------------
-DesOptPy version 1.1 released.
-
-November 16, 2015
------------------
-DesOptPy version 1.02 released.
-
-November 10, 2015
------------------
-DesOptPy version 1.01 released.
-
-November 8, 2015
-----------------
-The website is currently a work in progress and being built.  Check back for updates. 
-
-October 18, 2015
-----------------
-Initial public release of DesOptPy on GitHub and PyPI - the Python Package Index.
-
-
 Introduction to DesOptPy
 ========================
 
@@ -80,6 +43,42 @@ If DesOptPy is used in your research, a citation would be appreciated.  The foll
     Type = {Dr.-Ing. diss.}
     }
 ```
+
+
+Release history
+===============
+July 27, 2019
+-------------
+DesOptPy version 2019 released.
+
+July 30, 2016
+-------------
+DesOptPy version 1.3 released.
+
+June 26, 2016
+-------------
+DesOptPy version 1.2 released.
+
+November 18, 2015
+-----------------
+DesOptPy version 1.1 released.
+
+November 16, 2015
+-----------------
+DesOptPy version 1.02 released.
+
+November 10, 2015
+-----------------
+DesOptPy version 1.01 released.
+
+November 8, 2015
+----------------
+The website is currently a work in progress and being built.  Check back for updates. 
+
+October 18, 2015
+----------------
+Initial public release of DesOptPy on GitHub and PyPI - the Python Package Index.
+
 
 Contact
 =======
