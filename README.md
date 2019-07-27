@@ -58,8 +58,6 @@ Installation
 
 The quick and easy installation is accomplished via the following code:
 
-.. code-block:: bash
-
     pip install DesOptPy
 
 
@@ -75,7 +73,7 @@ Terms of usage
    
 If DesOptPy is used in your research, a citation would be appreciated.  The following is the :download:`BibTeX <Docs/Wehrle2015.bib>` format:  
 
-.. literalinclude:: _docs/Wehrle2015.bib
+.. literalinclude:: Docs/Wehrle2015.bib
    :language: tex
 
 
