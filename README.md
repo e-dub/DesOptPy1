@@ -69,14 +69,15 @@ Terms of usage
    
 If DesOptPy is used in your research, a citation would be appreciated.  The following is the BibTeX format:  
 
-`@PhdThesis{Wehrle2015,
+```
+@PhdThesis{Wehrle2015,
     Title = {Design optimization of lightweight space frame structures considering crashworthiness and parameter uncertainty},
     Author = {Wehrle, E. J.},
     School = {Lehrstuhl für Leichtbau, Technische Universität München},
     Year = {2015},
     Type = {Dr.-Ing. diss.}
     }
-`
+```
 
 Contact
 =======
