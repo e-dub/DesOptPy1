@@ -1,10 +1,6 @@
 # DesOptPy
 DESign OPTimization in PYthon
 
-*****************************************
-DesOptPy -- DESign OPTimization in PYthon
-*****************************************
-
 Release history
 ====
 July 27, 2019
@@ -71,11 +67,16 @@ Further contribution to examples from users is welcome, see the repository: http
 Terms of usage
 ==============
    
-If DesOptPy is used in your research, a citation would be appreciated.  The following is the :download:`BibTeX <Docs/Wehrle2015.bib>` format:  
+If DesOptPy is used in your research, a citation would be appreciated.  The following is the BibTeX format:  
 
-.. literalinclude:: Docs/Wehrle2015.bib
-   :language: tex
-
+`@PhdThesis{Wehrle2015,
+    Title = {Design optimization of lightweight space frame structures considering crashworthiness and parameter uncertainty},
+    Author = {Wehrle, E. J.},
+    School = {Lehrstuhl für Leichtbau, Technische Universität München},
+    Year = {2015},
+    Type = {Dr.-Ing. diss.}
+    }
+`
 
 Contact
 =======
