@@ -77,9 +77,9 @@ def OptHis2HTML(OptName, Alg, AlgOptions, DesOptDir, x0, xL, xU, gc, DesVarNorm,
 #                [xIter[y, :], xLnorm, xUnorm] = normalize(xIterDenorm[y, :],
 #                                                          x0, xL, xU, "xLxU")
         else:
-            xIter = xIter[0:np.size(xL),:]
+            xIter = xIter[0:np.size(xL), :]
             xIterDenorm = np.zeros(np.shape(xIter))
-            for ii in range(len(xIterDenorm)):
+            for ii in range(np.shape(xIterDenorm)[1]):
                 xIterDenorm[:, ii] = denormalize(xIter[:, ii], x0, xL, xU, DesVarNorm)
             #xIterDenorm = np.zeros((nIter + 1, len(x0)))
 #            for y in range(0, nIter + 1):
