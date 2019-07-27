@@ -1,4 +1,4 @@
-<p align=center><img height="72.125%" width="72.125%" src="DesOptPy/StatusReportFiles/DesOptPy.png"></p>
+<p align=center><img height="50%" width="50%" src="DesOptPy/StatusReportFiles/DesOptPy.png"></p>
 
 # DesOptPy
 DESign OPTimization in PYthon
