@@ -1,3 +1,6 @@
+
+!(DesOptPy/StatusReportFiles/DesOptPy.png)
+
 # DesOptPy
 DESign OPTimization in PYthon
 
