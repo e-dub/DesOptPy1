@@ -5,7 +5,7 @@ Version:        2019
 Units:          Unitless
 Author:         E. J. Wehrle
 Contributors:   S. Rudolph (<α0.5), F. Wachter (α0.5-1.2), M. Richter (α0.5)
-Date:           June 4, 2019
+Date:           July 27, 2019
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
@@ -16,11 +16,11 @@ DesOptPy - DESign OPTimization in PYthon - is an optimization toolbox in Python
 -------------------------------------------------------------------------------
 Change log
 -------------------------------------------------------------------------------
-2019
-    General clean-up
-    NumPy problems
-    PyGMO working again
-    Sensitivity analysis
+2019 (July 27, 2019)
+     General clean-up
+     NumPy problems
+     PyGMO working again
+     Sensitivity analysis
 
 1.3 (July 30, 2016)
     Removed support for surrogate model based optimization
@@ -162,7 +162,7 @@ from DesOptPy.OptReadHis import OptReadHis
 # -----------------------------------------------------------------------------
 __title__ = "DESign OPTimization in PYthon"
 __shorttitle__ = "DesOptPy"
-__version__ = "2019pre"
+__version__ = "2019"
 __all__ = ['DesOpt']
 __author__ = "E. J. Wehrle"
 __copyright__ = "Copyright 2015, 2016, 2017, 2018, 2019 E. J. Wehrle"
