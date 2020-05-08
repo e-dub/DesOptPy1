@@ -794,11 +794,14 @@ def DesOpt(SysEq, x0, xU, xL, xDis=[], gc=[], hc=[], SensEq=[], Alg="SLSQP",
     gLUActive = gLU[gLUActiveIndex]
     gLUNablaActive = gLUNabla[gLUActiveIndex, :]
     gLUActiveType = np.asarray(["Bound"]*np.size(gLUActive))
-
     if np.size(gc) > 0:
         gMaxIt = np.zeros([nIt])
-        for ii in range(len(gIt)):
-            gMaxIt[ii] = max(gIt[ii])
+        # THIS IS A STUPID FIX!!!!
+        for ii in range(nIt):
+            try:
+                gMaxIt[ii] = max(gIt[ii])
+            except:
+                gMaxIt[ii] = 0
         gOpt = gIt[:, -1]
         gActiveIndex = gOpt > -epsActive
         gActive = gOpt[gActiveIndex]
