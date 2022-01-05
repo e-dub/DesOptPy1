@@ -3,6 +3,8 @@
 # DesOptPy
 DESign OPTimization in PYthon
 
+Previous version. See http://github.com/e-dub/DesOptPy for newest.
+
 Introduction to DesOptPy
 ========================
 
@@ -13,7 +15,7 @@ Download
 
 DesOptPy can be downloaded an branched at the following GitHub repository:
 
-http://github.com/e-dub/DesOptPy
+http://github.com/e-dub/DesOptPy1
 
 
 Installation
